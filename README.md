@@ -1,4 +1,4 @@
-﻿﻿# rx-template-govtransmitter
+# rx-template-transmitter
 Репозиторий с шаблоном разработки "Отправка адресатам".
 
 ## Описание
