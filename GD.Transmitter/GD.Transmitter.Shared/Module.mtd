@@ -1,0 +1,57 @@
+{
+  "$type": "Sungero.Metadata.SolutionMetadata, Sungero.Metadata",
+  "NameGuid": "af848e26-f8aa-4bf6-976a-8ab65253ab5f",
+  "Name": "Transmitter",
+  "AsyncHandlers": [],
+  "ClientAssemblyName": "GD.Transmitter.Client",
+  "ClientBaseAssemblyName": "GD.Transmitter.ClientBase",
+  "ClientBaseNamespace": "GD.Transmitter.ClientBase",
+  "ClientNamespace": "GD.Transmitter.Client",
+  "Code": "Transmi",
+  "CompanyCode": "GD",
+  "Cover": {
+    "NameGuid": "0c7b62a4-4d0b-4c2e-a33e-9fc1cbf14183",
+    "Actions": [],
+    "Background": null,
+    "Footer": {
+      "NameGuid": "619a9fd5-cdd7-4199-a81c-65a566b6d8b1",
+      "BackgroundPosition": "Stretch"
+    },
+    "Groups": [],
+    "Header": {
+      "NameGuid": "c16631f7-f4ec-4dd4-b405-b462bc20707b",
+      "BackgroundPosition": "Stretch"
+    }
+  },
+  "DesktopViews": [],
+  "IconResourcesKeys": [],
+  "Importance": "Medium",
+  "InterfaceAssemblyName": "Sungero.Domain.Interfaces",
+  "InterfaceNamespace": "GD.Transmitter",
+  "OrderedSpecialFolders": [],
+  "PublicStructures": [],
+  "ResourceInterfaceAssemblyName": "Sungero.Domain.Interfaces",
+  "ResourceInterfaceNamespace": "GD.Transmitter",
+  "ResourcesKeys": [],
+  "ServerAssemblyName": "GD.Transmitter.Server",
+  "ServerNamespace": "GD.Transmitter.Server",
+  "SharedAssemblyName": "GD.Transmitter.Shared",
+  "SharedNamespace": "GD.Transmitter.Shared",
+  "SpecialFolders": [],
+  "Version": "0.0.1.0",
+  "Widgets": [],
+  "Versions": [
+    {
+      "Type": "SolutionMetadata",
+      "Number": 6
+    },
+    {
+      "Type": "ModuleMetadata",
+      "Number": 6
+    },
+    {
+      "Type": "DomainApi",
+      "Number": 3
+    }
+  ]
+}

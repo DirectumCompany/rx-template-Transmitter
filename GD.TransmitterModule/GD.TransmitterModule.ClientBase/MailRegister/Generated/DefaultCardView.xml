@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+  <ViewName>Default</ViewName>
+  <Collection51a3583131074452adfcd78799ad116a FormGuid="0accf66e-8b9b-450c-9be9-0bfe2a5112cd">
+    <XtraSerializer version="1.0" application="GridControl">
+      <property name="#LayoutVersion" isnull="true" />
+      <property name="$GridControl" iskey="true" value="GridControl">
+        <property name="GroupSummary" iskey="true" value="0" />
+        <property name="View" isnull="true" iskey="true">
+          <property name="ColumnChooserState" isnull="true" iskey="true">
+            <property name="Location">906,-2</property>
+            <property name="Size">220,250</property>
+          </property>
+          <property name="AutoWidth">false</property>
+          <property name="AllowGrouping">false</property>
+          <property name="ShowGroupPanel">false</property>
+          <property name="AllowSorting">true</property>
+          <property name="ShowTotalSummary">false</property>
+          <property name="AllowMoveColumnToDropArea">false</property>
+          <property name="AllowColumnMoving">true</property>
+          <property name="IsRowCellMenuEnabled">false</property>
+          <property name="LinesPerRowMode">None</property>
+        </property>
+        <property name="TotalSummary" iskey="true" value="0" />
+        <property name="GroupCount">0</property>
+        <property name="Columns" iskey="true" value="1">
+          <property name="Item1" isnull="true" iskey="true">
+            <property name="Visible">true</property>
+            <property name="FieldName">Document</property>
+            <property name="Name">MailRegister_RelatedDocuments_Document</property>
+            <property name="VisibleIndex">0</property>
+            <property name="ActualWidth">8*</property>
+          </property>
+        </property>
+        <property name="SortInfo" iskey="true" value="0" />
+        <property name="GroupSummarySortInfo" iskey="true" value="0" />
+      </property>
+    </XtraSerializer>
+  </Collection51a3583131074452adfcd78799ad116a>
+</settings>

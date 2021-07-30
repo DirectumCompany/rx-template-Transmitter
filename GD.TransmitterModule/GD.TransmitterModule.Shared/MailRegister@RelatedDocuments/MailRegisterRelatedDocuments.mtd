@@ -1,0 +1,60 @@
+{
+  "$type": "Sungero.Metadata.EntityMetadata, Sungero.Metadata",
+  "NameGuid": "5b330c6d-05ce-4bc5-989b-3f8478088b15",
+  "Name": "MailRegisterRelatedDocuments",
+  "AccessRightsMode": "NoRight",
+  "BaseGuid": "a3d38bf5-0414-41f6-bb33-a4621d2e5a60",
+  "CanBeNavigationPropertyType": true,
+  "Code": "MailRegisterRe",
+  "ExtraSearchProperties": [],
+  "IsChildEntity": true,
+  "Properties": [
+    {
+      "$type": "Sungero.Metadata.NavigationPropertyMetadata, Sungero.Metadata",
+      "NameGuid": "7e899e1e-8463-4ecd-bb8b-f95d2084d46e",
+      "Name": "MailRegister",
+      "CanBeSearch": false,
+      "Code": "MailRegister",
+      "EntityGuid": "8befb02b-16af-4fe1-8694-c508d0b01aad",
+      "IsReferenceToRootEntity": true,
+      "IsShowedInList": false
+    },
+    {
+      "$type": "Sungero.Metadata.NavigationPropertyMetadata, Sungero.Metadata",
+      "NameGuid": "3cec4966-a78f-4f1e-82ae-2b5dda0e3237",
+      "Name": "Document",
+      "CanBeSearch": false,
+      "Code": "Document",
+      "EntityGuid": "030d8d67-9b94-4f0d-bcc6-691016eb70f3",
+      "FlatListInStandaloneLookup": true,
+      "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.DropDownEditorToNavigationBinder",
+      "PreviousPropertyGuid": "7e899e1e-8463-4ecd-bb8b-f95d2084d46e"
+    }
+  ],
+  "PublicStructures": [],
+  "RibbonCardMetadata": {
+    "NameGuid": "9f9efed4-4f55-4d18-8ba9-8e6d1a01fbca",
+    "Name": "RibbonCard",
+    "Categories": [],
+    "Elements": [],
+    "Groups": [],
+    "IsAncestorMetadata": true,
+    "Pages": [],
+    "RibbonKind": "Card"
+  },
+  "RibbonCollectionMetadata": {
+    "NameGuid": "3d003ca3-c805-427e-a9bf-e8674325df96",
+    "Name": "RibbonCollection",
+    "Categories": [],
+    "Elements": [],
+    "Groups": [],
+    "IsAncestorMetadata": true,
+    "Pages": []
+  },
+  "Versions": [
+    {
+      "Type": "EntityMetadata",
+      "Number": 9
+    }
+  ]
+}

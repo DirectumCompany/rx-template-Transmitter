@@ -1,0 +1,476 @@
+{
+  "$type": "Sungero.Metadata.ModuleMetadata, Sungero.Metadata",
+  "NameGuid": "4544291a-865d-4ee4-8e2c-7ae22cd895ba",
+  "Name": "TransmitterModule",
+  "AsyncHandlers": [
+    {
+      "NameGuid": "ff2324b7-c7d3-4847-836b-260bab0ec5bf",
+      "Name": "SendDocumentToAddresseesEMail",
+      "DelayPeriod": 2,
+      "DelayStrategy": "RegularDelayStrategy",
+      "IsHandlerGenerated": true,
+      "Parameters": [
+        {
+          "NameGuid": "3797d078-5321-4e31-8d52-62e085867ef6",
+          "Name": "DocumentId",
+          "ParameterType": "Integer"
+        },
+        {
+          "NameGuid": "4b2c5a01-0fc1-46f0-9a5d-4fc775e44221",
+          "Name": "Sender",
+          "ParameterType": "String"
+        }
+      ]
+    },
+    {
+      "NameGuid": "9d048f7c-1b78-44fc-b37c-4cb894a7db97",
+      "Name": "SendDocumentToAddressees",
+      "DelayPeriod": 3,
+      "DelayStrategy": "RegularDelayStrategy",
+      "IsHandlerGenerated": true,
+      "Parameters": [
+        {
+          "NameGuid": "0b022821-a3fa-4d16-aa5b-cc38cfa31e61",
+          "Name": "DocumentID",
+          "ParameterType": "Integer"
+        },
+        {
+          "NameGuid": "882ff9e5-ede3-4200-aed6-35d1c2fbecd5",
+          "Name": "RelationDocumentIDs",
+          "ParameterType": "String"
+        }
+      ]
+    }
+  ],
+  "ClientAssemblyName": "GD.TransmitterModule.Client",
+  "ClientBaseAssemblyName": "GD.TransmitterModule.ClientBase",
+  "ClientBaseNamespace": "GD.TransmitterModule.ClientBase",
+  "ClientNamespace": "GD.TransmitterModule.Client",
+  "Code": "Transm1",
+  "CompanyCode": "GD",
+  "Cover": {
+    "NameGuid": "e0caad87-7a7e-41cb-9969-7d3f686d912d",
+    "Actions": [],
+    "Background": null,
+    "Footer": {
+      "NameGuid": "3e33e4a5-9e33-4775-ac31-a14435743dbd",
+      "BackgroundPosition": "Stretch"
+    },
+    "Groups": [],
+    "Header": {
+      "NameGuid": "a024cc49-46a3-4117-b60f-58d035d72c57",
+      "BackgroundPosition": "Stretch"
+    }
+  },
+  "Dependencies": [
+    {
+      "Id": "af848e26-f8aa-4bf6-976a-8ab65253ab5f",
+      "IsSolutionModule": true,
+      "MaxVersion": "",
+      "MinVersion": ""
+    }
+  ],
+  "ExplorerTreeOrder": [
+    {
+      "ItemId": "8befb02b-16af-4fe1-8694-c508d0b01aad"
+    },
+    {
+      "ItemId": "cbe2e152-4c70-40ae-bd00-ff02fedec489",
+      "PreviousItemId": "8befb02b-16af-4fe1-8694-c508d0b01aad"
+    },
+    {
+      "ItemId": "dbef401e-f8c3-424b-91e8-cb7dd914c8e5",
+      "PreviousItemId": "cbe2e152-4c70-40ae-bd00-ff02fedec489"
+    },
+    {
+      "ItemId": "2fabb4be-1133-4579-9aff-fec24fb98851",
+      "PreviousItemId": "dbef401e-f8c3-424b-91e8-cb7dd914c8e5"
+    },
+    {
+      "ItemId": "0e51b567-2880-4fdb-970a-6a4633399156",
+      "PreviousItemId": "2fabb4be-1133-4579-9aff-fec24fb98851"
+    }
+  ],
+  "HandledEvents": [
+    "InitializingServer"
+  ],
+  "IconResourcesKeys": [],
+  "Importance": "Medium",
+  "InitializationFunctions": [
+    {
+      "Name": "CreateElectronicDeliveryMethod",
+      "Parameters": [
+        {
+          "Name": "name",
+          "ParameterType": "global::System.String",
+          "ParameterTypeFullName": "System.String"
+        },
+        {
+          "Name": "sid",
+          "ParameterType": "global::System.String",
+          "ParameterTypeFullName": "System.String"
+        }
+      ],
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    }
+  ],
+  "InterfaceAssemblyName": "Sungero.Domain.Interfaces",
+  "InterfaceNamespace": "GD.TransmitterModule",
+  "IsVisible": false,
+  "Jobs": [
+    {
+      "NameGuid": "08918d73-0ea1-44fc-8ac8-2ce44483bf61",
+      "Name": "SendOutgoingInternalMail",
+      "Daily": "Repeat",
+      "GenerateHandler": true,
+      "MonthSchedule": "Monthly",
+      "TimePeriod": 10
+    },
+    {
+      "NameGuid": "e53276c8-c164-47df-8089-c1bb28cc27ba",
+      "Name": "SendOutgoingMail",
+      "Daily": "Repeat",
+      "GenerateHandler": true,
+      "MonthSchedule": "Monthly",
+      "TimePeriod": 10
+    }
+  ],
+  "Libraries": [
+    {
+      "NameGuid": "61b8fbc5-4731-4445-97f4-0c1d12e2e82d",
+      "Name": "Zip",
+      "Scope": "Both"
+    }
+  ],
+  "Overridden": [
+    "IsVisible"
+  ],
+  "PublicConstants": [
+    {
+      "Name": "DirectumRX",
+      "ParentClasses": [
+        "Module",
+        "DeliveryMethod"
+      ],
+      "TypeName": "System.String",
+      "Value": "\"DB866210-2F13-4B7F-AD6C-1857AA078843\""
+    },
+    {
+      "Name": "IncLetterKind",
+      "ParentClasses": [
+        "Module"
+      ],
+      "TypeName": "System.String",
+      "Value": "\"8dd00491-8fd0-4a7a-9cf3-8b6dc2e6455d\""
+    }
+  ],
+  "PublicFunctions": [
+    {
+      "Name": "CanSendToAddressee",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::GD.GovernmentSolution.IOutgoingLetter",
+          "ParameterTypeFullName": "GD.GovernmentSolution.IOutgoingLetter, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Client",
+      "ReturnType": "global::System.Boolean",
+      "ReturnTypeFullName": "System.Boolean"
+    },
+    {
+      "Name": "CheckAttachmentIsValid",
+      "Parameters": [
+        {
+          "Name": "task",
+          "ParameterType": "global::Sungero.Workflow.ITask",
+          "ParameterTypeFullName": "Sungero.Workflow.ITask, Sungero.Workflow.Interfaces"
+        }
+      ],
+      "ReturnType": "global::System.Boolean",
+      "ReturnTypeFullName": "System.Boolean"
+    },
+    {
+      "Name": "CheckExtForMedo",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Client",
+      "ReturnType": "global::System.Boolean",
+      "ReturnTypeFullName": "System.Boolean"
+    },
+    {
+      "Name": "CheckRequisitesForEmail",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
+      "ReturnTypeFullName": "System.Collections.Generic.List"
+    },
+    {
+      "Name": "CheckRequisitesForSendRX",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
+      "ReturnTypeFullName": "System.Collections.Generic.List"
+    },
+    {
+      "Name": "CopyAddendum",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "addendum",
+          "ParameterType": "global::Sungero.Docflow.IAddendum",
+          "ParameterTypeFullName": "Sungero.Docflow.IAddendum, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::Sungero.Docflow.IAddendum",
+      "ReturnTypeFullName": "Sungero.Docflow.IAddendum, Sungero.Domain.Interfaces"
+    },
+    {
+      "Name": "CreateFromDirectoryPublic",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "archivePath",
+          "ParameterType": "global::System.String",
+          "ParameterTypeFullName": "System.String"
+        },
+        {
+          "Name": "zipName",
+          "ParameterType": "global::System.String",
+          "ParameterTypeFullName": "System.String"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "DirRXSendToCounterparty",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "relatedDocs",
+          "ParameterType": "global::System.Linq.IQueryable<global::Sungero.Content.IElectronicDocument>",
+          "ParameterTypeFullName": "System.Linq.IQueryable"
+        },
+        {
+          "Name": "correspondent",
+          "ParameterType": "global::Sungero.Parties.ICounterparty",
+          "ParameterTypeFullName": "Sungero.Parties.ICounterparty, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "errors",
+          "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
+          "ParameterTypeFullName": "System.Collections.Generic.List"
+        }
+      ],
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "GetDocRegState",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "id",
+          "ParameterType": "global::System.Int32",
+          "ParameterTypeFullName": "System.Int32"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::Sungero.Core.Enumeration",
+      "ReturnTypeFullName": "Sungero.Core.Enumeration, Sungero.Domain.Shared"
+    },
+    {
+      "Name": "GetRegistrarForBusinessUnit",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "businessUnit",
+          "ParameterType": "global::Sungero.Company.IBusinessUnit",
+          "ParameterTypeFullName": "Sungero.Company.IBusinessUnit, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "documentKind",
+          "ParameterType": "global::Sungero.Docflow.IDocumentKind",
+          "ParameterTypeFullName": "Sungero.Docflow.IDocumentKind, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::Sungero.Company.IEmployee",
+      "ReturnTypeFullName": "Sungero.Company.IEmployee, Sungero.Domain.Interfaces"
+    },
+    {
+      "Name": "MEDOSendToCounterparty",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOutgoingDocumentBase",
+          "ParameterTypeFullName": "Sungero.Docflow.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "relatedDocs",
+          "ParameterType": "global::System.Linq.IQueryable<global::Sungero.Content.IElectronicDocument>",
+          "ParameterTypeFullName": "System.Linq.IQueryable"
+        },
+        {
+          "Name": "company",
+          "ParameterType": "global::GD.GovernmentSolution.ICompany",
+          "ParameterTypeFullName": "GD.GovernmentSolution.ICompany, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "errors",
+          "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
+          "ParameterTypeFullName": "System.Collections.Generic.List"
+        }
+      ],
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "SendingDocumentAsyncHandlers",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "SendInternalMail",
+      "Parameters": [
+        {
+          "Name": "item",
+          "ParameterType": "global::GD.TransmitterModule.IInternalMailRegister",
+          "ParameterTypeFullName": "GD.TransmitterModule.IInternalMailRegister, Sungero.Domain.Interfaces"
+        }
+      ],
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "SendToAddressee",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::GD.GovernmentSolution.IOutgoingLetter",
+          "ParameterTypeFullName": "GD.GovernmentSolution.IOutgoingLetter, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Client",
+      "ReturnType": "global::GD.TransmitterModule.Structures.Module.ISendToAddresseeResult",
+      "ReturnTypeFullName": "GD.TransmitterModule.Structures.Module.ISendToAddresseeResult"
+    }
+  ],
+  "PublicStructures": [
+    {
+      "Name": "SendToAddresseeResult",
+      "IsPublic": true,
+      "Properties": [
+        {
+          "Name": "infomation",
+          "IsList": true,
+          "IsNullable": true,
+          "TypeFullName": "global::System.Collections.Generic.List<global::System.String>"
+        },
+        {
+          "Name": "errorsRX",
+          "IsList": true,
+          "IsNullable": true,
+          "TypeFullName": "global::System.Collections.Generic.List<global::System.String>"
+        },
+        {
+          "Name": "errorsMEDO",
+          "IsList": true,
+          "IsNullable": true,
+          "TypeFullName": "global::System.Collections.Generic.List<global::System.String>"
+        },
+        {
+          "Name": "errorsEmail",
+          "IsList": true,
+          "IsNullable": true,
+          "TypeFullName": "global::System.Collections.Generic.List<global::System.String>"
+        }
+      ],
+      "StructureNamespace": "GD.TransmitterModule.Structures.Module"
+    }
+  ],
+  "ResourceInterfaceAssemblyName": "Sungero.Domain.Interfaces",
+  "ResourceInterfaceNamespace": "GD.TransmitterModule",
+  "ResourcesKeys": [
+    "RelatedDocumentsForSending",
+    "SelectDocuments",
+    "AwaitingDispatch",
+    "PreparedByPropertiesAreEmpty",
+    "CurrentEmployeePropertiesAreEmpty",
+    "PreparedByIsSystem",
+    "NeedCorrectExt",
+    "Abort",
+    "NotAbort",
+    "NeedPdfForMedo26",
+    "NeedEnterSignedBy",
+    "FillInAddendumsPageCount",
+    "DocumentWasSending",
+    "SendingDocumentsErrors",
+    "CounterpartyIsNotBusinessUnit",
+    "NoRegistrarInBusinessUnit",
+    "UseReferralByCompetence",
+    "AttachIsNotValid",
+    "DocumentNotRegistered",
+    "MailTemplate",
+    "DeliveryState_Registered",
+    "DeliveryState_Sent",
+    "DeliveryState_Return",
+    "DeliveryState_RedirectedTo",
+    "IncomingRequestLetter",
+    "DirectumRXDeliveryMethod",
+    "CounterpartyIsNotEmail"
+  ],
+  "ServerAssemblyName": "GD.TransmitterModule.Server",
+  "ServerNamespace": "GD.TransmitterModule.Server",
+  "SharedAssemblyName": "GD.TransmitterModule.Shared",
+  "SharedNamespace": "GD.TransmitterModule.Shared",
+  "SpecialFolders": [],
+  "Version": "0.0.1.0",
+  "Widgets": [],
+  "Versions": [
+    {
+      "Type": "ModuleMetadata",
+      "Number": 6
+    },
+    {
+      "Type": "DomainApi",
+      "Number": 3
+    }
+  ]
+}
