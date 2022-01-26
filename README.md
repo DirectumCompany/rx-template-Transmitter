@@ -22,6 +22,7 @@
     result.infomation.ForEach(e.AddInformation);
     result.errorsMEDO.ForEach(e.AddWarning);
     result.errorsRX.ForEach(e.AddWarning);
+    result.errorsEmail.ForEach(e.AddWarning);
   }
 ```
    Пример вычислений на кнопке (Возможность выполнения):
