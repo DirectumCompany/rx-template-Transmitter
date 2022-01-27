@@ -565,8 +565,7 @@ namespace GD.TransmitterModule.Server
       }
       try
       {
-        MEDO.PublicFunctions.Module.Remote.CreatePackage(document, company, documentPages, !OutgoingLetters.Is(document));
-        var package = MEDO.PublicFunctions.Module.Remote.GetPackageByCompany(company);
+        var package = MEDO.PublicFunctions.Module.Remote.CreatePackage(document, company, documentPages, !OutgoingLetters.Is(document));
         if (OutgoingLetters.Is(document))
           MEDO.PublicFunctions.Module.Remote.SetDocumentMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, company.MEDOGUID, OutgoingLetters.As(document), package);
         else
