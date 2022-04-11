@@ -9,7 +9,6 @@ using GD.CitizenRequests;
 using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
-using System.Net.Mail;
 
 namespace GD.TransmitterModule.Server
 {
@@ -271,63 +270,58 @@ namespace GD.TransmitterModule.Server
         var attachmentsPath = Directory.CreateDirectory(Path.Combine(pathForDoc, Calendar.Now.ToString().Replace(" ", "").Replace(".", "").Replace(":", "")));
         var maxDocNameLength = 240 - attachmentsPath.FullName.Length;
         Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 1 = " + letter.Name);
-        using (var mailClient = new System.Net.Mail.SmtpClient())
+        
+        var mail = Mail.CreateMailMessage();
+        mail.Body = Resources.MailTemplateFormat(letter.BusinessUnit != null ? letter.BusinessUnit.Name : string.Empty, mailRegister.Sender, letter.BusinessUnit != null ? letter.BusinessUnit.Email : string.Empty);
+        mail.IsBodyHtml = true;
+        mail.Subject = Sungero.Docflow.OfficialDocuments.Resources.SendByEmailSubjectPrefixFormat(letter.Name);
+        
+        
+        Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 2 Add applications");
+        
+        var docsToSend = new List<Sungero.Content.IElectronicDocument>();
+        if (OutgoingLetters.Is(letter))
+          foreach (var relatedDoc in OutgoingLetters.As(letter).DocsToSendGD)
+            docsToSend.Add(relatedDoc.Document);
+        else if (OutgoingRequestLetters.Is(letter))
+          foreach (var relatedDoc in OutgoingRequestLetters.As(letter).DocsToSendGD)
+            docsToSend.Add(relatedDoc.Document);
+        
+        if (docsToSend.Any())
         {
-          using (var mail = new System.Net.Mail.MailMessage
-                 {
-                   Body = Resources.MailTemplateFormat(letter.BusinessUnit != null ? letter.BusinessUnit.Name : string.Empty, mailRegister.Sender, letter.BusinessUnit != null ? letter.BusinessUnit.Email : string.Empty),
-                   IsBodyHtml = true,
-                   Subject = Sungero.Docflow.OfficialDocuments.Resources.SendByEmailSubjectPrefixFormat(letter.Name),
-                   HeadersEncoding = System.Text.Encoding.UTF8,
-                   SubjectEncoding = System.Text.Encoding.UTF8,
-                   BodyEncoding = System.Text.Encoding.UTF8
-                 })
+          foreach (var item in docsToSend)
           {
-            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 2 Add applications");
-            
-            var docsToSend = new List<Sungero.Content.IElectronicDocument>();
-            if (OutgoingLetters.Is(letter))
-              foreach (var relatedDoc in OutgoingLetters.As(letter).DocsToSendGD)
-                docsToSend.Add(relatedDoc.Document);
-            else if (OutgoingRequestLetters.Is(letter))
-              foreach (var relatedDoc in OutgoingRequestLetters.As(letter).DocsToSendGD)
-                docsToSend.Add(relatedDoc.Document);
-            
-            if (docsToSend.Any())
+            using (var body = item.LastVersion.Body.Read())
             {
-              foreach (var item in docsToSend)
+              using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, item.Name, item.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
               {
-                using (var body = item.LastVersion.Body.Read())
-                {
-                  using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, item.Name, item.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
-                  {
-                    body.Seek(0, SeekOrigin.Begin);
-                    body.CopyTo(fileStreamPublic);
-                  }
-                }
+                body.Seek(0, SeekOrigin.Begin);
+                body.CopyTo(fileStreamPublic);
               }
             }
-            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 3");
-            
-            var isNeedToConvert = false;
-            var isPDF = false;
-            
-            if (letter.LastVersion.BodyAssociatedApplication.Extension == "pdf")
-            {
-              var ms = letter.LastVersion.Body.Read();
-              using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, letter.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
-              {
-                ms.Seek(0, SeekOrigin.Begin);
-                ms.CopyTo(fileStreamPublic);
-              }
-            }
-            else
-            {
-              if (!(letter.LastVersion.AssociatedApplication.Extension == "pdf"))
-              {
-                isNeedToConvert = true;
-                // Добавление возможности автоматического преобразования отправляемого документа в pdf и установки отметки об ЭП.
-                /*if (letter.LastVersion.AssociatedApplication.Extension == "doc" || letter.LastVersion.AssociatedApplication.Extension == "docx" ||
+          }
+        }
+        Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 3");
+        
+        var isNeedToConvert = false;
+        var isPDF = false;
+        
+        if (letter.LastVersion.BodyAssociatedApplication.Extension == "pdf")
+        {
+          var ms = letter.LastVersion.Body.Read();
+          using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, letter.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
+          {
+            ms.Seek(0, SeekOrigin.Begin);
+            ms.CopyTo(fileStreamPublic);
+          }
+        }
+        else
+        {
+          if (!(letter.LastVersion.AssociatedApplication.Extension == "pdf"))
+          {
+            isNeedToConvert = true;
+            // Добавление возможности автоматического преобразования отправляемого документа в pdf и установки отметки об ЭП.
+            /*if (letter.LastVersion.AssociatedApplication.Extension == "doc" || letter.LastVersion.AssociatedApplication.Extension == "docx" ||
                     letter.LastVersion.AssociatedApplication.Extension == "xls" || letter.LastVersion.AssociatedApplication.Extension == "xlsx" ||
                     letter.LastVersion.AssociatedApplication.Extension == "odt" || letter.LastVersion.AssociatedApplication.Extension == "ods")
                 {
@@ -361,146 +355,148 @@ namespace GD.TransmitterModule.Server
                     }
                   }
                 }*/
-              }
-              
-              mailRegister.Extension = letter.LastVersion.AssociatedApplication.Extension;
-              mailRegister.Save();
-              
-              if (letter.LastVersion.AssociatedApplication.Extension == "pdf")
-              {
-                var ms = letter.LastVersion.PublicBody.Read();
-                using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, letter.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
-                {
-                  ms.Seek(0, SeekOrigin.Begin);
-                  ms.CopyTo(fileStreamPublic);
-                }
-                
-                if (isNeedToConvert)
-                {
-                  var lastVersionBody = new System.IO.MemoryStream();
-                  var lastVersionExt = letter.LastVersion.BodyAssociatedApplication.Extension;
-                  using (var sourceStream = letter.LastVersion.Body.Read())
-                    sourceStream.CopyTo(lastVersionBody);
-                  letter.LastVersion.PublicBody.Write(lastVersionBody);
-                  letter.LastVersion.AssociatedApplication = Sungero.Content.AssociatedApplications.GetByExtension(lastVersionExt);
-                  letter.Save();
-                }
-              }
-              else
-              {
-                var ms = letter.LastVersion.Body.Read();
-                using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, letter.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
-                {
-                  ms.Seek(0, SeekOrigin.Begin);
-                  ms.CopyTo(fileStreamPublic);
-                }
-              }
+          }
+          
+          mailRegister.Extension = letter.LastVersion.AssociatedApplication.Extension;
+          mailRegister.Save();
+          
+          if (letter.LastVersion.AssociatedApplication.Extension == "pdf")
+          {
+            var ms = letter.LastVersion.PublicBody.Read();
+            using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, letter.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
+            {
+              ms.Seek(0, SeekOrigin.Begin);
+              ms.CopyTo(fileStreamPublic);
             }
             
-            // Выгрузить оригинал и подпись, заархивировать и добавить вложение в письмо.
-            var signatory = letter.OurSignatory;
-            var signatures = Signatures.Get(letter.LastVersion).Where(s => s.SignatureType == SignatureType.Approval);
-            if (signatory != null && signatures.Where(s => s.SignatoryFullName == signatory.Name).Any())
-              signatures = signatures.Where(s => s.SignatoryFullName == signatory.Name);
-            
-            if (signatures.Any())
+            if (isNeedToConvert)
             {
-              var signatureText = signatures.FirstOrDefault().GetDataSignature();
-              var fileStreamSignature = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, "sig", maxDocNameLength));
-              fileStreamSignature.Write(signatureText, 0, signatureText.Length);
-              fileStreamSignature.Close();
-              
-              if (isPDF)
-              {
-                var streamOriginal = letter.LastVersion.Body.Read();
-                var fileStreamOriginal = File.Create(GenerateFilePath(attachmentsPath.FullName, string.Format("{0}_original", letter.Name), letter.LastVersion.BodyAssociatedApplication.Extension, maxDocNameLength));
-                streamOriginal.Seek(0, SeekOrigin.Begin);
-                streamOriginal.CopyTo(fileStreamOriginal);
-                fileStreamOriginal.Close();
-              }
+              var lastVersionBody = new System.IO.MemoryStream();
+              var lastVersionExt = letter.LastVersion.BodyAssociatedApplication.Extension;
+              using (var sourceStream = letter.LastVersion.Body.Read())
+                sourceStream.CopyTo(lastVersionBody);
+              letter.LastVersion.PublicBody.Write(lastVersionBody);
+              letter.LastVersion.AssociatedApplication = Sungero.Content.AssociatedApplications.GetByExtension(lastVersionExt);
+              letter.Save();
             }
-            var zipName = string.Format(@"{0}\Документы_к_отправке.zip", pathForDoc);
-            if (File.Exists(zipName))
+          }
+          else
+          {
+            var ms = letter.LastVersion.Body.Read();
+            using (var fileStreamPublic = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, letter.LastVersion.AssociatedApplication.Extension, maxDocNameLength)))
             {
-              File.Delete(zipName);
+              ms.Seek(0, SeekOrigin.Begin);
+              ms.CopyTo(fileStreamPublic);
             }
-            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-1 Создание архива ");
-            PublicFunctions.Module.Remote.CreateFromDirectoryPublic(attachmentsPath.FullName, zipName);
-            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-2 добавление архива во вложение ");
-            if (File.Exists(zipName))
-            {
-              System.Net.Mail.Attachment mailAttachment = new System.Net.Mail.Attachment(zipName);
-              mail.Attachments.Add(mailAttachment);
-              Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-3 добавлен архив во вложение ");
-            }
-            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 5 ");
-            var isError = false;
-            if (!string.IsNullOrWhiteSpace(mailRegister.Correspondent.Email))
-            {
-              var email = mailRegister.Correspondent.Email;;
-              Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 6 = " + email);
-              var mailAddress = new System.Net.Mail.MailAddress(email);
-              mail.To.Add(email);
-              Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 7 Before Send");
-              try
-              {
-                mailClient.Send(mail);
-                mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Complete;
-                mailRegister.ErrorInfo = string.Empty;
-                mailRegister.Save();
-              }
-              catch (SmtpFailedRecipientsException ex)
-              {
-                isError = true;
-                var errorMessage = string.Empty;
-                errorMessage += ex.InnerExceptions.ToList().Select(x => x.Message) + "\n";
-                mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
-                mailRegister.ErrorInfo = errorMessage;
-                mailRegister.Save();
-                /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
-                var att = new List<Sungero.Domain.Shared.IEntity>();
-                att.Add(mailRegister);
-                att.Add(letter);
-                if (config != null && config.NotifAddressees.Any())
-                  foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
-                    DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", errorMessage, att);*/
-              }
-              catch (Exception ex)
-              {
-                isError = true;
-                mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
-                mailRegister.ErrorInfo = ex.Message;
-                mailRegister.Save();
-                /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
+          }
+        }
+        
+        // Выгрузить оригинал и подпись, заархивировать и добавить вложение в письмо.
+        var signatory = letter.OurSignatory;
+        var signatures = Signatures.Get(letter.LastVersion).Where(s => s.SignatureType == SignatureType.Approval);
+        if (signatory != null && signatures.Where(s => s.SignatoryFullName == signatory.Name).Any())
+          signatures = signatures.Where(s => s.SignatoryFullName == signatory.Name);
+        
+        if (signatures.Any())
+        {
+          var signatureText = signatures.FirstOrDefault().GetDataSignature();
+          var fileStreamSignature = File.Create(GenerateFilePath(attachmentsPath.FullName, letter.Name, "sig", maxDocNameLength));
+          fileStreamSignature.Write(signatureText, 0, signatureText.Length);
+          fileStreamSignature.Close();
+          
+          if (isPDF)
+          {
+            var streamOriginal = letter.LastVersion.Body.Read();
+            var fileStreamOriginal = File.Create(GenerateFilePath(attachmentsPath.FullName, string.Format("{0}_original", letter.Name), letter.LastVersion.BodyAssociatedApplication.Extension, maxDocNameLength));
+            streamOriginal.Seek(0, SeekOrigin.Begin);
+            streamOriginal.CopyTo(fileStreamOriginal);
+            fileStreamOriginal.Close();
+          }
+        }
+        var zipName = string.Format(@"{0}\Документы_к_отправке.zip", pathForDoc);
+        if (File.Exists(zipName))
+        {
+          File.Delete(zipName);
+        }
+        Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-1 Создание архива ");
+        PublicFunctions.Module.Remote.CreateFromDirectoryPublic(attachmentsPath.FullName, zipName);
+        Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-2 добавление архива во вложение ");
+        if (File.Exists(zipName))
+        {
+          using (FileStream stream = File.Open(zipName, FileMode.Open))
+          {
+            mail.AddAttachment(stream, "Документы к отправке.zip");
+            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-3 добавлен архив во вложение ");
+          }
+        }
+        Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 5 ");
+        var isError = false;
+        if (!string.IsNullOrWhiteSpace(mailRegister.Correspondent.Email))
+        {
+          var email = mailRegister.Correspondent.Email;;
+          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 6 = " + email);
+          var mailAddress = new System.Net.Mail.MailAddress(email);
+          mail.To.Add(email);
+          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 7 Before Send");
+          try
+          {
+            Mail.Send(mail);
+            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Complete;
+            mailRegister.ErrorInfo = string.Empty;
+            mailRegister.Save();
+          }
+          //          catch (SmtpFailedRecipientsException ex)
+          //          {
+          //            isError = true;
+          //            var errorMessage = string.Empty;
+          //            errorMessage += ex.InnerExceptions.ToList().Select(x => x.Message) + "\n";
+          //            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
+          //            mailRegister.ErrorInfo = errorMessage;
+          //            mailRegister.Save();
+          //            /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
+          //                var att = new List<Sungero.Domain.Shared.IEntity>();
+          //                att.Add(mailRegister);
+          //                att.Add(letter);
+          //                if (config != null && config.NotifAddressees.Any())
+          //                  foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
+          //                    DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", errorMessage, att);*/
+          //          }
+          catch (Exception ex)
+          {
+            isError = true;
+            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
+            mailRegister.ErrorInfo = ex.Message;
+            mailRegister.Save();
+            /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
                 var att = new List<Sungero.Domain.Shared.IEntity>();
                 att.Add(mailRegister);
                 att.Add(letter);
                 if (config != null && config.NotifAddressees.Any())
                   foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
                     DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", ex.Message, att);*/
-              }
-              Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 8 After Send");
-              
-              var addressee = letter.Addressees.FirstOrDefault(x => x.Id == mailRegister.AddresseeId);
-              Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 9  Update state and forward date to letter");
-              if (addressee != null && !isError)
-              {
-                if (OutgoingLetters.Is(letter))
-                {
-                  (addressee as IOutgoingLetterAddressees).DocumentState = Resources.DeliveryState_Sent;
-                  (addressee as IOutgoingLetterAddressees).ForwardDateGD = Calendar.Today;
-                }
-                else if (OutgoingRequestLetters.Is(letter))
-                {
-                  (addressee as IOutgoingRequestLetterAddressees).DocumentState = Resources.DeliveryState_Sent;
-                  (addressee as IOutgoingRequestLetterAddressees).ForwardDate = Calendar.Today;
-                }
-              }
-              Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 10  Finally");
-            }
-            letter.Save();
           }
+          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 8 After Send");
+          
+          var addressee = letter.Addressees.FirstOrDefault(x => x.Id == mailRegister.AddresseeId);
+          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 9  Update state and forward date to letter");
+          if (addressee != null && !isError)
+          {
+            if (OutgoingLetters.Is(letter))
+            {
+              (addressee as IOutgoingLetterAddressees).DocumentState = Resources.DeliveryState_Sent;
+              (addressee as IOutgoingLetterAddressees).ForwardDateGD = Calendar.Today;
+            }
+            else if (OutgoingRequestLetters.Is(letter))
+            {
+              (addressee as IOutgoingRequestLetterAddressees).DocumentState = Resources.DeliveryState_Sent;
+              (addressee as IOutgoingRequestLetterAddressees).ForwardDate = Calendar.Today;
+            }
+          }
+          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 10  Finally");
         }
+        letter.Save();
+        
+        
         // Удалить папку выгрузки.
         try
         {
