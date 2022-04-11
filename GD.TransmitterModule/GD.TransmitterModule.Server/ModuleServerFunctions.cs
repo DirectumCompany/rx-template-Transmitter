@@ -445,23 +445,22 @@ namespace GD.TransmitterModule.Server
             mailRegister.ErrorInfo = string.Empty;
             mailRegister.Save();
           }
-          /*
-          catch (SmtpFailedRecipientsException ex)
-          {
-            isError = true;
-            var errorMessage = string.Empty;
-            errorMessage += ex.InnerExceptions.ToList().Select(x => x.Message) + "\n";
-            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
-            mailRegister.ErrorInfo = errorMessage;
-            mailRegister.Save();
-            /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
-                var att = new List<Sungero.Domain.Shared.IEntity>();
-                att.Add(mailRegister);
-                att.Add(letter);
-                if (config != null && config.NotifAddressees.Any())
-                  foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
-                    DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", errorMessage, att);*/
-          }*/
+          //          catch (SmtpFailedRecipientsException ex)
+          //          {
+          //            isError = true;
+          //            var errorMessage = string.Empty;
+          //            errorMessage += ex.InnerExceptions.ToList().Select(x => x.Message) + "\n";
+          //            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
+          //            mailRegister.ErrorInfo = errorMessage;
+          //            mailRegister.Save();
+          //            /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
+          //                var att = new List<Sungero.Domain.Shared.IEntity>();
+          //                att.Add(mailRegister);
+          //                att.Add(letter);
+          //                if (config != null && config.NotifAddressees.Any())
+          //                  foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
+          //                    DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", errorMessage, att);*/
+          //          }
           catch (Exception ex)
           {
             isError = true;
