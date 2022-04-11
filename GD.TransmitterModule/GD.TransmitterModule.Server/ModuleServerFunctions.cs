@@ -270,7 +270,7 @@ namespace GD.TransmitterModule.Server
         var attachmentsPath = Directory.CreateDirectory(Path.Combine(pathForDoc, Calendar.Now.ToString().Replace(" ", "").Replace(".", "").Replace(":", "")));
         var maxDocNameLength = 240 - attachmentsPath.FullName.Length;
         Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 1 = " + letter.Name);
-       
+        
         var mail = Mail.CreateMailMessage();
         mail.Body = Resources.MailTemplateFormat(letter.BusinessUnit != null ? letter.BusinessUnit.Name : string.Empty, mailRegister.Sender, letter.BusinessUnit != null ? letter.BusinessUnit.Email : string.Empty);
         mail.IsBodyHtml = true;
@@ -445,6 +445,7 @@ namespace GD.TransmitterModule.Server
             mailRegister.ErrorInfo = string.Empty;
             mailRegister.Save();
           }
+          /*
           catch (SmtpFailedRecipientsException ex)
           {
             isError = true;
@@ -460,7 +461,7 @@ namespace GD.TransmitterModule.Server
                 if (config != null && config.NotifAddressees.Any())
                   foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
                     DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", errorMessage, att);*/
-          }
+          }*/
           catch (Exception ex)
           {
             isError = true;
