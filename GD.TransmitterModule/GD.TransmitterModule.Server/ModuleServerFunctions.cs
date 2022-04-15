@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -463,6 +463,7 @@ namespace GD.TransmitterModule.Server
           //          }
           catch (Exception ex)
           {
+            Logger.Error("Отправка почтовых сообщений. Ошибка непосредственно при отправке.", ex);
             isError = true;
             mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
             mailRegister.ErrorInfo = ex.Message;
@@ -505,12 +506,14 @@ namespace GD.TransmitterModule.Server
         }
         catch (Exception ex)
         {
-          Logger.ErrorFormat("Отправка почтовых сообщений. Ошибка при удалении папки выгрузки. {0}", ex.Message);
+          //Logger.ErrorFormat("Отправка почтовых сообщений. Ошибка при удалении папки выгрузки. {0}", ex.Message);
+          Logger.Error("Отправка почтовых сообщений. Ошибка при удалении папки выгрузки.", ex);
         }
       }
       catch (Exception ex)
       {
-        Logger.Error(ex.Message);
+        //Logger.Error(ex.Message);
+        Logger.Error("Отправка почтовых сообщений. Ошибка при обработке.", ex);
         mailRegister.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
         mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
         mailRegister.Extension = letter != null ? letter.LastVersion.AssociatedApplication.Extension : string.Empty;
