@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -421,13 +421,12 @@ namespace GD.TransmitterModule.Server
         Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-1 Создание архива ");
         PublicFunctions.Module.Remote.CreateFromDirectoryPublic(attachmentsPath.FullName, zipName);
         Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-2 добавление архива во вложение ");
+        FileStream attachmentStream = null;
         if (File.Exists(zipName))
         {
-          using (FileStream stream = File.Open(zipName, FileMode.Open))
-          {
-            mail.AddAttachment(stream, "Документы к отправке.zip");
-            Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-3 добавлен архив во вложение ");
-          }
+          attachmentStream = File.OpenRead(zipName);
+          mail.AddAttachment(attachmentStream, "Документы к отправке.zip");
+          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-3 добавлен архив во вложение ");
         }
         Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 5 ");
         var isError = false;
@@ -495,6 +494,7 @@ namespace GD.TransmitterModule.Server
           }
           Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 10  Finally");
         }
+        attachmentStream.Dispose();
         letter.Save();
         
         
