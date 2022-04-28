@@ -75,12 +75,6 @@ namespace GD.TransmitterModule.Server
           return;
         }
         
-        if (Locks.GetLockInfo(letter).IsLocked)
-        {
-          args.Retry = true;
-          return;
-        }
-        
         Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: FileName - " + string.Format(@"{0}.{1}", letter.Name, "pdf"));
         
         /*var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name,method.Name) ||
@@ -133,7 +127,7 @@ namespace GD.TransmitterModule.Server
           // Создание сообщения для копии.
           if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.Sender);
+            Functions.Module.CreateMailRegisterItem(letter, item, args.SenderId, args.DocumentsSetId);
           }
         }
       }

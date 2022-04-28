@@ -70,6 +70,7 @@
     }
   ],
   "BaseGuid": "d795d1f6-45c1-4e5e-9677-b53fb7280c7e",
+  "BlockIds": [],
   "CanBeNavigationPropertyType": true,
   "CanBeSearch": true,
   "CreationAreaMetadata": {
@@ -244,7 +245,7 @@
     },
     {
       "Type": "EntityMetadata",
-      "Number": 9
+      "Number": 11
     }
   ]
 }

@@ -10,6 +10,15 @@ namespace GD.TransmitterModule.Client
 {
   public class ModuleFunctions
   {
+
+    /// <summary>
+    /// Открыть карточку настроек модуля.
+    /// </summary>
+    [Public]
+    public virtual void ShowTransmitterSettings()
+    {
+      PublicFunctions.Module.Remote.GetTransmitterSettings().Show();
+    }
     
     /// <summary>
     /// Проверить расширения приложений для МЭДО
@@ -87,9 +96,9 @@ namespace GD.TransmitterModule.Client
       foreach (var relationName in RelationTypes.GetAll().Select(r => r.Name))
       {
         allRelatedDocuments.AddRange(document.Relations.GetRelated(relationName).
-                                     Where(d => Sungero.Content.ElectronicDocuments.Is(d) && d.HasVersions).Select(d => Sungero.Content.ElectronicDocuments.As(d)).ToList());
+                                     Where(d => d.HasVersions));
         allRelatedDocuments.AddRange(document.Relations.GetRelatedFrom(relationName).
-                                     Where(d => Sungero.Content.ElectronicDocuments.Is(d) && d.HasVersions).Select(d => Sungero.Content.ElectronicDocuments.As(d)).ToList());
+                                     Where(d => d.HasVersions));
       }
       
       Logger.DebugFormat("Debug SendToAddressee: allRelatedDocuments = {0}", allRelatedDocuments.Count);
@@ -134,36 +143,44 @@ namespace GD.TransmitterModule.Client
                              isExistsCopyTo))*/
       
       var errorsEmail = new List<string>();
-      if (method != null &&
-          (document.Addressees.Cast<IOutgoingLetterAddressees>().Any(x => Equals(x.DeliveryMethod, method) &&
-                                                                     x.DocumentState != Resources.DeliveryState_Sent)))
+      var emailAddressees = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(x => Equals(x.DeliveryMethod, method) &&
+                                                                                        string.IsNullOrEmpty(x.DocumentState));
+      
+      if (method != null && emailAddressees.Any())
       {
-        Logger.DebugFormat("Debug SendToAddressee - 2");
         // Проверки для отправки по Email.
-        errorsEmail = PublicFunctions.Module.Remote.CheckRequisitesForEmail(document);
-        var sendDocumentToAddresseesEMail = AsyncHandlers.SendDocumentToAddresseesEMail.Create();
-        sendDocumentToAddresseesEMail.DocumentId = document.Id;
-        sendDocumentToAddresseesEMail.Sender = Sungero.Company.Employees.Current != null ? Sungero.Company.Employees.Current.Name : string.Empty;
-        sendDocumentToAddresseesEMail.ExecuteAsync();
+        errorsEmail.AddRange(PublicFunctions.Module.CheckRequisitesForEmail(document, method));
         
-        // Проставление статуса по аналогии с исх. по обращению.
-        var addressesEmail = document.Addressees.Cast<IOutgoingLetterAddressees>()
-          .Where(x => Equals(x.DeliveryMethod, method) && x.DocumentState != Resources.DeliveryState_Sent && !errorsEmail.Any());
+        var settings = Functions.Module.Remote.GetTransmitterSettings();
+        if (settings.MaxAttachmentFileSize.HasValue && !Functions.Module.Remote.CheckPackageSize(document, settings.MaxAttachmentFileSize.Value))
+          errorsEmail.Add(GD.TransmitterModule.Resources.GeneratedArchiveExceedsMaxSizeFormat(settings.MaxAttachmentFileSize.Value));
         
-        foreach(var addresseEmail in addressesEmail)
+        if (!errorsEmail.Any())
         {
-          addresseEmail.DocumentState = Resources.AwaitingDispatch;
-          addresseEmail.AddresserGD = Users.Current;
-        }
-        
-        // Добавление возможности отправки копии письма на указанный адрес электронной почты.
-        /*var copyAddresses = document.Addressees.Cast<IOutgoingLetterAddressees>()
+          Logger.DebugFormat("Debug SendToAddressee - 2");
+          
+          var sendDocumentToAddresseesEMail = AsyncHandlers.SendDocumentToAddresseesEMail.Create();
+          sendDocumentToAddresseesEMail.DocumentId = document.Id;
+          sendDocumentToAddresseesEMail.SenderId = Sungero.Company.Employees.Current != null ? Sungero.Company.Employees.Current.Id : -1;
+          sendDocumentToAddresseesEMail.DocumentsSetId = Guid.NewGuid().ToString();
+          sendDocumentToAddresseesEMail.ExecuteAsync();
+          
+          foreach(var emailAddresse in emailAddressees)
+          {
+            emailAddresse.DocumentState = Resources.AwaitingDispatch;
+            emailAddresse.AddresserGD = Users.Current;
+          }
+          
+          // Добавление возможности отправки копии письма на указанный адрес электронной почты.
+          /*var copyAddresses = document.Addressees.Cast<IOutgoingLetterAddressees>()
           .Where(x => !string.IsNullOrWhiteSpace(x.CopyTo) && x.CopyStatus != OutgoingLetters.Resources.DeliveryState_Sent);
         foreach (var item in copyAddresses)
           item.CopyStatus = OutgoingLetters.Resources.AwaitingDispatch;*/
-        if (document.State.Properties.Addressees.IsChanged)
-          information.Add(Resources.DocumentWasSending);
+          if (document.State.Properties.Addressees.IsChanged)
+            information.Add(Resources.DocumentWasSending);
+        }
       }
+      
       
       Logger.DebugFormat("Debug SendToAddressee - 3");
       // Проверки для отправки по МЭДО.
@@ -196,8 +213,8 @@ namespace GD.TransmitterModule.Client
             errorsMEDO.Add(GovernmentSolution.OutgoingLetters.Resources.NeedViewStampFormat(document.Info.Actions.ReadVersion));
 
         // Проверка расширений приложений.
-        var needCancle = PublicFunctions.Module.CheckExtForMedo(document);
-        if (needCancle)
+        var needCancel = PublicFunctions.Module.CheckExtForMedo(document);
+        if (needCancel)
           return null;
         
         var responseDoc = document.InResponseTo;
@@ -268,7 +285,7 @@ namespace GD.TransmitterModule.Client
           document.DocumentState = Resources.AwaitingDispatch;
         document.Save();
         Logger.DebugFormat("Debug SendToAddressee - 10");
-        PublicFunctions.Module.Remote.SendingDocumentAsyncHandlers(document);
+        PublicFunctions.Module.SendingDocumentAsyncHandlers(document);
         Logger.DebugFormat("Debug SendToAddressee - 11");
         information.Add(Resources.DocumentWasSending);
       }

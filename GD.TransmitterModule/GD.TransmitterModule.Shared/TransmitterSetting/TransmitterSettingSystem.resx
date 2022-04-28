@@ -62,81 +62,15 @@
     <value>Name</value>
   </data>
   <data name="DisplayName" xml:space="preserve">
-    <value>Mail register</value>
+    <value>Settings for the module for sending documents to recipients</value>
   </data>
   <data name="AccusativeDisplayName" xml:space="preserve">
-    <value>Mail register</value>
+    <value>Settings for the module for sending documents to recipients</value>
   </data>
   <data name="CollectionDisplayName" xml:space="preserve">
-    <value>Mail registers</value>
+    <value>Settings for the module for sending documents to recipients</value>
   </data>
-  <data name="Property_LeadingDocument" xml:space="preserve">
-    <value>Leading document</value>
-  </data>
-  <data name="Property_RelatedDocuments" xml:space="preserve">
-    <value>Related documents</value>
-  </data>
-  <data name="Property_Correspondent" xml:space="preserve">
-    <value>Correspondent</value>
-  </data>
-  <data name="Property_ErrorInfo" xml:space="preserve">
-    <value>Error info</value>
-  </data>
-  <data name="Property_Iteration" xml:space="preserve">
-    <value>Iteration</value>
-  </data>
-  <data name="Property_Extension" xml:space="preserve">
-    <value>Extension</value>
-  </data>
-  <data name="Property_Sender" xml:space="preserve">
-    <value>Sender</value>
-  </data>
-  <data name="Property_AddresseeId" xml:space="preserve">
-    <value>Addressee Id</value>
-  </data>
-  <data name="Property_DepartureDate" xml:space="preserve">
-    <value>Departure date</value>
-  </data>
-  <data name="Property_Email" xml:space="preserve">
-    <value>E-mail</value>
-  </data>
-  <data name="Property_Assignee" xml:space="preserve">
-    <value>Assignee</value>
-  </data>
-  <data name="Property_MainTaskId" xml:space="preserve">
-    <value>Main task id</value>
-  </data>
-  <data name="Property_IsDuplic" xml:space="preserve">
-    <value>Is duplic</value>
-  </data>
-  <data name="Property_TaskId" xml:space="preserve">
-    <value>Task id</value>
-  </data>
-  <data name="Property_MailType" xml:space="preserve">
-    <value>Mail type</value>
-  </data>
-  <data name="Enum_MailType_OutgoingLetter" xml:space="preserve">
-    <value>Outgoing letter</value>
-  </data>
-  <data name="Enum_MailType_ActionItem" xml:space="preserve">
-    <value>Action item</value>
-  </data>
-  <data name="Enum_MailType_SupervisorAssig" xml:space="preserve">
-    <value>Supervisor assignment</value>
-  </data>
-  <data name="Enum_MailType_ActionItemContr" xml:space="preserve">
-    <value>Action item and control</value>
-  </data>
-  <data name="Enum_Status_Complete" xml:space="preserve">
-    <value>Complete</value>
-  </data>
-  <data name="Enum_Status_Error" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="Enum_Status_ToProcess" xml:space="preserve">
-    <value>To process</value>
-  </data>
-  <data name="Property_DocumentsSetId" xml:space="preserve">
-    <value>ID of the set of documents</value>
+  <data name="Property_MaxAttachmentFileSize" xml:space="preserve">
+    <value>Maximum size of attachments to be sent by email (MB)</value>
   </data>
 </root>
