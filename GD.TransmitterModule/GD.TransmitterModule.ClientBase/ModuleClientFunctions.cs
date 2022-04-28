@@ -290,6 +290,10 @@ namespace GD.TransmitterModule.Client
         information.Add(Resources.DocumentWasSending);
       }
       
+      var addresseesWithoutDeliveryMethod = document.Addressees.Where(a => a.DeliveryMethod == null);
+      foreach (var addressee in addresseesWithoutDeliveryMethod)
+        errorsRX.Add(GD.TransmitterModule.Resources.CorrespondentDeliveryMethodIsEmptyFormat(addressee.Correspondent.Name));
+      
       return Structures.Module.SendToAddresseeResult.Create(information, errorsRX, errorsMEDO, errorsEmail);
     }
 

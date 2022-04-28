@@ -509,7 +509,8 @@
     "CounterpartyIsNotEmail",
     "SendError",
     "EmailSendingResponsibleRoleName",
-    "GeneratedArchiveExceedsMaxSize"
+    "GeneratedArchiveExceedsMaxSize",
+    "CorrespondentDeliveryMethodIsEmpty"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

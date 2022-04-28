@@ -158,4 +158,7 @@
   <data name="GeneratedArchiveExceedsMaxSize" xml:space="preserve">
     <value>Sending documents exceeds the size limit for sending files via e-mail - {0} MB.</value>
   </data>
+  <data name="CorrespondentDeliveryMethodIsEmpty" xml:space="preserve">
+    <value>Correspondent {0} has no delivery method</value>
+  </data>
 </root>
