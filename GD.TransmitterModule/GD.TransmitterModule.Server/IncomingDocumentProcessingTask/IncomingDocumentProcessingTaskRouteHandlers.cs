@@ -160,159 +160,170 @@ namespace GD.TransmitterModule.Server
     #region 3 - Создание/синхронизация входящего документа.
     public virtual void Script3Execute()
     {
-      var reasonDoc = _obj.ReasonDoc;
-      var reasonDocSubject = string.Empty;
-      if (OutgoingLetters.Is(reasonDoc))
-        reasonDocSubject = OutgoingLetters.As(reasonDoc).Subject;
-      if (OutgoingRequestLetters.Is(reasonDoc))
-        reasonDocSubject = OutgoingRequestLetters.As(reasonDoc).Subject;
-      
-      if (string.IsNullOrEmpty(reasonDocSubject) || string.IsNullOrWhiteSpace(reasonDocSubject))
-        reasonDocSubject = reasonDoc.Subject;
-      
-      var document = IncomingLetters.As(_obj.ResultDoc);
-      var businessUnit = _obj.ToBusinessUnit;
-      // Создать/обновить входящее письмо
-      if (document == null)
+      try
       {
-        // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-        /*if (IncomingLetters.Is(reasonDoc))
+        var reasonDoc = _obj.ReasonDoc;
+        var reasonDocSubject = string.Empty;
+        if (OutgoingLetters.Is(reasonDoc))
+          reasonDocSubject = OutgoingLetters.As(reasonDoc).Subject;
+        if (OutgoingRequestLetters.Is(reasonDoc))
+          reasonDocSubject = OutgoingRequestLetters.As(reasonDoc).Subject;
+        
+        if (string.IsNullOrEmpty(reasonDocSubject) || string.IsNullOrWhiteSpace(reasonDocSubject))
+          reasonDocSubject = reasonDoc.Subject;
+        
+        var document = IncomingLetters.As(_obj.ResultDoc);
+        var businessUnit = _obj.ToBusinessUnit;
+        // Создать/обновить входящее письмо
+        if (document == null)
+        {
+          // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
+          /*if (IncomingLetters.Is(reasonDoc))
         {
           document = IncomingLetters.Copy(IncomingLetters.As(reasonDoc));
           document.RegAGOData = string.Format("{0} {1} {2}", reasonDoc.RegistrationNumber, Sungero.Docflow.OfficialDocuments.Resources.DateFrom, reasonDoc.RegistrationDate).Replace(" 0:00:00", "");
         }
         else*/
-        document = IncomingLetters.Create();
-        
-        document.DeliveryMethod = GovernmentSolution.MailDeliveryMethods.GetAll().Where(m => m.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX).FirstOrDefault();
-        
-        // Записать исходящий документ (документ-основание) во входящий в В ответ на.
-        document.InResponseTo = Sungero.Docflow.OutgoingDocumentBases.As(reasonDoc);
-        if (OutgoingRequestLetters.Is(reasonDoc))
-        {
-          var docKind = Sungero.Docflow.DocumentKinds.GetAll().Where(k => k.Name == Resources.IncomingRequestLetter).FirstOrDefault();
-          if (docKind != null)
-            document.DocumentKind = docKind;
-        }
-      }
-      // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-      document.Correspondent = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Correspondent : */Companies.As(reasonDoc.BusinessUnit.Company);
-      
-      document.BusinessUnit = businessUnit;
-      document.Addressee = businessUnit.CEO;
-      document.Department = _obj.Registrar != null ? _obj.Registrar.Department : businessUnit.CEO.Department;
-      //document.AddresseeDepartment = businessUnit.CEO.Department;
-      if (reasonDoc.OurSignatory != null)
-      {
-        var contact = Sungero.Parties.Contacts.GetAll().Where(d => d.Person.Equals(reasonDoc.OurSignatory.Person) && d.Company.Equals(reasonDoc.BusinessUnit.Company)).FirstOrDefault();
-        document.SignedBy = contact;
-      }
-      // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-      document.Dated = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Dated : */reasonDoc.RegistrationDate;
-      document.InNumber = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).InNumber : */reasonDoc.RegistrationNumber;
-      var subjectCustom = reasonDocSubject;
-      
-      if (string.IsNullOrEmpty(reasonDocSubject) || string.IsNullOrWhiteSpace(reasonDocSubject))
-        subjectCustom = document.Name;
-      
-      document.Subject = subjectCustom.Length > 250 ? subjectCustom.Remove(250) : subjectCustom;
-      
-      var reasonDocVersion = reasonDoc.LastVersion;
-      document.CreateVersion();
-      var documentVersion = document.LastVersion;
-      
-      // Копия тела документа.
-      var docBodyStream = new System.IO.MemoryStream();
-      using (var sourceStream = reasonDocVersion.Body.Read())
-        sourceStream.CopyTo(docBodyStream);
-      documentVersion.Body.Write(docBodyStream);
-      docBodyStream.Close();
-      
-      if (reasonDoc.HasPublicBody == true)
-      {
-        var docPublicBodyStream = new System.IO.MemoryStream();
-        using (var sourceStream = reasonDocVersion.PublicBody.Read())
-          sourceStream.CopyTo(docPublicBodyStream);
-        documentVersion.PublicBody.Write(docPublicBodyStream);
-        docPublicBodyStream.Close();
-      }
-      documentVersion.AssociatedApplication = reasonDocVersion.AssociatedApplication;
-      documentVersion.BodyAssociatedApplication = reasonDocVersion.BodyAssociatedApplication;
-      
-      
-      document.Save();
-      
-      // Копия подписей.
-      foreach (var signature in Signatures.Get(reasonDocVersion).Where(s => s.SignCertificate != null))
-      {
-        var signatureText = signature.GetDataSignature();
-        try
-        {
-          Signatures.Import(document, signature.SignatureType, signature.SignatoryFullName, signatureText, documentVersion);
-        }
-        catch (Exception ex)
-        {
-          Logger.Error(ex.Message);
-        }
-      }
-      
-      // Привязка документов, заданных в источнике
-      foreach (var addendumStr in _obj.Addendums.ToList())
-      {
-        var relatedDoc = addendumStr.Reason;
-        if (Sungero.Docflow.Addendums.Is(relatedDoc))
-        {
-          if (!_obj.AddendaGroup.All.Any(d => d.Equals(relatedDoc)))
-            _obj.AddendaGroup.ElectronicDocuments.Add(relatedDoc);
-        }
-        else
-        {
-          if (!_obj.OtherGroup.All.Any(d => d.Equals(relatedDoc)))
-            _obj.OtherGroup.ElectronicDocuments.Add(relatedDoc);
-        }
-        
-        if (addendumStr.Result == null)
-        {
-          // Создать копию приложений и вложить в задачу.
-          var addendum = Sungero.Docflow.Addendums.As(relatedDoc);
-          if (addendum != null)
+          document = IncomingLetters.Create();
+          
+          document.DeliveryMethod = GovernmentSolution.MailDeliveryMethods.GetAll().Where(m => m.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX).FirstOrDefault();
+          
+          // Записать исходящий документ (документ-основание) во входящий в В ответ на.
+          document.InResponseTo = Sungero.Docflow.OutgoingDocumentBases.As(reasonDoc);
+          if (OutgoingRequestLetters.Is(reasonDoc))
           {
-            var copyAddendum = PublicFunctions.Module.Remote.CopyAddendum(addendum);
-            copyAddendum.LeadingDocument = document;
-            copyAddendum.Save();
-            // Перенести подписи.
-            foreach (var signature in Signatures.Get(addendum).Where(s => s.SignCertificate != null))
-            {
-              var signatureText = signature.GetDataSignature();
-              try
-              {
-                Signatures.Import(copyAddendum, signature.SignatureType, signature.SignatoryFullName, signatureText, copyAddendum.LastVersion);
-              }
-              catch (Exception ex)
-              {
-                Logger.Error(ex.Message);
-              }
-            }
-            // Добавить к группе приложения к входящему документу.
-            _obj.InAttachmentGroup.Addendums.Add(copyAddendum);
-            addendumStr.Result = copyAddendum;
+            var docKind = Sungero.Docflow.DocumentKinds.GetAll().Where(k => k.Name == Resources.IncomingRequestLetter).FirstOrDefault();
+            if (docKind != null)
+              document.DocumentKind = docKind;
+          }
+        }
+        // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
+        document.Correspondent = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Correspondent : */Companies.As(reasonDoc.BusinessUnit.Company);
+        
+        document.BusinessUnit = businessUnit;
+        document.Addressee = businessUnit.CEO;
+        document.Department = _obj.Registrar != null ? _obj.Registrar.Department : businessUnit.CEO.Department;
+        //document.AddresseeDepartment = businessUnit.CEO.Department;
+        if (reasonDoc.OurSignatory != null)
+        {
+          var contact = Sungero.Parties.Contacts.GetAll().Where(d => d.Person.Equals(reasonDoc.OurSignatory.Person) && d.Company.Equals(reasonDoc.BusinessUnit.Company)).FirstOrDefault();
+          document.SignedBy = contact;
+        }
+        // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
+        document.Dated = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Dated : */reasonDoc.RegistrationDate;
+        document.InNumber = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).InNumber : */reasonDoc.RegistrationNumber;
+        var subjectCustom = reasonDocSubject;
+        
+        if (string.IsNullOrEmpty(reasonDocSubject) || string.IsNullOrWhiteSpace(reasonDocSubject))
+          subjectCustom = document.Name;
+        
+        document.Subject = subjectCustom.Length > 250 ? subjectCustom.Remove(250) : subjectCustom;
+        
+        var reasonDocVersion = reasonDoc.LastVersion;
+        document.CreateVersion();
+        var documentVersion = document.LastVersion;
+        
+        // Копия тела документа.
+        var docBodyStream = new System.IO.MemoryStream();
+        using (var sourceStream = reasonDocVersion.Body.Read())
+          sourceStream.CopyTo(docBodyStream);
+        documentVersion.Body.Write(docBodyStream);
+        docBodyStream.Close();
+        
+        if (reasonDoc.HasPublicBody == true)
+        {
+          var docPublicBodyStream = new System.IO.MemoryStream();
+          using (var sourceStream = reasonDocVersion.PublicBody.Read())
+            sourceStream.CopyTo(docPublicBodyStream);
+          documentVersion.PublicBody.Write(docPublicBodyStream);
+          docPublicBodyStream.Close();
+        }
+        documentVersion.AssociatedApplication = reasonDocVersion.AssociatedApplication;
+        documentVersion.BodyAssociatedApplication = reasonDocVersion.BodyAssociatedApplication;
+        
+        
+        document.Save();
+        
+        // Копия подписей.
+        foreach (var signature in Signatures.Get(reasonDocVersion).Where(s => s.SignCertificate != null))
+        {
+          var signatureText = signature.GetDataSignature();
+          try
+          {
+            Signatures.Import(document, signature.SignatureType, signature.SignatoryFullName, signatureText, documentVersion);
+          }
+          catch (Exception ex)
+          {
+            Logger.Error(ex.Message);
+          }
+        }
+        
+        // Привязка документов, заданных в источнике
+        foreach (var addendumStr in _obj.Addendums.ToList())
+        {
+          var relatedDoc = addendumStr.Reason;
+          if (Sungero.Docflow.Addendums.Is(relatedDoc))
+          {
+            if (!_obj.AddendaGroup.All.Any(d => d.Equals(relatedDoc)))
+              _obj.AddendaGroup.ElectronicDocuments.Add(relatedDoc);
           }
           else
           {
-            relatedDoc.Relations.Add(Sungero.Docflow.PublicConstants.Module.SimpleRelationName, document);
-            addendumStr.Result = relatedDoc;
+            if (!_obj.OtherGroup.All.Any(d => d.Equals(relatedDoc)))
+              _obj.OtherGroup.ElectronicDocuments.Add(relatedDoc);
+          }
+          
+          if (addendumStr.Result == null)
+          {
+            // Создать копию приложений и вложить в задачу.
+            var addendum = Sungero.Docflow.Addendums.As(relatedDoc);
+            if (addendum != null)
+            {
+              var copyAddendum = PublicFunctions.Module.Remote.CopyAddendum(addendum);
+              copyAddendum.LeadingDocument = document;
+              copyAddendum.Save();
+              // Перенести подписи.
+              foreach (var signature in Signatures.Get(addendum).Where(s => s.SignCertificate != null))
+              {
+                var signatureText = signature.GetDataSignature();
+                try
+                {
+                  Signatures.Import(copyAddendum, signature.SignatureType, signature.SignatoryFullName, signatureText, copyAddendum.LastVersion);
+                }
+                catch (Exception ex)
+                {
+                  Logger.Error(ex.Message);
+                }
+              }
+              // Добавить к группе приложения к входящему документу.
+              _obj.InAttachmentGroup.Addendums.Add(copyAddendum);
+              addendumStr.Result = copyAddendum;
+            }
+            else
+            {
+              relatedDoc.Relations.Add(Sungero.Docflow.PublicConstants.Module.SimpleRelationName, document);
+              addendumStr.Result = relatedDoc;
+            }
           }
         }
+        
+        var subject = Sungero.Docflow.PublicFunctions.Module.TrimSpecialSymbols(IncomingDocumentProcessingTasks.Resources.TaskSubject, document.Name);
+        _obj.Subject = subject.Substring(0, subject.Length > 250 ? 250 : subject.Length);
+        
+        if (_obj.ResultDoc == null || _obj.ResultDoc != document)
+        {
+          _obj.ResultDoc = document;
+          _obj.MainDocGroupReason.OfficialDocuments.Add(_obj.ReasonDoc);
+          _obj.MainDocGroupNew.OfficialDocuments.Add(document);
+        }
       }
-      
-      var subject = Sungero.Docflow.PublicFunctions.Module.TrimSpecialSymbols(IncomingDocumentProcessingTasks.Resources.TaskSubject, document.Name);
-      _obj.Subject = subject.Substring(0, subject.Length > 250 ? 250 : subject.Length);
-      
-      if (_obj.ResultDoc == null || _obj.ResultDoc != document)
+      catch (Exception ex)
       {
-        _obj.ResultDoc = document;
-        _obj.MainDocGroupReason.OfficialDocuments.Add(_obj.ReasonDoc);
-        _obj.MainDocGroupNew.OfficialDocuments.Add(document);
+        // В случае ошибок при создании, вместо стандартного уведомления отправляем собственное.
+        var errorHandler = AsyncHandlers.HandleErrorInDocumentProcessingTask.Create();
+        errorHandler.InternalMailRegisterId = _obj.CreatedFrom.Id;
+        errorHandler.ErrorMessage = ex.Message;
+        errorHandler.ExecuteAsync();
       }
     }
   }

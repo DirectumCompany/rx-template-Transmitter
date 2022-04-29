@@ -141,6 +141,21 @@ namespace GD.TransmitterModule.Server
       task.Start();
     }
     
+    public virtual void SendNoticeToResponsible(IInternalMailRegister mailRegister)
+    {
+      var letter = mailRegister != null ? Sungero.Docflow.OfficialDocuments.As(mailRegister.LeadingDocument) : Sungero.Docflow.OfficialDocuments.Null;
+      var attachments = new List<Sungero.Domain.Shared.IEntity>();
+      if (mailRegister != null)
+      {
+        attachments.Add(mailRegister);
+      }
+      
+      var addressee = Roles.Administrators;
+      var task = Sungero.Workflow.SimpleTasks.CreateWithNotices(GD.TransmitterModule.Resources.SendingDocumentsErrors, new List<IRecipient> {addressee}, attachments.ToArray());
+      task.ActiveText = mailRegister.ErrorInfo;
+      task.Start();
+    }
+    
     public virtual IRecipient GetResponsibleForEmailSending()
     {
       return Roles.GetAll(r => r.Sid == Guid.Empty).FirstOrDefault() ?? Roles.Administrators;
@@ -493,17 +508,15 @@ namespace GD.TransmitterModule.Server
         
         var procTask = IncomingDocumentProcessingTasks.Create();
         procTask.ReasonDoc = document;
-        procTask.Save();
         procTask.ToBusinessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b => b.Status == Sungero.CoreEntities.DatabookEntry.Status.Active && Companies.Equals(b.Company, item.Correspondent)).FirstOrDefault();
-        procTask.Save();
         procTask.ToCounterparty = item.Correspondent;
-        procTask.Save();
         foreach (var relatedDoc in item.RelatedDocuments.Where(x => x.Document != null).Select(x => x.Document))
         {
           var newAddendum = procTask.Addendums.AddNew();
           newAddendum.Reason = relatedDoc;
-          procTask.Save();
         }
+        procTask.CreatedFrom = item;
+        
         procTask.Save();
         procTask.Start();
         
@@ -910,6 +923,9 @@ namespace GD.TransmitterModule.Server
               errors.Add(Resources.CounterpartyIsNotBusinessUnitFormat(addresse.Correspondent.Name, addresse.DeliveryMethod.Name));
             else
             {
+              if (businessUnit.CEO == null)
+                errors.Add(Resources.BusinessUnitCEOIsEmptyFormat(addresse.Correspondent.Name));
+              
               Logger.DebugFormat("Debug CheckRequisitesForSendRX - 6");
               if (GetRegistrarForBusinessUnit(businessUnit, incommingLetterDocumentKind) == null)
                 errors.Add(Resources.NoRegistrarInBusinessUnitFormat(addresse.Correspondent.Name, incommingLetterDocumentKind.Name));

@@ -161,4 +161,10 @@
   <data name="CorrespondentDeliveryMethodIsEmpty" xml:space="preserve">
     <value>Correspondent {0} has no delivery method</value>
   </data>
+  <data name="BusinessUnitCEOIsEmpty" xml:space="preserve">
+    <value>CEO for business unit {0} is empty</value>
+  </data>
+  <data name="DeliveryState_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
 </root>

@@ -45,6 +45,25 @@
           "ParameterType": "String"
         }
       ]
+    },
+    {
+      "NameGuid": "ec4fa070-216a-4b5c-b01d-e7b00e00dc07",
+      "Name": "HandleErrorInDocumentProcessingTask",
+      "DelayPeriod": 10,
+      "DelayStrategy": "RegularDelayStrategy",
+      "IsHandlerGenerated": true,
+      "Parameters": [
+        {
+          "NameGuid": "55c0a957-f8e2-4a58-9b73-bb40d3e7456c",
+          "Name": "ErrorMessage",
+          "ParameterType": "String"
+        },
+        {
+          "NameGuid": "b933dea4-fba0-4d79-9b64-72a29c664005",
+          "Name": "InternalMailRegisterId",
+          "ParameterType": "Integer"
+        }
+      ]
     }
   ],
   "ClientAssemblyName": "GD.TransmitterModule.Client",
@@ -510,7 +529,9 @@
     "SendError",
     "EmailSendingResponsibleRoleName",
     "GeneratedArchiveExceedsMaxSize",
-    "CorrespondentDeliveryMethodIsEmpty"
+    "CorrespondentDeliveryMethodIsEmpty",
+    "BusinessUnitCEOIsEmpty",
+    "DeliveryState_Error"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",
