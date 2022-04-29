@@ -10,6 +10,83 @@ namespace GD.TransmitterModule.Server
 {
   public class ModuleAsyncHandlers
   {
+
+    public virtual void HandleErrorInDocumentProcessingTask(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.HandleErrorInDocumentProcessingTaskInvokeArgs args)
+    {
+      var item = InternalMailRegisters.GetAll(i => i.Id == args.InternalMailRegisterId).FirstOrDefault();
+      
+      if (item == null)
+        return;
+      
+      if (Locks.GetLockInfo(item).IsLocked)
+      {
+        args.Retry = true;
+        return;
+      }
+      
+      var document = item.LeadingDocument;
+      
+      if (Locks.GetLockInfo(document).IsLocked)
+      {
+        args.Retry = true;
+        return;
+      }
+      
+      var correspondent = item.Correspondent;
+      
+      try
+      {
+        
+        item.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
+        item.ErrorInfo = args.ErrorMessage.Substring(0, args.ErrorMessage.Length < 1000 ? args.ErrorMessage.Length : 1000);
+        item.Save();
+        
+        Functions.Module.SendNoticeToResponsible(item);
+        var error = GD.TransmitterModule.Resources.DeliveryState_Error;
+        
+        if (OutgoingLetters.Is(document))
+        {
+          var outgoingLetter = OutgoingLetters.As(document);
+          
+          var addressee = (IOutgoingLetterAddressees)outgoingLetter.Addressees.Where(x => Equals(x.Correspondent, correspondent) && x.DeliveryMethod != null).FirstOrDefault();
+          if (addressee != null)
+          {
+            addressee.DocumentState = error;
+            addressee.StateInfo = error;
+          }
+          if (outgoingLetter.IsManyAddressees == false)
+          {
+            outgoingLetter.DocumentState = error;
+            outgoingLetter.StateInfo = error;
+          }
+          
+          outgoingLetter.Save();
+        }
+        else if (OutgoingRequestLetters.Is(document))
+        {
+          var outgoingRequestLetter = OutgoingRequestLetters.As(document);
+          
+          var addressee = (IOutgoingRequestLetterAddressees)outgoingRequestLetter.Addressees.Where(x => Equals(x.Correspondent, correspondent) && x.DeliveryMethod != null).FirstOrDefault();
+          if (addressee != null)
+          {
+            addressee.DocumentState = error;
+            addressee.StateInfo = error;
+          }
+          if (outgoingRequestLetter.IsManyAddressees == false)
+          {
+            outgoingRequestLetter.DocumentState = error;
+            outgoingRequestLetter.StateInfo = error;
+          }
+          
+          outgoingRequestLetter.Save();
+        }
+      }
+      catch (Exception ex)
+      {
+        Logger.ErrorFormat("An error occured while update state. RegisterItem = {0}", ex, item.Id);
+      }
+    }
+    
     /// <summary>
     /// Отправка документов адресатам.
     /// </summary>
@@ -75,12 +152,6 @@ namespace GD.TransmitterModule.Server
           return;
         }
         
-        if (Locks.GetLockInfo(letter).IsLocked)
-        {
-          args.Retry = true;
-          return;
-        }
-        
         Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: FileName - " + string.Format(@"{0}.{1}", letter.Name, "pdf"));
         
         /*var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name,method.Name) ||
@@ -133,7 +204,7 @@ namespace GD.TransmitterModule.Server
           // Создание сообщения для копии.
           if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.Sender);
+            Functions.Module.CreateMailRegisterItem(letter, item, args.SenderId, args.DocumentsSetId);
           }
         }
       }

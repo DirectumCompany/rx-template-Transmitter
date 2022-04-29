@@ -16,8 +16,13 @@
           "ParameterType": "Integer"
         },
         {
-          "NameGuid": "4b2c5a01-0fc1-46f0-9a5d-4fc775e44221",
-          "Name": "Sender",
+          "NameGuid": "9a03d812-252e-4d08-9ad0-7b1ecd5d1431",
+          "Name": "SenderId",
+          "ParameterType": "Integer"
+        },
+        {
+          "NameGuid": "dcbe0a75-c111-483d-a503-d3e538dd1e88",
+          "Name": "DocumentsSetId",
           "ParameterType": "String"
         }
       ]
@@ -38,6 +43,25 @@
           "NameGuid": "882ff9e5-ede3-4200-aed6-35d1c2fbecd5",
           "Name": "RelationDocumentIDs",
           "ParameterType": "String"
+        }
+      ]
+    },
+    {
+      "NameGuid": "ec4fa070-216a-4b5c-b01d-e7b00e00dc07",
+      "Name": "HandleErrorInDocumentProcessingTask",
+      "DelayPeriod": 10,
+      "DelayStrategy": "RegularDelayStrategy",
+      "IsHandlerGenerated": true,
+      "Parameters": [
+        {
+          "NameGuid": "55c0a957-f8e2-4a58-9b73-bb40d3e7456c",
+          "Name": "ErrorMessage",
+          "ParameterType": "String"
+        },
+        {
+          "NameGuid": "b933dea4-fba0-4d79-9b64-72a29c664005",
+          "Name": "InternalMailRegisterId",
+          "ParameterType": "Integer"
         }
       ]
     }
@@ -89,6 +113,10 @@
     {
       "ItemId": "0e51b567-2880-4fdb-970a-6a4633399156",
       "PreviousItemId": "2fabb4be-1133-4579-9aff-fec24fb98851"
+    },
+    {
+      "ItemId": "633ed056-5e81-4e62-ae63-730e253e7cb8",
+      "PreviousItemId": "0e51b567-2880-4fdb-970a-6a4633399156"
     }
   ],
   "HandledEvents": [
@@ -157,6 +185,14 @@
       "Value": "\"DB866210-2F13-4B7F-AD6C-1857AA078843\""
     },
     {
+      "Name": "EmailSendingResponsibleRoleGuid",
+      "ParentClasses": [
+        "Module"
+      ],
+      "TypeName": "System.Guid",
+      "Value": "new System.Guid(\"B405A458-2F6A-4D43-8B07-3605967CAB62\")"
+    },
+    {
       "Name": "IncLetterKind",
       "ParentClasses": [
         "Module"
@@ -205,13 +241,36 @@
       "ReturnTypeFullName": "System.Boolean"
     },
     {
-      "Name": "CheckRequisitesForEmail",
+      "Name": "CheckPackageSize",
       "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "letter",
+          "ParameterType": "global::Sungero.Docflow.IOutgoingDocumentBase",
+          "ParameterTypeFullName": "Sungero.Docflow.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "maxAttachmentFileSize",
+          "ParameterType": "global::System.Double",
+          "ParameterTypeFullName": "System.Double"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::System.Boolean",
+      "ReturnTypeFullName": "System.Boolean"
+    },
+    {
+      "Name": "CheckRequisitesForEmail",
       "Parameters": [
         {
           "Name": "document",
           "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
           "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "method",
+          "ParameterType": "global::Sungero.Docflow.IMailDeliveryMethod",
+          "ParameterTypeFullName": "Sungero.Docflow.IMailDeliveryMethod, Sungero.Domain.Interfaces"
         }
       ],
       "Placement": "Shared",
@@ -326,6 +385,13 @@
       "ReturnTypeFullName": "Sungero.Company.IEmployee, Sungero.Domain.Interfaces"
     },
     {
+      "Name": "GetTransmitterSettings",
+      "IsRemote": true,
+      "Placement": "Shared",
+      "ReturnType": "global::GD.TransmitterModule.ITransmitterSetting",
+      "ReturnTypeFullName": "GD.TransmitterModule.ITransmitterSetting, Sungero.Domain.Interfaces"
+    },
+    {
       "Name": "MEDOSendToCounterparty",
       "Parameters": [
         {
@@ -354,7 +420,6 @@
     },
     {
       "Name": "SendingDocumentAsyncHandlers",
-      "IsRemote": true,
       "Parameters": [
         {
           "Name": "document",
@@ -390,6 +455,12 @@
       "Placement": "Client",
       "ReturnType": "global::GD.TransmitterModule.Structures.Module.ISendToAddresseeResult",
       "ReturnTypeFullName": "GD.TransmitterModule.Structures.Module.ISendToAddresseeResult"
+    },
+    {
+      "Name": "ShowTransmitterSettings",
+      "Placement": "Client",
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
     }
   ],
   "PublicStructures": [
@@ -454,7 +525,13 @@
     "DeliveryState_RedirectedTo",
     "IncomingRequestLetter",
     "DirectumRXDeliveryMethod",
-    "CounterpartyIsNotEmail"
+    "CounterpartyIsNotEmail",
+    "SendError",
+    "EmailSendingResponsibleRoleName",
+    "GeneratedArchiveExceedsMaxSize",
+    "CorrespondentDeliveryMethodIsEmpty",
+    "BusinessUnitCEOIsEmpty",
+    "DeliveryState_Error"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",
