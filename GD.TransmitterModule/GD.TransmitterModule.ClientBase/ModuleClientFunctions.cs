@@ -244,6 +244,8 @@ namespace GD.TransmitterModule.Client
       // Добавление возможности отправки копии письма на указанный адрес электронной почты.
       //var operationCopy = new Enumeration(Constants.Module.SendCopyTo);
       
+	  // TODO. Чтобы запись в истории отображалась корректно, название действия (переменная operation) необходимо локализовать 
+	  // (создать ресурс в необходимом типе документа с названием Enum_Operation_<значение перечисления>. Например, Enum_Operation_SendAddressees)
       if (addresses.Any() ||
           document.Addressees.Any(x => Equals(x.DeliveryMethod, method) && (x as IOutgoingLetterAddressees).DocumentState != Resources.DeliveryState_Sent))
       {
