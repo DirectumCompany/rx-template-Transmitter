@@ -741,9 +741,9 @@ namespace GD.TransmitterModule.Server
       {
         var package = MEDO.PublicFunctions.Module.Remote.CreatePackage(document, company, documentPages, !OutgoingLetters.Is(document));
         if (OutgoingLetters.Is(document))
-          MEDO.PublicFunctions.Module.Remote.SetDocumentMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, company.MEDOGUID, OutgoingLetters.As(document), package);
+          MEDO.PublicFunctions.Module.Remote.SetDocumentMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, OutgoingLetters.As(document), package);
         else
-          MEDO.PublicFunctions.Module.Remote.SetRequestMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, company.MEDOGUID, OutgoingRequestLetters.As(document), package);
+          MEDO.PublicFunctions.Module.Remote.SetRequestMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, OutgoingRequestLetters.As(document), package);
       }
       catch (Exception ex)
       {
