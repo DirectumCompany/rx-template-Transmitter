@@ -84,7 +84,8 @@
     "Header": {
       "NameGuid": "a024cc49-46a3-4117-b60f-58d035d72c57",
       "BackgroundPosition": "Stretch"
-    }
+    },
+    "Tabs": []
   },
   "Dependencies": [
     {
@@ -538,12 +539,12 @@
   "SharedAssemblyName": "GD.TransmitterModule.Shared",
   "SharedNamespace": "GD.TransmitterModule.Shared",
   "SpecialFolders": [],
-  "Version": "0.0.1.0",
+  "Version": "0.0.1.1",
   "Widgets": [],
   "Versions": [
     {
       "Type": "ModuleMetadata",
-      "Number": 6
+      "Number": 8
     },
     {
       "Type": "DomainApi",

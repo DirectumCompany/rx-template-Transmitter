@@ -21,7 +21,8 @@
     "Header": {
       "NameGuid": "c16631f7-f4ec-4dd4-b405-b462bc20707b",
       "BackgroundPosition": "Stretch"
-    }
+    },
+    "Tabs": []
   },
   "DesktopViews": [],
   "IconResourcesKeys": [],
@@ -38,16 +39,16 @@
   "SharedAssemblyName": "GD.Transmitter.Shared",
   "SharedNamespace": "GD.Transmitter.Shared",
   "SpecialFolders": [],
-  "Version": "0.0.1.0",
+  "Version": "0.0.1.1",
   "Widgets": [],
   "Versions": [
     {
       "Type": "SolutionMetadata",
-      "Number": 6
+      "Number": 8
     },
     {
       "Type": "ModuleMetadata",
-      "Number": 6
+      "Number": 8
     },
     {
       "Type": "DomainApi",
