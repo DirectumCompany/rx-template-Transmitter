@@ -458,6 +458,19 @@
       "ReturnTypeFullName": "GD.TransmitterModule.Structures.Module.ISendToAddresseeResult"
     },
     {
+      "Name": "SendToAddressee",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::GD.CitizenRequests.IOutgoingRequestLetter",
+          "ParameterTypeFullName": "GD.CitizenRequests.IOutgoingRequestLetter, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Client",
+      "ReturnType": "global::GD.TransmitterModule.Structures.Module.ISendToAddresseeResult",
+      "ReturnTypeFullName": "GD.TransmitterModule.Structures.Module.ISendToAddresseeResult"
+    },
+    {
       "Name": "ShowTransmitterSettings",
       "Placement": "Client",
       "ReturnType": "void",

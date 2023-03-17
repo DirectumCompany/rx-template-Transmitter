@@ -107,7 +107,7 @@
     <value>For documents kind {1} registrar in the organization {0} is not specified.</value>
   </data>
   <data name="UseReferralByCompetence" xml:space="preserve">
-    <value>You can't send this letter to addressees: {0}. Use a referral by competence.</value>
+    <value>You can't send this letter to addressees: {0}.</value>
   </data>
   <data name="AttachIsNotValid" xml:space="preserve">
     <value>All required properties for attachments must be filled.</value>

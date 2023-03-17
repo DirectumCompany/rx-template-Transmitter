@@ -940,10 +940,13 @@ namespace GD.TransmitterModule.Server
           .Where(a => a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX &&
                  string.IsNullOrEmpty(a.DocumentState));
         Logger.DebugFormat("Debug CheckRequisitesForSendRX - 1");
+        
         if (addresses.Count() > 0)
         {
           Logger.DebugFormat("Debug CheckRequisitesForSendRX - 2");
           var addressesName = string.Join(", ", addresses.Select(a => a.Correspondent.Name));
+          
+          // Запрещаем отправку т.к. пока не реализован функционал по перенаправлению исх., писем по обращению.
           errors.Add(Resources.UseReferralByCompetenceFormat(addressesName));
         }
       }
