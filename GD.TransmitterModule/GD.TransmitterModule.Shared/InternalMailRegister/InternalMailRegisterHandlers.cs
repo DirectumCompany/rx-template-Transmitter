@@ -7,8 +7,4 @@ using GD.TransmitterModule.InternalMailRegister;
 
 namespace GD.TransmitterModule
 {
-  partial class InternalMailRegisterSharedHandlers
-  {
-
-  }
 }

@@ -79,7 +79,13 @@ namespace GD.TransmitterModule.Server
       {
         if (Locks.GetLockInfo(item).IsLocked)
           continue;
-        Functions.Module.SendInternalMail(item);
+        
+        if (item.IsRequestTransfer == true)
+        {
+          Functions.Module.SendInternalTransfer(item);
+        }
+        else
+          Functions.Module.SendInternalMail(item);
       }
     }
 

@@ -5,7 +5,6 @@ using Sungero.Core;
 using Sungero.CoreEntities;
 using GD.GovernmentSolution;
 using GD.CitizenRequests;
-using System.Collections.Generic;
 
 namespace GD.TransmitterModule.Client
 {
@@ -89,8 +88,6 @@ namespace GD.TransmitterModule.Client
     [Public]
     public virtual Structures.Module.ISendToAddresseeResult SendToAddressee(IOutgoingLetter document)
     {
-      var information = new List<string>();
-      
       // Выбрать связанные документы для отправки.
       Logger.DebugFormat("Debug SendToAddressee - 1");
       var allRelatedDocuments = new List<Sungero.Content.IElectronicDocument>();
@@ -136,10 +133,12 @@ namespace GD.TransmitterModule.Client
         }
       }
       
+      var information = new List<string>();
+      
       // Отправка адресатам по E-mail.
       var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
       var errorsEmail = new List<string>();
-      var emailAddressees = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(x => Equals(x.DeliveryMethod, method) &&                                                                                    string.IsNullOrEmpty(x.DocumentState));
+      var emailAddressees = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(x => Equals(x.DeliveryMethod, method) && string.IsNullOrEmpty(x.DocumentState));
       
       if (method != null && emailAddressees.Any())
       {
@@ -273,7 +272,7 @@ namespace GD.TransmitterModule.Client
           document.DocumentState = Resources.AwaitingDispatch;
         document.Save();
         Logger.DebugFormat("Debug SendToAddressee - 10");
-        PublicFunctions.Module.SendingDocumentAsyncHandlers(document);
+        PublicFunctions.Module.StartSendingDocuments(document);
         Logger.DebugFormat("Debug SendToAddressee - 11");
         information.Add(Resources.DocumentWasSending);
       }
@@ -293,52 +292,63 @@ namespace GD.TransmitterModule.Client
     [Public]
     public virtual Structures.Module.ISendToAddresseeResult SendToAddressee(IOutgoingRequestLetter document)
     {
-      var information = new List<string>();
+      var transferErrors = new List<string>();
       
-      // Выбрать связанные документы для отправки.
-      Logger.DebugFormat("Debug SendToAddressee - 1");
-      var allRelatedDocuments = new List<Sungero.Content.IElectronicDocument>();
-      
-      foreach (var relationName in RelationTypes.GetAll().Select(r => r.Name))
+      if (CitizenRequests.PublicFunctions.OutgoingRequestLetter.Remote.IsTransfer(document))
       {
-        allRelatedDocuments.AddRange(document.Relations.GetRelated(relationName).
-                                     Where(d => d.HasVersions));
-        allRelatedDocuments.AddRange(document.Relations.GetRelatedFrom(relationName).
-                                     Where(d => d.HasVersions));
-      }
-      
-      Logger.DebugFormat("Debug SendToAddressee: allRelatedDocuments = {0}", allRelatedDocuments.Count);
-      
-      if (allRelatedDocuments.Any())
-      {
-        Logger.DebugFormat("Debug SendToAddressee - 1-1");
-        var dialogSelectDocument = Dialogs.CreateInputDialog(Resources.RelatedDocumentsForSending);
-        Logger.DebugFormat("Debug SendToAddressee - 1-2");
-        var applications = dialogSelectDocument.AddSelectMany(Resources.SelectDocuments, false, Sungero.Content.ElectronicDocuments.Null).
-          From(allRelatedDocuments.Distinct().ToArray());
-        Logger.DebugFormat("Debug SendToAddressee - 1-3");
+        transferErrors = CitizenRequests.PublicFunctions.Module.Remote.CheckRequisitesForInternalTransfer(document);
+        var request = document.Request ?? document.Requests.Select(r => r.Request).FirstOrDefault();
+        var relatedDocs = request.Relations
+          .GetRelated().Union(request.Relations.GetRelatedFrom())
+          .Where(d => d.HasVersions && !Equals(d, document));
         
-        if (dialogSelectDocument.Show() == DialogButtons.Ok)
+        foreach (var relatedDoc in relatedDocs)
         {
-          Logger.DebugFormat("Debug SendToAddressee - 1-4");
-          document.DocsToSendGD.Clear();
-          
-          foreach (var relatedDoc in applications.Value)
-          {
-            var newRelatedDoc = document.DocsToSendGD.AddNew();
-            newRelatedDoc.Document = relatedDoc;
-          }
-          
-          if (document.DocsToSendGD.Any())
-            document.Save();
-          
-          Logger.DebugFormat("Debug SendToAddressee - 1-5");
-        }
-        else
-        {
-          return null;
+          var newRelatedDoc = document.DocsToSendGD.AddNew();
+          newRelatedDoc.Document = relatedDoc;
         }
       }
+      else
+      {
+        // Выбрать связанные документы для отправки.
+        var allRelatedDocuments = new List<Sungero.Content.IElectronicDocument>();
+        
+        foreach (var relationName in RelationTypes.GetAll().Select(r => r.Name))
+        {
+          allRelatedDocuments.AddRange(document.Relations.GetRelated(relationName).
+                                       Where(d => d.HasVersions));
+          allRelatedDocuments.AddRange(document.Relations.GetRelatedFrom(relationName).
+                                       Where(d => d.HasVersions));
+        }
+        
+        Logger.DebugFormat("Debug SendToAddressee: allRelatedDocuments = {0}", allRelatedDocuments.Count);
+        
+        if (allRelatedDocuments.Any())
+        {
+          var dialogSelectDocument = Dialogs.CreateInputDialog(Resources.RelatedDocumentsForSending);
+          var applications = dialogSelectDocument.AddSelectMany(Resources.SelectDocuments, false, Sungero.Content.ElectronicDocuments.Null).
+            From(allRelatedDocuments.Distinct().ToArray());
+          
+          if (dialogSelectDocument.Show() == DialogButtons.Ok)
+          {
+            document.DocsToSendGD.Clear();
+            
+            foreach (var relatedDoc in applications.Value)
+            {
+              var newRelatedDoc = document.DocsToSendGD.AddNew();
+              newRelatedDoc.Document = relatedDoc;
+            }
+            
+            if (document.DocsToSendGD.Any())
+              document.Save();
+          }
+          else
+          {
+            return null;
+          }
+        }
+      }
+      var information = new List<string>();
       
       // Отправка адресатам по E-mail.
       var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
@@ -356,7 +366,6 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsEmail.Any())
         {
-          Logger.DebugFormat("Debug SendToAddressee - 2");
           var sendDocumentToAddresseesEMail = AsyncHandlers.SendDocumentToAddresseesEMail.Create();
           sendDocumentToAddresseesEMail.DocumentId = document.Id;
           sendDocumentToAddresseesEMail.SenderId = Sungero.Company.Employees.Current != null ? Sungero.Company.Employees.Current.Id : -1;
@@ -374,16 +383,13 @@ namespace GD.TransmitterModule.Client
         }
       }
       
-      Logger.DebugFormat("Debug SendToAddressee - 3");
-      
       // Проверки для отправки по МЭДО.
       var errorsMEDO = new List<string>();
       var addressesMedoCount = document.Addressees.Cast<IOutgoingRequestLetterAddressees>()
-        .Where(a => a.DeliveryMethod != null)
-        .Where(a => a.DeliveryMethod.Sid == MEDO.PublicConstants.Module.MedoDeliveryMethod &&
+        .Where(a => a.DeliveryMethod != null &&
+               a.DeliveryMethod.Sid == MEDO.PublicConstants.Module.MedoDeliveryMethod &&
                string.IsNullOrEmpty(a.DocumentState))
         .Count();
-      Logger.DebugFormat("Debug SendToAddressee - 4");
       
       if (addressesMedoCount > 0)
       {
@@ -428,19 +434,12 @@ namespace GD.TransmitterModule.Client
           errorsMEDO.Add(Resources.FillInAddendumsPageCount);
       }
       
-      Logger.DebugFormat("Debug SendToAddressee - 5");
-      
-      // Проверки для отправки в Directum RX.
-      var errorsRX = PublicFunctions.Module.Remote.CheckRequisitesForSendRX(document);
-      Logger.DebugFormat("Debug SendToAddressee - 6");
-      
       // Если проверки для отправки не пройдены - не менять статус для адресатов.
       var addresses = document.Addressees.Cast<IOutgoingRequestLetterAddressees>()
         .Where(a => a.DeliveryMethod != null)
-        .Where(a => (a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX && !errorsRX.Any() ||
-                     a.DeliveryMethod.Sid == MEDO.PublicConstants.Module.MedoDeliveryMethod && !errorsMEDO.Any()) &&
+        .Where(a => (a.DeliveryMethod.Sid == MEDO.PublicConstants.Module.MedoDeliveryMethod && !errorsMEDO.Any() ||
+                     a.DeliveryMethod.Sid == CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid() && !transferErrors.Any()) &&
                string.IsNullOrEmpty(a.DocumentState));
-      Logger.DebugFormat("Debug SendToAddressee - 7");
       
       // Фиксация в истории отправки.
       var operation = new Enumeration(Constants.Module.SendAddressees);
@@ -467,28 +466,23 @@ namespace GD.TransmitterModule.Client
         addresse.Addresser = Users.Current.IsSystem == true ? null : Users.Current;
       }
       
-      Logger.DebugFormat("Debug SendToAddressee - 8");
-      
       // Вызвать асинхронный обработчик для отправки.
       if (document.State.Properties.Addressees.IsChanged)
       {
-        Logger.DebugFormat("Debug SendToAddressee - 9");
-        
         if (!document.IsManyAddressees.Value)
           document.DocumentState = Resources.AwaitingDispatch;
+        
         document.Save();
-        Logger.DebugFormat("Debug SendToAddressee - 10");
-        PublicFunctions.Module.SendingDocumentAsyncHandlers(document);
-        Logger.DebugFormat("Debug SendToAddressee - 11");
+        PublicFunctions.Module.StartSendingDocuments(document);
         information.Add(Resources.DocumentWasSending);
       }
       
       var addresseesWithoutDeliveryMethod = document.Addressees.Where(a => a.DeliveryMethod == null);
       
       foreach (var addressee in addresseesWithoutDeliveryMethod)
-        errorsRX.Add(GD.TransmitterModule.Resources.CorrespondentDeliveryMethodIsEmptyFormat(addressee.Correspondent.Name));
+        transferErrors.Add(GD.TransmitterModule.Resources.CorrespondentDeliveryMethodIsEmptyFormat(addressee.Correspondent.Name));
       
-      return Structures.Module.SendToAddresseeResult.Create(information, errorsRX, errorsMEDO, errorsEmail);
+      return Structures.Module.SendToAddresseeResult.Create(information, transferErrors, errorsMEDO, errorsEmail);
     }
   }
 }

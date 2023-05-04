@@ -14,6 +14,51 @@ namespace GD.TransmitterModule.Server
 {
   public class ModuleFunctions
   {
+
+    /// <summary>
+    /// Отправить исх., документ перенаправлением.
+    /// </summary>
+    /// <param name="transferRecord">Элемент очереди отправки.</param>
+    [Public]
+    public void SendInternalTransfer(IInternalMailRegister transferRecord)
+    {
+      try
+      {
+        var outgoingRequestLetter = GD.CitizenRequests.OutgoingRequestLetters.As(transferRecord.LeadingDocument);
+        var correspondent = transferRecord.Correspondent;
+        
+        if (outgoingRequestLetter == null)
+          throw AppliedCodeException.Create(Resources.DocumentNotFound);
+        
+        if (Locks.GetLockInfo(outgoingRequestLetter).IsLocked)
+          return;
+        
+        var task = CitizenRequests.PublicFunctions.Module.Remote.StartInternalTransfer(outgoingRequestLetter, transferRecord.Request, correspondent);
+        
+        var deliveryMethodSid = GD.CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
+        var addresses = outgoingRequestLetter.Addressees.Cast<IOutgoingRequestLetterAddressees>().Where(a => Equals(a.Correspondent, correspondent) &&
+                                                                                                        a.DeliveryMethod != null &&
+                                                                                                        a.DeliveryMethod.Sid == deliveryMethodSid &&
+                                                                                                        a.DocumentState == Resources.AwaitingDispatch).FirstOrDefault();
+        
+        CitizenRequests.PublicFunctions.Module.Remote.SetRequestLetterTransferStatus(outgoingRequestLetter,
+                                                                                     addresses.Correspondent,
+                                                                                     CitizenRequests.PublicConstants.Module.InternalTransferDeliveryStatus.Sent,
+                                                                                     CitizenRequests.PublicConstants.Module.InternalTransferDeliveryStatus.Sent);
+        outgoingRequestLetter.Save();
+        transferRecord.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
+        transferRecord.TaskId = task.Id;
+        transferRecord.Save();
+      }
+      catch (Exception ex)
+      {
+        Logger.ErrorFormat("TransmitterModule. ФП Исходящие. Отправка сообщений RX-RX. Произошла ошибка при отправке исх. документа перенаправлением в записи id = {0} \"Реестра отправки сообщений в рамках системы\": {1}.",
+                           transferRecord.Id, ex);
+        transferRecord.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
+        transferRecord.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
+        transferRecord.Save();
+      }
+    }
     
     /// <summary>
     /// Проверить размер архива со всеми вложениями письма на допустимое значение.
@@ -494,22 +539,22 @@ namespace GD.TransmitterModule.Server
     [Public]
     public void SendInternalMail(IInternalMailRegister item)
     {
-      if (Locks.GetLockInfo(item).IsLocked)
-        return;
       try
       {
         var document = Sungero.Docflow.OfficialDocuments.As(item.LeadingDocument);
+        var correspondent = item.Correspondent;
         
         if (document == null)
-          throw new NullReferenceException("Документ не найден.");
+          throw AppliedCodeException.Create(Resources.DocumentNotFound);
         
         if (Locks.GetLockInfo(document).IsLocked)
           return;
         
         var procTask = IncomingDocumentProcessingTasks.Create();
         procTask.ReasonDoc = document;
-        procTask.ToBusinessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b => b.Status == Sungero.CoreEntities.DatabookEntry.Status.Active && Companies.Equals(b.Company, item.Correspondent)).FirstOrDefault();
-        procTask.ToCounterparty = item.Correspondent;
+        procTask.ToBusinessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b => b.Status == Sungero.CoreEntities.DatabookEntry.Status.Active && Companies.Equals(b.Company, correspondent)).FirstOrDefault();
+        procTask.ToCounterparty = correspondent;
+        
         foreach (var relatedDoc in item.RelatedDocuments.Where(x => x.Document != null).Select(x => x.Document))
         {
           var newAddendum = procTask.Addendums.AddNew();
@@ -524,7 +569,8 @@ namespace GD.TransmitterModule.Server
         {
           var outgoingLetter = OutgoingLetters.As(document);
           
-          var addressee = (IOutgoingLetterAddressees)outgoingLetter.Addressees.Where(x => x.Correspondent == item.Correspondent &&
+          var addressee = (IOutgoingLetterAddressees)outgoingLetter.Addressees.Where(x => x.Correspondent != null &&
+                                                                                     Equals(x.Correspondent, correspondent) &&
                                                                                      x.DeliveryMethod != null &&
                                                                                      x.DeliveryMethod.Sid == Constants.Module.DeliveryMethod.DirectumRX).FirstOrDefault();
           if (addressee != null)
@@ -544,7 +590,8 @@ namespace GD.TransmitterModule.Server
         {
           var outgoingRequestLetter = OutgoingRequestLetters.As(document);
           
-          var addressee = (IOutgoingRequestLetterAddressees)outgoingRequestLetter.Addressees.Where(x => x.Correspondent == item.Correspondent &&
+          var addressee = (IOutgoingRequestLetterAddressees)outgoingRequestLetter.Addressees.Where(x => x.Correspondent != null &&
+                                                                                                   Equals(x.Correspondent, correspondent) &&
                                                                                                    x.DeliveryMethod != null &&
                                                                                                    x.DeliveryMethod.Sid == Constants.Module.DeliveryMethod.DirectumRX).FirstOrDefault();
           if (addressee != null)
@@ -552,6 +599,7 @@ namespace GD.TransmitterModule.Server
             addressee.DocumentState = Resources.DeliveryState_Sent;
             addressee.StateInfo = Resources.DeliveryState_Sent;
           }
+          
           if (outgoingRequestLetter.IsManyAddressees == false)
           {
             outgoingRequestLetter.DocumentState = Resources.DeliveryState_Sent;
@@ -560,21 +608,6 @@ namespace GD.TransmitterModule.Server
           
           outgoingRequestLetter.Save();
         }
-        // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-        /*else if (IncomingLetters.Is(document))
-        {
-          var incomingLetter = IncomingLetters.As(document);
-          
-          var addressee = incomingLetter.FanSendingGD.Where(x => x.Correspondent == item.Correspondent &&
-                                                            x.DeliveryMethod != null &&
-                                                            x.DeliveryMethod.Sid == Constants.Module.DeliveryMethod.DirectumRX).FirstOrDefault();
-          if (addressee != null)
-          {
-            addressee.DocumentState = Resources.DeliveryState_Sent;
-          }
-          
-          incomingLetter.Save();
-        }*/
         
         item.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
         item.TaskId = procTask.Id;
@@ -582,6 +615,8 @@ namespace GD.TransmitterModule.Server
       }
       catch (Exception ex)
       {
+        Logger.ErrorFormat("TransmitterModule. ФП Исходящие. Отправка сообщений RX-RX. Произошла ошибка при отправке исх. документа в DirecumRX в записи id = {0} \"Реестра отправки сообщений в рамках системы\": {1}.",
+                                   item.Id, ex);
         item.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
         item.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
         item.Save();
@@ -770,8 +805,39 @@ namespace GD.TransmitterModule.Server
           var registerItem = InternalMailRegisters.Create();
           registerItem.Correspondent = correspondent;
           registerItem.LeadingDocument = document;
+          
           foreach (var relatedDoc in relatedDocs)
             registerItem.RelatedDocuments.AddNew().Document = relatedDoc;
+          
+          registerItem.Status = GD.TransmitterModule.InternalMailRegister.Status.ToProcess;
+          registerItem.Save();
+        }
+      }
+      catch (Exception ex)
+      {
+        errors.Add(ex.Message);
+      }
+    }
+    
+    
+    [Public]
+    public void CreateCounterpartyTransferRecord(Sungero.Docflow.IOfficialDocument document,
+                                                 Sungero.Parties.ICounterparty correspondent,
+                                                 List<string> errors,
+                                                 bool IsRequestTransfer,
+                                                 IRequest request)
+    {
+      try
+      {
+        if (!InternalMailRegisters.GetAll(x => x.Correspondent == correspondent &&
+                                          x.LeadingDocument == document &&
+                                          x.Status == GD.TransmitterModule.InternalMailRegister.Status.ToProcess).Any())
+        {
+          var registerItem = InternalMailRegisters.Create();
+          registerItem.Correspondent = correspondent;
+          registerItem.LeadingDocument = document;
+          registerItem.IsRequestTransfer = IsRequestTransfer;
+          registerItem.Request = request;
           registerItem.Status = GD.TransmitterModule.InternalMailRegister.Status.ToProcess;
           registerItem.Save();
         }
@@ -827,10 +893,15 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="document">Основной документ для отправки.</param>
     /// <param name="relatedDocs">Связанные документы для отправки.</param>
-    public List<string> SendDocumentToAddressees(Sungero.Docflow.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs)
+    public List<string> SendDocumentToAddressees(Sungero.Docflow.IOutgoingDocumentBase letter,
+                                                 IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
+                                                 bool IsRequestTransfer,
+                                                 IRequest request)
     {
       Logger.DebugFormat("Debug SendDocumentToAddressees - start");
       var errors = new List<string>();
+      var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
+      
       if (OutgoingLetters.Is(letter))
       {
         var awaitingDispatchAddresses = letter.Addressees.Cast<IOutgoingLetterAddressees>()
@@ -849,7 +920,7 @@ namespace GD.TransmitterModule.Server
             var company = Companies.As(addresse.Correspondent);
             MEDOSendToCounterparty(letter, relatedDocs, company, errors);
           }
-          else if (deliveryMethodSid == PublicConstants.Module.DeliveryMethod.DirectumRX)
+          else if (deliveryMethodSid == directumRXDeliveryMethodSid)
             DirRXSendToCounterparty(letter, relatedDocs, addresse.Correspondent, errors);
         }
       }
@@ -860,22 +931,26 @@ namespace GD.TransmitterModule.Server
           .Where(a => Companies.Is(a.Correspondent) &&
                  a.DocumentState == Resources.AwaitingDispatch &&
                  (a.DeliveryMethod.Sid == MEDO.PublicConstants.Module.MedoDeliveryMethod ||
-                  a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX))
+                  a.DeliveryMethod.Sid == directumRXDeliveryMethodSid))
           .ToList();
+        
         foreach (var addresse in awaitingDispatchAddresses)
         {
           var deliveryMethodSid = addresse.DeliveryMethod.Sid;
+          
           if (deliveryMethodSid == MEDO.PublicConstants.Module.MedoDeliveryMethod)
           {
             var company = Companies.As(addresse.Correspondent);
             MEDOSendToCounterparty(letter, relatedDocs, company, errors);
           }
-          else if (deliveryMethodSid == PublicConstants.Module.DeliveryMethod.DirectumRX)
-            DirRXSendToCounterparty(letter, relatedDocs, addresse.Correspondent, errors);
+          else if (deliveryMethodSid == directumRXDeliveryMethodSid && IsRequestTransfer)
+            CreateCounterpartyTransferRecord(letter, addresse.Correspondent, errors, IsRequestTransfer, request);
         }
       }
+      
       if (letter.State.Properties.Addressees.IsChanged)
         letter.Save();
+      
       if (errors.Count() > 0)
       {
         var allErrors = string.Empty;
@@ -889,6 +964,7 @@ namespace GD.TransmitterModule.Server
         notice.Start();
         Logger.Error(allErrors);
       }
+      
       Logger.DebugFormat("Debug SendDocumentToAddressees - end");
       return errors;
     }
@@ -898,87 +974,39 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="document">Основной документ для отправки.</param>
     [Remote, Public]
-    public List<string> CheckRequisitesForSendRX(Sungero.Docflow.IOfficialDocument document)
+    public List<string> CheckRequisitesForSendRX(IOutgoingLetter document)
     {
       Logger.DebugFormat("Debug CheckRequisitesForSendRX - start");
       var errors = new List<string>();
-      if (OutgoingLetters.Is(document))
+      var addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
+        .Where(a => a.DeliveryMethod != null)
+        .Where(a => a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX &&
+               string.IsNullOrEmpty(a.DocumentState));
+      Logger.DebugFormat("Debug CheckRequisitesForSendRX - 1");
+      if (addresses.Count() > 0)
       {
-        var addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
-          .Where(a => a.DeliveryMethod != null)
-          .Where(a => a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX &&
-                 string.IsNullOrEmpty(a.DocumentState));
-        Logger.DebugFormat("Debug CheckRequisitesForSendRX - 1");
-        if (addresses.Count() > 0)
+        Logger.DebugFormat("Debug CheckRequisitesForSendRX - 2");
+        var incommingLetterDocumentKind = Sungero.Docflow.DocumentKinds.GetAll().Where(k => k.Name == Sungero.RecordManagement.Resources.IncomingLetterKindName).FirstOrDefault();
+        Logger.DebugFormat("!!! CheckRequisitesForSendRX - 3");
+        foreach (var addresse in addresses)
         {
-          Logger.DebugFormat("Debug CheckRequisitesForSendRX - 2");
-          var incommingLetterDocumentKind = Sungero.Docflow.DocumentKinds.GetAll().Where(k => k.Name == Sungero.RecordManagement.Resources.IncomingLetterKindName).FirstOrDefault();
-          Logger.DebugFormat("!!! CheckRequisitesForSendRX - 3");
-          foreach (var addresse in addresses)
+          Logger.DebugFormat("Debug CheckRequisitesForSendRX - 4");
+          var businessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b  => Equals(b.Company, addresse.Correspondent)).OrderBy(x => x.Id).FirstOrDefault();
+          Logger.DebugFormat("Debug CheckRequisitesForSendRX - 5");
+          if (businessUnit == null)
+            errors.Add(Resources.CounterpartyIsNotBusinessUnitFormat(addresse.Correspondent.Name, addresse.DeliveryMethod.Name));
+          else
           {
-            Logger.DebugFormat("Debug CheckRequisitesForSendRX - 4");
-            var businessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b  => Equals(b.Company, addresse.Correspondent)).OrderBy(x => x.Id).FirstOrDefault();
-            Logger.DebugFormat("Debug CheckRequisitesForSendRX - 5");
-            if (businessUnit == null)
-              errors.Add(Resources.CounterpartyIsNotBusinessUnitFormat(addresse.Correspondent.Name, addresse.DeliveryMethod.Name));
-            else
-            {
-              if (businessUnit.CEO == null)
-                errors.Add(Resources.BusinessUnitCEOIsEmptyFormat(addresse.Correspondent.Name));
-              
-              Logger.DebugFormat("Debug CheckRequisitesForSendRX - 6");
-              if (GetRegistrarForBusinessUnit(businessUnit, incommingLetterDocumentKind) == null)
-                errors.Add(Resources.NoRegistrarInBusinessUnitFormat(addresse.Correspondent.Name, incommingLetterDocumentKind.Name));
-            }
+            if (businessUnit.CEO == null)
+              errors.Add(Resources.BusinessUnitCEOIsEmptyFormat(addresse.Correspondent.Name));
+            
+            Logger.DebugFormat("Debug CheckRequisitesForSendRX - 6");
+            if (GetRegistrarForBusinessUnit(businessUnit, incommingLetterDocumentKind) == null)
+              errors.Add(Resources.NoRegistrarInBusinessUnitFormat(addresse.Correspondent.Name, incommingLetterDocumentKind.Name));
           }
         }
       }
-      else if (OutgoingRequestLetters.Is(document))
-      {
-        var addresses = OutgoingRequestLetters.As(document).Addressees.Cast<IOutgoingRequestLetterAddressees>()
-          .Where(a => a.DeliveryMethod != null)
-          .Where(a => a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX &&
-                 string.IsNullOrEmpty(a.DocumentState));
-        Logger.DebugFormat("Debug CheckRequisitesForSendRX - 1");
-        
-        if (addresses.Count() > 0)
-        {
-          Logger.DebugFormat("Debug CheckRequisitesForSendRX - 2");
-          var addressesName = string.Join(", ", addresses.Select(a => a.Correspondent.Name));
-          
-          // Запрещаем отправку т.к. пока не реализован функционал по перенаправлению исх., писем по обращению.
-          errors.Add(Resources.UseReferralByCompetenceFormat(addressesName));
-        }
-      }
-      // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-      /*else if (IncomingLetters.Is(document))
-      {
-        var addresses = IncomingLetters.As(document).FanSendingGD
-          .Where(a => a.DeliveryMethod != null)
-          .Where(a => a.DeliveryMethod.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX &&
-                 string.IsNullOrEmpty(a.DocumentState));
-        Logger.DebugFormat("!!! CheckRequisitesForSendRX - 1");
-        if (addresses.Count() > 0)
-        {
-          Logger.DebugFormat("!!! CheckRequisitesForSendRX - 2");
-          var incommingLetterDocumentKind = Sungero.Docflow.DocumentKinds.GetAll().Where(k => k.Name == Sungero.RecordManagement.Resources.IncomingLetterKindName).FirstOrDefault();
-          Logger.DebugFormat("!!! CheckRequisitesForSendRX - 3");
-          foreach (var addresse in addresses)
-          {
-            Logger.DebugFormat("!!! CheckRequisitesForSendRX - 4");
-            var businessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b  => Equals(b.Company, addresse.Correspondent)).OrderBy(x => x.Id).FirstOrDefault();
-            Logger.DebugFormat("!!! CheckRequisitesForSendRX - 5");
-            if (businessUnit == null)
-              errors.Add(Resources.CounterpartyIsNotBusinessUnitFormat(addresse.Correspondent.Name, addresse.DeliveryMethod.Name));
-            else
-            {
-              Logger.DebugFormat("!!! CheckRequisitesForSendRX - 6");
-              if (GetRegistrarForBusinessUnit(businessUnit, incommingLetterDocumentKind) == null)
-                errors.Add(Resources.NoRegistrarInBusinessUnitFormat(addresse.Correspondent.Name, incommingLetterDocumentKind.Name));
-            }
-          }
-        }
-      }*/
+      
       Logger.DebugFormat("Debug CheckRequisitesForSendRX - end");
       return errors;
     }

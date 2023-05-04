@@ -94,29 +94,41 @@ namespace GD.TransmitterModule.Server
     /// <param name="RelationDocumentIDs">Список связанных документов.</param>
     public virtual void SendDocumentToAddressees(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.SendDocumentToAddresseesInvokeArgs args)
     {
-      var letter = Sungero.Docflow.OfficialDocuments.GetAll(d => d.Id == args.DocumentID).FirstOrDefault();
+      var letter = Sungero.Docflow.OfficialDocuments.Get(args.DocumentID);
+
       if (letter == null)
         return;
-      var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-      var intList = new List<int>();
-      foreach (var ids in relatedDocIDs)
-      {
-        var intId = 0;
-        if (int.TryParse(ids, out intId))
-          intList.Add(intId);
-      }
-      var relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => intList.Contains(d.Id));
-      
+
       if (Locks.GetLockInfo(letter).IsLocked)
       {
         args.Retry = true;
         return;
       }
+      
+      var request = Requests.Null;
+      
+      if (args.RequestId != 0)
+        request = Requests.Get(args.RequestId);
+      
+      var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+      var relationDocsId = new List<int>();
+      
+      foreach (var ids in relatedDocIDs)
+      {
+        var DocId = 0;
+        if (int.TryParse(ids, out DocId))
+          relationDocsId.Add(DocId);
+      }
+      
+      var relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relationDocsId.Contains(d.Id));
+      
       try
       {
         Logger.Debug("SendDocumentToAddressees: start SendDocumentToAddressees.");
+        
         if (Sungero.Docflow.OutgoingDocumentBases.Is(letter))
-          Functions.Module.SendDocumentToAddressees(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs);
+          Functions.Module.SendDocumentToAddressees(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs, args.IsRequestTransfer, request);
+        
         Logger.Debug("SendDocumentToAddressees: end SendDocumentToAddressees.");
       }
       catch (Exception ex)

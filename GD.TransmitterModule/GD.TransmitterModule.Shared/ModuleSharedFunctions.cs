@@ -63,28 +63,35 @@ namespace GD.TransmitterModule.Shared
     
     
     /// <summary>
-    /// Вызов обработчика для отправки исходящего письма адресатам.
+    /// Вызвать обработчик для отправки исходящего письма адресатам.
     /// </summary>
     /// <param name="document">Основной документ для отправки.</param>
     [Public]
-    public void SendingDocumentAsyncHandlers(Sungero.Docflow.IOfficialDocument document)
+    public void StartSendingDocuments(Sungero.Docflow.IOfficialDocument document)
     {
-      Logger.DebugFormat("Debug SendingDocumentAsyncHandlers - 1-1");
+      Logger.DebugFormat("StartSendingDocuments. Start function for document Id = {0}.", document.Id);
+      
       var relatedDocumentsIds = string.Empty;
+      var outgoingRequestLetter = OutgoingRequestLetters.As(document);
+      
       if (OutgoingLetters.Is(document))
         relatedDocumentsIds = string.Join(",", OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());
-      else if (OutgoingRequestLetters.Is(document))
-        relatedDocumentsIds = string.Join(",", OutgoingRequestLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());
-      // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-      /*else if (IncomingLetters.Is(document))
-        relatedDocumentsIds = string.Join(",", IncomingLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());*/
-      Logger.DebugFormat("Debug SendingDocumentAsyncHandlers - 1-2");
+      else if (outgoingRequestLetter != null)
+        relatedDocumentsIds = string.Join(",", outgoingRequestLetter.DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());
+      
       var asyncSendingHandler = AsyncHandlers.SendDocumentToAddressees.Create();
-      Logger.DebugFormat("Debug SendingDocumentAsyncHandlers - 1-3");
       asyncSendingHandler.DocumentID = document.Id;
       asyncSendingHandler.RelationDocumentIDs = relatedDocumentsIds;
+      asyncSendingHandler.IsRequestTransfer = outgoingRequestLetter != null && CitizenRequests.PublicFunctions.OutgoingRequestLetter.Remote.IsTransfer(outgoingRequestLetter);
+      
+      if (asyncSendingHandler.IsRequestTransfer)
+      {
+        var request = outgoingRequestLetter.Request ?? outgoingRequestLetter.Requests.FirstOrDefault().Request;
+        asyncSendingHandler.RequestId = request.Id;
+      }
       asyncSendingHandler.ExecuteAsync();
-      Logger.DebugFormat("Debug SendingDocumentAsyncHandlers - 1-4");
+      
+      Logger.DebugFormat("StartSendingDocuments. End function for document Id = {0}.", document.Id);
     }
   }
 }

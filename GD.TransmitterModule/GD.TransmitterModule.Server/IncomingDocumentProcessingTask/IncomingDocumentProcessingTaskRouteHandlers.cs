@@ -137,17 +137,6 @@ namespace GD.TransmitterModule.Server
             first.StateInfo = Resources.DeliveryState_RedirectedTo;
             _obj.ReasonDoc.Save();
           }
-          // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-          /*else if (IncomingLetters.Is(_obj.ReasonDoc))
-          {
-            var first = IncomingLetters.As(_obj.ReasonDoc).FanSendingGD.LastOrDefault(x => x.Correspondent.Equals(assignment.ToBusinessUnitBefore.Company));
-            var newItem = IncomingLetters.As(_obj.ReasonDoc).FanSendingGD.AddNew();// as IOutgoingRequestLetterAddressees;
-            newItem.Correspondent = Companies.As(assignment.ToCounterparty);
-            newItem.DeliveryMethod = first.DeliveryMethod;
-            first.RedirectedTo = assignment.ToBusinessUnit;
-            first.DocumentState = Resources.DeliveryState_RedirectedTo;
-            _obj.ReasonDoc.Save();
-          }*/
         }
       }
       if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.RedirectToDepartment)

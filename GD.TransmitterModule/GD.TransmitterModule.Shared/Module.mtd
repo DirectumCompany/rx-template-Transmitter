@@ -43,6 +43,16 @@
           "NameGuid": "882ff9e5-ede3-4200-aed6-35d1c2fbecd5",
           "Name": "RelationDocumentIDs",
           "ParameterType": "String"
+        },
+        {
+          "NameGuid": "95ff3412-1923-4d6e-aa4d-d61f42b1736b",
+          "Name": "IsRequestTransfer",
+          "ParameterType": "Boolean"
+        },
+        {
+          "NameGuid": "f3e0c98f-e11c-4edb-8b7a-bf4548758ca5",
+          "Name": "RequestId",
+          "ParameterType": "Integer"
         }
       ]
     },
@@ -284,8 +294,8 @@
       "Parameters": [
         {
           "Name": "document",
-          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
-          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+          "ParameterType": "global::GD.GovernmentSolution.IOutgoingLetter",
+          "ParameterTypeFullName": "GD.GovernmentSolution.IOutgoingLetter, Sungero.Domain.Interfaces"
         }
       ],
       "Placement": "Shared",
@@ -305,6 +315,38 @@
       "Placement": "Shared",
       "ReturnType": "global::Sungero.Docflow.IAddendum",
       "ReturnTypeFullName": "Sungero.Docflow.IAddendum, Sungero.Domain.Interfaces"
+    },
+    {
+      "Name": "CreateCounterpartyTransferRecord",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "correspondent",
+          "ParameterType": "global::Sungero.Parties.ICounterparty",
+          "ParameterTypeFullName": "Sungero.Parties.ICounterparty, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "errors",
+          "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
+          "ParameterTypeFullName": "System.Collections.Generic.List"
+        },
+        {
+          "Name": "IsRequestTransfer",
+          "ParameterType": "global::System.Boolean",
+          "ParameterTypeFullName": "System.Boolean"
+        },
+        {
+          "Name": "request",
+          "ParameterType": "global::GD.CitizenRequests.IRequest",
+          "ParameterTypeFullName": "GD.CitizenRequests.IRequest, Sungero.Domain.Interfaces"
+        }
+      ],
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
     },
     {
       "Name": "CreateFromDirectoryPublic",
@@ -420,23 +462,22 @@
       "ReturnTypeFullName": "System.Void"
     },
     {
-      "Name": "SendingDocumentAsyncHandlers",
-      "Parameters": [
-        {
-          "Name": "document",
-          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
-          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
-        }
-      ],
-      "Placement": "Shared",
-      "ReturnType": "void",
-      "ReturnTypeFullName": "System.Void"
-    },
-    {
       "Name": "SendInternalMail",
       "Parameters": [
         {
           "Name": "item",
+          "ParameterType": "global::GD.TransmitterModule.IInternalMailRegister",
+          "ParameterTypeFullName": "GD.TransmitterModule.IInternalMailRegister, Sungero.Domain.Interfaces"
+        }
+      ],
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "SendInternalTransfer",
+      "Parameters": [
+        {
+          "Name": "transferRecord",
           "ParameterType": "global::GD.TransmitterModule.IInternalMailRegister",
           "ParameterTypeFullName": "GD.TransmitterModule.IInternalMailRegister, Sungero.Domain.Interfaces"
         }
@@ -473,6 +514,19 @@
     {
       "Name": "ShowTransmitterSettings",
       "Placement": "Client",
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "StartSendingDocuments",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
+          "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
       "ReturnType": "void",
       "ReturnTypeFullName": "System.Void"
     }
@@ -545,7 +599,8 @@
     "GeneratedArchiveExceedsMaxSize",
     "CorrespondentDeliveryMethodIsEmpty",
     "BusinessUnitCEOIsEmpty",
-    "DeliveryState_Error"
+    "DeliveryState_Error",
+    "DocumentNotFound"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

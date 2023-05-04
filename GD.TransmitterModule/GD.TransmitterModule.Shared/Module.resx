@@ -167,4 +167,7 @@
   <data name="DeliveryState_Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="DocumentNotFound" xml:space="preserve">
+    <value>Document not found</value>
+  </data>
 </root>

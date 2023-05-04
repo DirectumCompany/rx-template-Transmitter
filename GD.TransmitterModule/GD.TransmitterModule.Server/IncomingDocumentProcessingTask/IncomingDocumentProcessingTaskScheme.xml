@@ -3,21 +3,29 @@
   <Blocks>
     <BlockBase xsi:type="StartBlock">
       <Id>1</Id>
+      <BlockTypeId xsi:nil="true" />
+      <CustomProperties />
     </BlockBase>
     <BlockBase xsi:type="FinishBlock">
       <Id>2</Id>
+      <BlockTypeId xsi:nil="true" />
+      <CustomProperties />
       <UnderReview>false</UnderReview>
       <ReviewAssignmentId>0</ReviewAssignmentId>
     </BlockBase>
     <BlockBase xsi:type="ScriptBlock">
       <Id>3</Id>
+      <BlockTypeId xsi:nil="true" />
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Создание/синхронизациѝ входящего документа</Title>
+      <CustomProperties />
     </BlockBase>
     <BlockBase xsi:type="AssignmentBlock">
       <Id>4</Id>
+      <BlockTypeId xsi:nil="true" />
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Задание на региcтрацию</Title>
+      <CustomProperties />
       <GroupsAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>fb2047a7-21bc-4bf5-9c29-3c30b5a56623</GroupId>
@@ -35,7 +43,6 @@
           <AttachmentsRightsType>676a7c2d-f883-4528-b190-84fa0e3cc0f3</AttachmentsRightsType>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
-      <CustomProperties />
       <TypeGuid>2fabb4be-1133-4579-9aff-fec24fb98851</TypeGuid>
       <CreatedEntitiesIds />
       <Performers />
@@ -54,8 +61,10 @@
     </BlockBase>
     <BlockBase xsi:type="AssignmentBlock">
       <Id>5</Id>
+      <BlockTypeId xsi:nil="true" />
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Задание на доработку</Title>
+      <CustomProperties />
       <GroupsAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>d426ad5b-ee1a-441a-a24b-9aca06efc617</GroupId>
@@ -68,7 +77,6 @@
           <AttachmentsRightsType>179af257-a60f-44b8-97b5-1d5bbd06716b</AttachmentsRightsType>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
-      <CustomProperties />
       <TypeGuid>0e51b567-2880-4fdb-970a-6a4633399156</TypeGuid>
       <CreatedEntitiesIds />
       <Performers />
