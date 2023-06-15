@@ -174,8 +174,8 @@ namespace GD.TransmitterModule.Server
         }
         else*/
           document = IncomingLetters.Create();
-          
-          document.DeliveryMethod = GovernmentSolution.MailDeliveryMethods.GetAll().Where(m => m.Sid == PublicConstants.Module.DeliveryMethod.DirectumRX).FirstOrDefault();
+          var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
+          document.DeliveryMethod = GovernmentSolution.MailDeliveryMethods.GetAll().Where(m => m.Sid == directumRXDeliveryMethodSid).FirstOrDefault();
           
           // Записать исходящий документ (документ-основание) во входящий в В ответ на.
           document.InResponseTo = Sungero.Docflow.OutgoingDocumentBases.As(reasonDoc);

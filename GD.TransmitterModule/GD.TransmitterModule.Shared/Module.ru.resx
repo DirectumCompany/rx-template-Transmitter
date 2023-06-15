@@ -143,9 +143,6 @@
   <data name="IncomingRequestLetter" xml:space="preserve">
     <value>Входящее письмо по обращению</value>
   </data>
-  <data name="DirectumRXDeliveryMethod" xml:space="preserve">
-    <value>Директум RX</value>
-  </data>
   <data name="CounterpartyIsNotEmail" xml:space="preserve">
     <value>У корреспондента {0} не заполнен E-mail</value>
   </data>
@@ -169,5 +166,11 @@
   </data>
   <data name="DocumentNotFound" xml:space="preserve">
     <value>Документ не найден.</value>
+  </data>
+  <data name="MailMethodNotFound" xml:space="preserve">
+    <value>Способ доставки "Почта" не был найден</value>
+  </data>
+  <data name="MethodMedoNotFound" xml:space="preserve">
+    <value>Сособ доставки "МЭДО" не был найден</value>
   </data>
 </root>

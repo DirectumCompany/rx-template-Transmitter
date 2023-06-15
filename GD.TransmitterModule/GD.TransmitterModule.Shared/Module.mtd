@@ -29,7 +29,7 @@
     },
     {
       "NameGuid": "9d048f7c-1b78-44fc-b37c-4cb894a7db97",
-      "Name": "SendDocumentToAddressees",
+      "Name": "SendDocumentToAddresseesInternalMail",
       "DelayPeriod": 3,
       "DelayStrategy": "RegularDelayStrategy",
       "IsHandlerGenerated": true,
@@ -72,6 +72,25 @@
           "NameGuid": "b933dea4-fba0-4d79-9b64-72a29c664005",
           "Name": "InternalMailRegisterId",
           "ParameterType": "Integer"
+        }
+      ]
+    },
+    {
+      "NameGuid": "a21c3b60-728d-4eee-927d-f734f406f5d3",
+      "Name": "SendDocumentToAddresseesMedo",
+      "DelayPeriod": 3,
+      "DelayStrategy": "RegularDelayStrategy",
+      "IsHandlerGenerated": true,
+      "Parameters": [
+        {
+          "NameGuid": "05bbc9c1-f5fb-47ff-bf7b-7b8639ef775d",
+          "Name": "DocumentID",
+          "ParameterType": "Integer"
+        },
+        {
+          "NameGuid": "4fb7ec84-e088-4956-83a0-bf45b9b18784",
+          "Name": "RelationDocumentIDs",
+          "ParameterType": "String"
         }
       ]
     }
@@ -135,27 +154,10 @@
   ],
   "IconResourcesKeys": [],
   "Importance": "Medium",
-  "InitializationFunctions": [
-    {
-      "Name": "CreateElectronicDeliveryMethod",
-      "Parameters": [
-        {
-          "Name": "name",
-          "ParameterType": "global::System.String",
-          "ParameterTypeFullName": "System.String"
-        },
-        {
-          "Name": "sid",
-          "ParameterType": "global::System.String",
-          "ParameterTypeFullName": "System.String"
-        }
-      ],
-      "ReturnType": "void",
-      "ReturnTypeFullName": "System.Void"
-    }
-  ],
   "InterfaceAssemblyName": "Sungero.Domain.Interfaces",
   "InterfaceNamespace": "GD.TransmitterModule",
+  "IsolatedAssemblyName": "GD.TransmitterModule.Isolated",
+  "IsolatedNamespace": "GD.TransmitterModule.Isolated",
   "IsVisible": false,
   "Jobs": [
     {
@@ -168,7 +170,7 @@
     },
     {
       "NameGuid": "e53276c8-c164-47df-8089-c1bb28cc27ba",
-      "Name": "SendOutgoingMail",
+      "Name": "SendOutgoingEMail",
       "Daily": "Repeat",
       "GenerateHandler": true,
       "MonthSchedule": "Monthly",
@@ -186,15 +188,6 @@
     "IsVisible"
   ],
   "PublicConstants": [
-    {
-      "Name": "DirectumRX",
-      "ParentClasses": [
-        "Module",
-        "DeliveryMethod"
-      ],
-      "TypeName": "System.String",
-      "Value": "\"DB866210-2F13-4B7F-AD6C-1857AA078843\""
-    },
     {
       "Name": "EmailSendingResponsibleRoleGuid",
       "ParentClasses": [
@@ -518,12 +511,38 @@
       "ReturnTypeFullName": "System.Void"
     },
     {
-      "Name": "StartSendingDocuments",
+      "Name": "StartInternalSendingDocuments",
       "Parameters": [
         {
           "Name": "document",
           "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
           "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "StartSendingDocumentToAddresseesEMail",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOutgoingDocumentBase",
+          "ParameterTypeFullName": "Sungero.Docflow.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "void",
+      "ReturnTypeFullName": "System.Void"
+    },
+    {
+      "Name": "StartStartSendingDocumentToAddresseesMedo",
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Docflow.IOutgoingDocumentBase",
+          "ParameterTypeFullName": "Sungero.Docflow.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
         }
       ],
       "Placement": "Shared",
@@ -592,7 +611,6 @@
     "DeliveryState_Return",
     "DeliveryState_RedirectedTo",
     "IncomingRequestLetter",
-    "DirectumRXDeliveryMethod",
     "CounterpartyIsNotEmail",
     "SendError",
     "EmailSendingResponsibleRoleName",
@@ -600,7 +618,9 @@
     "CorrespondentDeliveryMethodIsEmpty",
     "BusinessUnitCEOIsEmpty",
     "DeliveryState_Error",
-    "DocumentNotFound"
+    "DocumentNotFound",
+    "MailMethodNotFound",
+    "MethodMedoNotFound"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

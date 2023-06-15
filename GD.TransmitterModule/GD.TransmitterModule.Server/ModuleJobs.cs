@@ -13,7 +13,7 @@ namespace GD.TransmitterModule.Server
     /// <summary>
     /// Исходящие. Отправка сообщений по e-mail.
     /// </summary>
-    public virtual void SendOutgoingMail()
+    public virtual void SendOutgoingEMail()
     {
       var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
       

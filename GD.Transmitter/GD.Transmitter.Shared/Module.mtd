@@ -29,6 +29,8 @@
   "Importance": "Medium",
   "InterfaceAssemblyName": "Sungero.Domain.Interfaces",
   "InterfaceNamespace": "GD.Transmitter",
+  "IsolatedAssemblyName": "GD.Transmitter.Isolated",
+  "IsolatedNamespace": "GD.Transmitter.Isolated",
   "OrderedSpecialFolders": [],
   "PublicStructures": [],
   "ResourceInterfaceAssemblyName": "Sungero.Domain.Interfaces",

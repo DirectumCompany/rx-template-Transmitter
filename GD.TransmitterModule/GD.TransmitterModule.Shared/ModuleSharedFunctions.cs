@@ -67,24 +67,28 @@ namespace GD.TransmitterModule.Shared
     /// </summary>
     /// <param name="document">Основной документ для отправки.</param>
     [Public]
-    public void StartSendingDocuments(Sungero.Docflow.IOfficialDocument document)
+    public void StartInternalSendingDocuments(Sungero.Docflow.IOfficialDocument document)
     {
       Logger.DebugFormat("StartSendingDocuments. Start function for document Id = {0}.", document.Id);
       
       var relatedDocumentsIds = string.Empty;
       var outgoingRequestLetter = OutgoingRequestLetters.As(document);
+      var isTransfer = false;
       
       if (OutgoingLetters.Is(document))
         relatedDocumentsIds = string.Join(",", OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());
       else if (outgoingRequestLetter != null)
+      {
         relatedDocumentsIds = string.Join(",", outgoingRequestLetter.DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());
+        isTransfer = CitizenRequests.PublicFunctions.OutgoingRequestLetter.Remote.IsTransfer(outgoingRequestLetter);
+      }
       
-      var asyncSendingHandler = AsyncHandlers.SendDocumentToAddressees.Create();
+      var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesInternalMail.Create();
       asyncSendingHandler.DocumentID = document.Id;
       asyncSendingHandler.RelationDocumentIDs = relatedDocumentsIds;
-      asyncSendingHandler.IsRequestTransfer = outgoingRequestLetter != null && CitizenRequests.PublicFunctions.OutgoingRequestLetter.Remote.IsTransfer(outgoingRequestLetter);
+      asyncSendingHandler.IsRequestTransfer = isTransfer; 
       
-      if (asyncSendingHandler.IsRequestTransfer)
+      if (isTransfer)
       {
         var request = outgoingRequestLetter.Request ?? outgoingRequestLetter.Requests.FirstOrDefault().Request;
         asyncSendingHandler.RequestId = request.Id;
@@ -92,6 +96,37 @@ namespace GD.TransmitterModule.Shared
       asyncSendingHandler.ExecuteAsync();
       
       Logger.DebugFormat("StartSendingDocuments. End function for document Id = {0}.", document.Id);
+    }
+    
+    /// <summary>
+    /// Стартовать АО для отправки документа по Email.
+    /// </summary>
+    /// <param name="document">Документ.</param>
+    [Public]
+    public virtual void StartSendingDocumentToAddresseesEMail(Sungero.Docflow.IOutgoingDocumentBase document)
+    {
+      var sendDocumentToAddresseesEMail = AsyncHandlers.SendDocumentToAddresseesEMail.Create();
+      sendDocumentToAddresseesEMail.DocumentId = document.Id;
+      sendDocumentToAddresseesEMail.SenderId = Sungero.Company.Employees.Current != null ? Sungero.Company.Employees.Current.Id : -1;
+      sendDocumentToAddresseesEMail.DocumentsSetId = Guid.NewGuid().ToString();
+      sendDocumentToAddresseesEMail.ExecuteAsync();
+    }
+    
+    /// <summary>
+    /// Запустить АО для отправки докумнета по МЭДО.
+    /// </summary>
+    /// <param name="document">Документ.</param>
+    [Public]
+    public virtual void StartStartSendingDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase document)
+    {
+      var relatedDocuments = OutgoingLetters.Is(document) ?
+        OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList() :
+        OutgoingRequestLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList();
+      var relatedDocumentsIds = string.Join(",", relatedDocuments);
+      var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesMedo.Create();
+      asyncSendingHandler.DocumentID = document.Id;
+      asyncSendingHandler.RelationDocumentIDs = relatedDocumentsIds;
+      asyncSendingHandler.ExecuteAsync();
     }
   }
 }
