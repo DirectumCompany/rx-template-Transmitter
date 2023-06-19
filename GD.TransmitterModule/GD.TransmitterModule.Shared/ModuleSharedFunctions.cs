@@ -80,7 +80,7 @@ namespace GD.TransmitterModule.Shared
       else if (outgoingRequestLetter != null)
       {
         relatedDocumentsIds = string.Join(",", outgoingRequestLetter.DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList());
-        isTransfer = CitizenRequests.PublicFunctions.OutgoingRequestLetter.Remote.IsTransfer(outgoingRequestLetter);
+        isTransfer = CitizenRequests.PublicFunctions.OutgoingRequestLetter.IsTransfer(outgoingRequestLetter);
       }
       
       var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesInternalMail.Create();

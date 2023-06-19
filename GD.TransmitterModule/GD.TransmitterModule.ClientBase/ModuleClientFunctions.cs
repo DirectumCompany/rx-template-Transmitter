@@ -288,7 +288,7 @@ namespace GD.TransmitterModule.Client
     [Public]
     public virtual Structures.Module.ISendToAddresseeResult SendToAddressee(IOutgoingRequestLetter document)
     {
-      if (!CitizenRequests.PublicFunctions.OutgoingRequestLetter.Remote.IsTransfer(document))
+      if (!CitizenRequests.PublicFunctions.OutgoingRequestLetter.IsTransfer(document))
       {
         var allRelatedDocuments = new List<Sungero.Content.IElectronicDocument>();;
         
