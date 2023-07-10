@@ -310,12 +310,17 @@
       "ReturnTypeFullName": "Sungero.Docflow.IAddendum, Sungero.Domain.Interfaces"
     },
     {
-      "Name": "CreateCounterpartyTransferRecord",
+      "Name": "CreateDirectumRXTransferRegisterRecord",
       "Parameters": [
         {
           "Name": "document",
           "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
           "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "relatedDocs",
+          "ParameterType": "global::System.Linq.IQueryable<global::Sungero.Content.IElectronicDocument>",
+          "ParameterTypeFullName": "System.Linq.IQueryable"
         },
         {
           "Name": "correspondent",
@@ -326,16 +331,6 @@
           "Name": "errors",
           "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
           "ParameterTypeFullName": "System.Collections.Generic.List"
-        },
-        {
-          "Name": "IsRequestTransfer",
-          "ParameterType": "global::System.Boolean",
-          "ParameterTypeFullName": "System.Boolean"
-        },
-        {
-          "Name": "request",
-          "ParameterType": "global::GD.CitizenRequests.IRequest",
-          "ParameterTypeFullName": "GD.CitizenRequests.IRequest, Sungero.Domain.Interfaces"
         }
       ],
       "ReturnType": "void",
@@ -361,17 +356,12 @@
       "ReturnTypeFullName": "System.Void"
     },
     {
-      "Name": "DirRXSendToCounterparty",
+      "Name": "CreateMailRegisterRecord",
       "Parameters": [
         {
           "Name": "document",
           "ParameterType": "global::Sungero.Docflow.IOfficialDocument",
           "ParameterTypeFullName": "Sungero.Docflow.IOfficialDocument, Sungero.Domain.Interfaces"
-        },
-        {
-          "Name": "relatedDocs",
-          "ParameterType": "global::System.Linq.IQueryable<global::Sungero.Content.IElectronicDocument>",
-          "ParameterTypeFullName": "System.Linq.IQueryable"
         },
         {
           "Name": "correspondent",
@@ -382,6 +372,16 @@
           "Name": "errors",
           "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
           "ParameterTypeFullName": "System.Collections.Generic.List"
+        },
+        {
+          "Name": "IsRequestTransfer",
+          "ParameterType": "global::System.Boolean",
+          "ParameterTypeFullName": "System.Boolean"
+        },
+        {
+          "Name": "request",
+          "ParameterType": "global::GD.CitizenRequests.IRequest",
+          "ParameterTypeFullName": "GD.CitizenRequests.IRequest, Sungero.Domain.Interfaces"
         }
       ],
       "ReturnType": "void",
@@ -458,7 +458,7 @@
       "Name": "SendInternalMail",
       "Parameters": [
         {
-          "Name": "item",
+          "Name": "internalMailRegister",
           "ParameterType": "global::GD.TransmitterModule.IInternalMailRegister",
           "ParameterTypeFullName": "GD.TransmitterModule.IInternalMailRegister, Sungero.Domain.Interfaces"
         }
@@ -470,7 +470,7 @@
       "Name": "SendInternalTransfer",
       "Parameters": [
         {
-          "Name": "transferRecord",
+          "Name": "internalMailRegister",
           "ParameterType": "global::GD.TransmitterModule.IInternalMailRegister",
           "ParameterTypeFullName": "GD.TransmitterModule.IInternalMailRegister, Sungero.Domain.Interfaces"
         }
@@ -619,7 +619,7 @@
     "BusinessUnitCEOIsEmpty",
     "DeliveryState_Error",
     "DocumentNotFound",
-    "MailMethodNotFound",
+    "EmailMethodNotFound",
     "MethodMedoNotFound"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",

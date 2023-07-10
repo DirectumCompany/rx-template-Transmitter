@@ -234,11 +234,11 @@ namespace GD.TransmitterModule.Server
           // Создание сообщения для копии.
           if (!string.IsNullOrEmpty(copyTo) && isCopyNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.Sender, copyTo);
+            Functions.Module.CreateEmailRegisterRecord(letter, item, args.Sender, copyTo);
           }
           if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.Sender, string.Empty);
+            Functions.Module.CreateEmailRegisterRecord(letter, item, args.Sender, string.Empty);
           }
         }*/
         
@@ -253,16 +253,17 @@ namespace GD.TransmitterModule.Server
           {
             isStateNotSent = (item as IOutgoingRequestLetterAddressees).DocumentState != Resources.DeliveryState_Sent;
           }
+          
           // Создание сообщения для копии.
           if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.SenderId, args.DocumentsSetId);
+            Functions.Module.CreateEmailRegisterRecord(letter, item, args.SenderId, args.DocumentsSetId);
           }
         }
       }
       catch (Exception ex)
       {
-        Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: Error = " + ex.Message);
+        Logger.ErrorFormat("Debug SendDocumentToAddresseesEMail: Error = " + ex.Message);
       }
       finally
       {

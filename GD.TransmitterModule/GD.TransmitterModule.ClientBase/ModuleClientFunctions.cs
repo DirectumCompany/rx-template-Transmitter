@@ -134,7 +134,7 @@ namespace GD.TransmitterModule.Client
       var methodEmail = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
       
       if (methodEmail == null)
-        AppliedCodeException.Create(GD.TransmitterModule.Resources.MailMethodNotFound);
+        AppliedCodeException.Create(GD.TransmitterModule.Resources.EmailMethodNotFound);
       
       var errorsEmail = new List<string>();
       var addresseesEmail = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(x => Equals(x.DeliveryMethod, methodEmail) && string.IsNullOrEmpty(x.DocumentState));
@@ -262,10 +262,9 @@ namespace GD.TransmitterModule.Client
       // TODO. Чтобы запись в истории отображалась корректно, название действия (переменная operation) необходимо локализовать
       // (создать ресурс в необходимом типе документа с названием Enum_Operation_<значение перечисления>. Например, Enum_Operation_SendAddressees)
       if (existSending)
+      {
         Functions.Module.Remote.WriteSendingDocsInHistory(document);
       
-      if (document.State.Properties.Addressees.IsChanged)
-      {
         if (!document.IsManyAddressees.Value)
           document.DocumentState = Resources.AwaitingDispatch;
         
@@ -335,7 +334,7 @@ namespace GD.TransmitterModule.Client
       var methodEmail = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
       
       if (methodEmail == null)
-        AppliedCodeException.Create(GD.TransmitterModule.Resources.MailMethodNotFound);
+        AppliedCodeException.Create(GD.TransmitterModule.Resources.EmailMethodNotFound);
       
       var errorsEmail = new List<string>();
       var addresseesEmail = document.Addressees.Cast<IOutgoingRequestLetterAddressees>().Where(x => Equals(x.DeliveryMethod, methodEmail) && string.IsNullOrEmpty(x.DocumentState));
@@ -464,10 +463,7 @@ namespace GD.TransmitterModule.Client
       if (existSending)
       {
         Functions.Module.Remote.WriteSendingDocsInHistory(document);
-      }
-      
-      if (document.State.Properties.Addressees.IsChanged)
-      {
+        
         if (!document.IsManyAddressees.Value)
           document.DocumentState = Resources.AwaitingDispatch;
         

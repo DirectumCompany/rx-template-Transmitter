@@ -167,8 +167,8 @@
   <data name="DocumentNotFound" xml:space="preserve">
     <value>Document not found</value>
   </data>
-  <data name="MailMethodNotFound" xml:space="preserve">
-    <value>The delivery method "Mail" was not found</value>
+  <data name="EmailMethodNotFound" xml:space="preserve">
+    <value>The delivery method "Email" was not found</value>
   </data>
   <data name="MethodMedoNotFound" xml:space="preserve">
     <value>The delivery method "MEDO" was not found</value>

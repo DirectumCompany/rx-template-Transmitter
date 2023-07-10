@@ -53,23 +53,23 @@ namespace GD.TransmitterModule.Server
     /// <summary>
     /// Отправить исх., документ перенаправлением.
     /// </summary>
-    /// <param name="transferRecord">Элемент очереди отправки.</param>
+    /// <param name="internalMailRegister">Запись реестра для отправки в рамках системы.</param>
     [Public]
-    public virtual void SendInternalTransfer(IInternalMailRegister transferRecord)
+    public virtual void SendInternalTransfer(IInternalMailRegister internalMailRegister)
     {
-      var outgoingRequestLetter = GD.CitizenRequests.OutgoingRequestLetters.As(transferRecord.LeadingDocument);
+      var outgoingRequestLetter = GD.CitizenRequests.OutgoingRequestLetters.As(internalMailRegister.LeadingDocument);
       
       try
       {
         if (!Locks.TryLock(outgoingRequestLetter))
           return;
         
-        var correspondent = transferRecord.Correspondent;
+        var correspondent = internalMailRegister.Correspondent;
         
         if (outgoingRequestLetter == null)
           throw AppliedCodeException.Create(Resources.DocumentNotFound);
         
-        var task = CitizenRequests.PublicFunctions.Module.Remote.StartInternalTransfer(outgoingRequestLetter, transferRecord.Request, correspondent);
+        var task = CitizenRequests.PublicFunctions.Module.Remote.StartInternalTransfer(outgoingRequestLetter, internalMailRegister.Request, correspondent);
         var deliveryMethodSid = GD.CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
         var addresses = outgoingRequestLetter.Addressees.Cast<IOutgoingRequestLetterAddressees>().Where(a => Equals(a.Correspondent, correspondent) &&
                                                                                                         a.DeliveryMethod != null &&
@@ -85,17 +85,17 @@ namespace GD.TransmitterModule.Server
         addressee.ForwardDate = Calendar.Today;
         
         outgoingRequestLetter.Save();
-        transferRecord.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
-        transferRecord.TaskId = task.Id;
-        transferRecord.Save();
+        internalMailRegister.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
+        internalMailRegister.TaskId = task.Id;
+        internalMailRegister.Save();
       }
       catch (Exception ex)
       {
         Logger.ErrorFormat("TransmitterModule. ФП Исходящие. Отправка сообщений RX-RX. Произошла ошибка при отправке исх. документа перенаправлением в записи id = {0} \"Реестра отправки сообщений в рамках системы\": {1}.",
-                           transferRecord.Id, ex);
-        transferRecord.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
-        transferRecord.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
-        transferRecord.Save();
+                           internalMailRegister.Id, ex);
+        internalMailRegister.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
+        internalMailRegister.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
+        internalMailRegister.Save();
       }
       finally
       {
@@ -599,18 +599,18 @@ namespace GD.TransmitterModule.Server
     /// <summary>
     /// Отправка исходящего документа в DirectumRX.
     /// </summary>
-    /// <param name="item">Элемент очереди отправки.</param>
+    /// <param name="internalMailRegister">Запись реестра для отправки в рамках системы.</param>
     [Public]
-    public void SendInternalMail(IInternalMailRegister item)
+    public void SendInternalMail(IInternalMailRegister internalMailRegister)
     {
-      var document = Sungero.Docflow.OfficialDocuments.As(item.LeadingDocument);
+      var document = Sungero.Docflow.OfficialDocuments.As(internalMailRegister.LeadingDocument);
       
       try
       {
         if (!Locks.TryLock(document))
           return;
         
-        var correspondent = item.Correspondent;
+        var correspondent = internalMailRegister.Correspondent;
         
         if (document == null)
           throw AppliedCodeException.Create(Resources.DocumentNotFound);
@@ -620,12 +620,12 @@ namespace GD.TransmitterModule.Server
         procTask.ToBusinessUnit = Sungero.Company.BusinessUnits.GetAll().Where(b => b.Status == Sungero.CoreEntities.DatabookEntry.Status.Active && Companies.Equals(b.Company, correspondent)).FirstOrDefault();
         procTask.ToCounterparty = correspondent;
         
-        foreach (var relatedDoc in item.RelatedDocuments.Where(x => x.Document != null).Select(x => x.Document))
+        foreach (var relatedDoc in internalMailRegister.RelatedDocuments.Where(x => x.Document != null).Select(x => x.Document))
         {
           var newAddendum = procTask.Addendums.AddNew();
           newAddendum.Reason = relatedDoc;
         }
-        procTask.CreatedFrom = item;
+        procTask.CreatedFrom = internalMailRegister;
         
         procTask.Save();
         procTask.Start();
@@ -673,17 +673,17 @@ namespace GD.TransmitterModule.Server
           outgoingRequestLetter.Save();
         }
         
-        item.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
-        item.TaskId = procTask.Id;
-        item.Save();
+        internalMailRegister.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
+        internalMailRegister.TaskId = procTask.Id;
+        internalMailRegister.Save();
       }
       catch (Exception ex)
       {
         Logger.ErrorFormat("TransmitterModule. ФП Исходящие. Отправка сообщений RX-RX. Произошла ошибка при отправке исх. документа в DirecumRX в записи id = {0} \"Реестра отправки сообщений в рамках системы\": {1}.",
-                           item.Id, ex);
-        item.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
-        item.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
-        item.Save();
+                           internalMailRegister.Id, ex);
+        internalMailRegister.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
+        internalMailRegister.Status = GD.TransmitterModule.InternalMailRegister.Status.Error;
+        internalMailRegister.Save();
       }
       finally
       {
@@ -876,6 +876,7 @@ namespace GD.TransmitterModule.Server
       }
       catch (Exception ex)
       {
+        Logger.ErrorFormat("An error occurred when creating a record to send by MEDO: {0}", ex);
         errors.Add(ex.ToString());
       }
     }
@@ -888,7 +889,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="company">Адресат.</param>
     /// <param name="errors">Ошибки при отправке.</param>
     [Public]
-    public void DirRXSendToCounterparty(Sungero.Docflow.IOfficialDocument document,
+    public void CreateDirectumRXTransferRegisterRecord(Sungero.Docflow.IOfficialDocument document,
                                         IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
                                         Sungero.Parties.ICounterparty correspondent,
                                         List<string> errors)
@@ -912,6 +913,7 @@ namespace GD.TransmitterModule.Server
       }
       catch (Exception ex)
       {
+        Logger.ErrorFormat("CreateDirectumRXTransferRegisterRecord. An error occurred when creating a registry entry to send DirectumRX: {0}", ex);
         errors.Add(ex.ToString());
       }
     }
@@ -925,7 +927,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="IsRequestTransfer">Перенаправление обращения</param>
     /// <param name="request">Обращение для перенаправления.</param>
     [Public]
-    public void CreateCounterpartyTransferRecord(Sungero.Docflow.IOfficialDocument document,
+    public void CreateMailRegisterRecord(Sungero.Docflow.IOfficialDocument document,
                                                  Sungero.Parties.ICounterparty correspondent,
                                                  List<string> errors,
                                                  bool IsRequestTransfer,
@@ -948,6 +950,7 @@ namespace GD.TransmitterModule.Server
       }
       catch (Exception ex)
       {
+        Logger.ErrorFormat("CreateMailRegisterRecord. An error occurred when creating an entry in the registry for transfering: {0}", ex);
         errors.Add(ex.ToString());
       }
     }
@@ -960,35 +963,42 @@ namespace GD.TransmitterModule.Server
     /// <param name="senderId">ИД отправителя</param>
     /// <param name="copyTo">e-mail для отправки копии</param>
     /// <param name="documentsSetId">ИД комплекта документов к отправке</param>
-    public void CreateMailRegisterItem(Sungero.Docflow.IOutgoingDocumentBase letter,
-                                       Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
-                                       int senderId,
-                                       string documentsSetId)
+    public void CreateEmailRegisterRecord(Sungero.Docflow.IOutgoingDocumentBase letter,
+                                               Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
+                                               int senderId,
+                                               string documentsSetId)
     {
-      if (!MailRegisters.GetAll(x => x.Correspondent == addressee.Correspondent &&
-                                x.LeadingDocument == letter &&
-                                x.Status == GD.TransmitterModule.MailRegister.Status.ToProcess).Any())
+      try
       {
-        var registerItem = MailRegisters.Create();
-        registerItem.Correspondent = addressee.Correspondent;
-        if (addressee.Correspondent != null)
-          registerItem.Email = addressee.Correspondent.Email;
-        registerItem.LeadingDocument = letter;
-        
-        if (OutgoingLetters.Is(letter))
-          foreach (var relatedDoc in OutgoingLetters.As(letter).DocsToSendGD)
-            registerItem.RelatedDocuments.AddNew().Document = relatedDoc.Document;
-        else if (OutgoingRequestLetters.Is(letter))
-          foreach (var relatedDoc in OutgoingRequestLetters.As(letter).DocsToSendGD)
-            registerItem.RelatedDocuments.AddNew().Document = relatedDoc.Document;
-        
-        registerItem.Status = GD.TransmitterModule.MailRegister.Status.ToProcess;
-        registerItem.Sender = Sungero.Company.Employees.GetAll(emp => emp.Id == senderId).FirstOrDefault();
-        registerItem.AddresseeId = addressee.Id;
-        registerItem.DepartureDate = Calendar.Now;
-        registerItem.MailType = GD.TransmitterModule.MailRegister.MailType.OutgoingLetter;
-        registerItem.DocumentsSetId = documentsSetId;
-        registerItem.Save();
+        if (!MailRegisters.GetAll(x => x.Correspondent == addressee.Correspondent &&
+                                  x.LeadingDocument == letter &&
+                                  x.Status == GD.TransmitterModule.MailRegister.Status.ToProcess).Any())
+        {
+          var registerItem = MailRegisters.Create();
+          registerItem.Correspondent = addressee.Correspondent;
+          if (addressee.Correspondent != null)
+            registerItem.Email = addressee.Correspondent.Email;
+          registerItem.LeadingDocument = letter;
+          
+          if (OutgoingLetters.Is(letter))
+            foreach (var relatedDoc in OutgoingLetters.As(letter).DocsToSendGD)
+              registerItem.RelatedDocuments.AddNew().Document = relatedDoc.Document;
+          else if (OutgoingRequestLetters.Is(letter))
+            foreach (var relatedDoc in OutgoingRequestLetters.As(letter).DocsToSendGD)
+              registerItem.RelatedDocuments.AddNew().Document = relatedDoc.Document;
+          
+          registerItem.Status = GD.TransmitterModule.MailRegister.Status.ToProcess;
+          registerItem.Sender = Sungero.Company.Employees.GetAll(emp => emp.Id == senderId).FirstOrDefault();
+          registerItem.AddresseeId = addressee.Id;
+          registerItem.DepartureDate = Calendar.Now;
+          registerItem.MailType = GD.TransmitterModule.MailRegister.MailType.OutgoingLetter;
+          registerItem.DocumentsSetId = documentsSetId;
+          registerItem.Save();
+        }
+      }
+      catch (Exception ex)
+      {
+        Logger.ErrorFormat("CreateEmailRegisterRecord. An error occurred when creating an entry to send by Email: {0}", ex);
       }
     }
     
@@ -1017,7 +1027,7 @@ namespace GD.TransmitterModule.Server
         foreach (var item in awaitingDispatchAddresses)
         {
           var addresse = item.FirstOrDefault();
-          DirRXSendToCounterparty(letter, relatedDocs, addresse.Correspondent, errors);
+          CreateDirectumRXTransferRegisterRecord(letter, relatedDocs, addresse.Correspondent, errors);
         }
       }
       else
@@ -1029,7 +1039,7 @@ namespace GD.TransmitterModule.Server
           .ToList();
         
         foreach (var addresse in awaitingDispatchAddresses)
-          CreateCounterpartyTransferRecord(letter, addresse.Correspondent, errors, IsRequestTransfer, request);
+          CreateMailRegisterRecord(letter, addresse.Correspondent, errors, IsRequestTransfer, request);
       }
       
       if (letter.State.Properties.Addressees.IsChanged)

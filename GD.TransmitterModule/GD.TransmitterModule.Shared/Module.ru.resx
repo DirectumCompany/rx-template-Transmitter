@@ -167,10 +167,10 @@
   <data name="DocumentNotFound" xml:space="preserve">
     <value>Документ не найден.</value>
   </data>
-  <data name="MailMethodNotFound" xml:space="preserve">
-    <value>Способ доставки "Почта" не был найден</value>
+  <data name="EmailMethodNotFound" xml:space="preserve">
+    <value>Способ доставки "Эл. почта" не был найден</value>
   </data>
   <data name="MethodMedoNotFound" xml:space="preserve">
-    <value>Сособ доставки "МЭДО" не был найден</value>
+    <value>Способ доставки "МЭДО" не был найден</value>
   </data>
 </root>
