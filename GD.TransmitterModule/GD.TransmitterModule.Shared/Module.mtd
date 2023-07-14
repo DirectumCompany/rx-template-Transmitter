@@ -175,6 +175,14 @@
       "GenerateHandler": true,
       "MonthSchedule": "Monthly",
       "TimePeriod": 10
+    },
+    {
+      "NameGuid": "6262541d-e389-4846-86a9-7f487dffeb0c",
+      "Name": "UpdateCorrespondentSendState",
+      "Daily": "Repeat",
+      "GenerateHandler": true,
+      "MonthSchedule": "Monthly",
+      "TimePeriod": 10
     }
   ],
   "Libraries": [
@@ -620,7 +628,8 @@
     "DeliveryState_Error",
     "DocumentNotFound",
     "EmailMethodNotFound",
-    "MethodMedoNotFound"
+    "MethodMedoNotFound",
+    "DuplicatesCorrespondents"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

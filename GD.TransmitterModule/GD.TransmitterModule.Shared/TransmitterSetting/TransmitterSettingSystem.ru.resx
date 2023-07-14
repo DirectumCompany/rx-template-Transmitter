@@ -73,4 +73,10 @@
   <data name="Property_MaxAttachmentFileSize" xml:space="preserve">
     <value>Максимальный размер вложений для отправки по email (Мб)</value>
   </data>
+  <data name="Property_MaxProcessingRecordsPerRun" xml:space="preserve">
+    <value>Ограничение кол-ва элементов очереди отправки за один запуск ФП</value>
+  </data>
+  <data name="Property_MaxRetrySendEmailCount" xml:space="preserve">
+    <value>Максимальное кол-во попыток отправки письма</value>
+  </data>
 </root>

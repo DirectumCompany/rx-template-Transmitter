@@ -103,4 +103,16 @@
   <data name="Property_IsRequestTransfer" xml:space="preserve">
     <value>Transferred of request </value>
   </data>
+  <data name="Property_NeedUpdateStatusInfoInDocument" xml:space="preserve">
+    <value>Need update status info in document</value>
+  </data>
+  <data name="Property_NewCorrespondent" xml:space="preserve">
+    <value>New correspondent</value>
+  </data>
+  <data name="Property_CounterpartyState" xml:space="preserve">
+    <value>Counterparty state</value>
+  </data>
+  <data name="Property_StateInfo" xml:space="preserve">
+    <value>State info</value>
+  </data>
 </root>

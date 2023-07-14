@@ -103,4 +103,16 @@
   <data name="Property_IsRequestTransfer" xml:space="preserve">
     <value>Перенаправление обращения</value>
   </data>
+  <data name="Property_NeedUpdateStatusInfoInDocument" xml:space="preserve">
+    <value>Необходима актуализация статуса в документе</value>
+  </data>
+  <data name="Property_NewCorrespondent" xml:space="preserve">
+    <value>Новый корреспондент</value>
+  </data>
+  <data name="Property_CounterpartyState" xml:space="preserve">
+    <value>Статус у контрагента</value>
+  </data>
+  <data name="Property_StateInfo" xml:space="preserve">
+    <value>Информация по статусу</value>
+  </data>
 </root>

@@ -41,6 +41,32 @@
           "RowNumber": 0,
           "RowSpan": 1,
           "Settings": []
+        },
+        {
+          "$type": "Sungero.Metadata.ControlMetadata, Sungero.Metadata",
+          "NameGuid": "4d1556a1-f303-4aef-8f7e-7df95b7950ad",
+          "Name": "MaxProcessingRecordsPerRun",
+          "ColumnNumber": 0,
+          "ColumnSpan": 1,
+          "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.NumericEditorToIntAndDoubleBinder",
+          "ParentGuid": "fc203f6e-0eb5-4987-b18a-2d45bf5aae5f",
+          "PropertyGuid": "de0fed42-c246-4644-bc6c-41436eefd58e",
+          "RowNumber": 1,
+          "RowSpan": 1,
+          "Settings": []
+        },
+        {
+          "$type": "Sungero.Metadata.ControlMetadata, Sungero.Metadata",
+          "NameGuid": "741dde3c-1918-45fc-ad2c-e35132f328e4",
+          "Name": "MaxRetrySendEmailCount",
+          "ColumnNumber": 0,
+          "ColumnSpan": 1,
+          "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.NumericEditorToIntAndDoubleBinder",
+          "ParentGuid": "fc203f6e-0eb5-4987-b18a-2d45bf5aae5f",
+          "PropertyGuid": "de7dae34-8209-4dc8-bcf2-3a5e8718c8f4",
+          "RowNumber": 2,
+          "RowSpan": 1,
+          "Settings": []
         }
       ]
     }
@@ -71,6 +97,22 @@
       "IsQuickSearchAllowed": true,
       "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.StringEditorToStringBinder",
       "PreviousPropertyGuid": "1dcedc29-5140-4770-ac92-eabc212326a1"
+    },
+    {
+      "$type": "Sungero.Metadata.IntegerPropertyMetadata, Sungero.Metadata",
+      "NameGuid": "de0fed42-c246-4644-bc6c-41436eefd58e",
+      "Name": "MaxProcessingRecordsPerRun",
+      "Code": "MaxProcRec",
+      "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.NumericEditorToIntAndDoubleBinder",
+      "PreviousPropertyGuid": "c71b3f8d-de64-4bab-8bda-762c8d864b02"
+    },
+    {
+      "$type": "Sungero.Metadata.IntegerPropertyMetadata, Sungero.Metadata",
+      "NameGuid": "de7dae34-8209-4dc8-bcf2-3a5e8718c8f4",
+      "Name": "MaxRetrySendEmailCount",
+      "Code": "MaxRetrySendEm",
+      "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.NumericEditorToIntAndDoubleBinder",
+      "PreviousPropertyGuid": "de0fed42-c246-4644-bc6c-41436eefd58e"
     }
   ],
   "PublicStructures": [],

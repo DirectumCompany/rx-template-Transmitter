@@ -5,11 +5,13 @@
       <Id>1</Id>
       <BlockTypeId xsi:nil="true" />
       <CustomProperties />
+      <ParameterOperations />
     </BlockBase>
     <BlockBase xsi:type="FinishBlock">
       <Id>2</Id>
       <BlockTypeId xsi:nil="true" />
       <CustomProperties />
+      <ParameterOperations />
       <UnderReview>false</UnderReview>
       <ReviewAssignmentId>0</ReviewAssignmentId>
     </BlockBase>
@@ -19,6 +21,7 @@
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Создание/синхронизациѝ входящего документа</Title>
       <CustomProperties />
+      <ParameterOperations />
     </BlockBase>
     <BlockBase xsi:type="AssignmentBlock">
       <Id>4</Id>
@@ -26,6 +29,7 @@
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Задание на региcтрацию</Title>
       <CustomProperties />
+      <ParameterOperations />
       <GroupsAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>fb2047a7-21bc-4bf5-9c29-3c30b5a56623</GroupId>
@@ -43,6 +47,7 @@
           <AttachmentsRightsType>676a7c2d-f883-4528-b190-84fa0e3cc0f3</AttachmentsRightsType>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
+      <AttachmentGroupsSettings />
       <TypeGuid>2fabb4be-1133-4579-9aff-fec24fb98851</TypeGuid>
       <CreatedEntitiesIds />
       <Performers />
@@ -58,6 +63,7 @@
       <RelativeStopDeadlineDays xsi:nil="true" />
       <RelativeStopDeadlineHours xsi:nil="true" />
       <AbsoluteStopAssignmentsDeadlineInternal>0001-01-01T00:00:00</AbsoluteStopAssignmentsDeadlineInternal>
+      <ExecutionResults />
     </BlockBase>
     <BlockBase xsi:type="AssignmentBlock">
       <Id>5</Id>
@@ -65,6 +71,7 @@
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Задание на доработку</Title>
       <CustomProperties />
+      <ParameterOperations />
       <GroupsAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>d426ad5b-ee1a-441a-a24b-9aca06efc617</GroupId>
@@ -77,6 +84,7 @@
           <AttachmentsRightsType>179af257-a60f-44b8-97b5-1d5bbd06716b</AttachmentsRightsType>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
+      <AttachmentGroupsSettings />
       <TypeGuid>0e51b567-2880-4fdb-970a-6a4633399156</TypeGuid>
       <CreatedEntitiesIds />
       <Performers />
@@ -92,6 +100,7 @@
       <RelativeStopDeadlineDays xsi:nil="true" />
       <RelativeStopDeadlineHours xsi:nil="true" />
       <AbsoluteStopAssignmentsDeadlineInternal>0001-01-01T00:00:00</AbsoluteStopAssignmentsDeadlineInternal>
+      <ExecutionResults />
     </BlockBase>
   </Blocks>
   <Edges>
