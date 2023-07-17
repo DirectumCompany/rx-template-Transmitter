@@ -363,6 +363,7 @@ namespace GD.TransmitterModule.Server
       var settings = TransmitterSettings.Create();
       settings.Name = TransmitterSettings.Info.LocalizedName;
       settings.MaxAttachmentFileSize = 15;
+      settings.MaxRetrySendEmailCount = 1;
       settings.Save();
     }
     

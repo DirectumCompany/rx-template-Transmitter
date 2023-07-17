@@ -103,6 +103,7 @@
       "NameGuid": "de0fed42-c246-4644-bc6c-41436eefd58e",
       "Name": "MaxProcessingRecordsPerRun",
       "Code": "MaxProcRec",
+      "IsRequired": true,
       "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.NumericEditorToIntAndDoubleBinder",
       "PreviousPropertyGuid": "c71b3f8d-de64-4bab-8bda-762c8d864b02"
     },
