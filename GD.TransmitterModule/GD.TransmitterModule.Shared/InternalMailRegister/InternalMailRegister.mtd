@@ -266,7 +266,7 @@
       "PreviousPropertyGuid": "63faf647-db34-4f7b-8efe-7051bd93a552"
     },
     {
-      "$type": "Sungero.Metadata.IntegerPropertyMetadata, Sungero.Metadata",
+      "$type": "Sungero.Metadata.LongIntegerPropertyMetadata, Sungero.Metadata",
       "NameGuid": "ff765b27-6706-4288-9ecd-aa100233bfa8",
       "Name": "TaskId",
       "Code": "TaskId",
@@ -358,7 +358,7 @@
   "Versions": [
     {
       "Type": "EntityMetadata",
-      "Number": 11
+      "Number": 12
     }
   ]
 }

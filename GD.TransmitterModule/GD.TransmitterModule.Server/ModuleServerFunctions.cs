@@ -632,7 +632,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="document">Идентификатор документа.</param>
     /// </summary>
     [Remote(IsPure = true), Public]
-    public static Sungero.Core.Enumeration GetDocRegState(int id)
+    public static Sungero.Core.Enumeration GetDocRegState(long id)
     {
       return Sungero.Docflow.OfficialDocuments.Get(id).RegistrationState.Value;
     }
@@ -1020,7 +1020,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="documentsSetId">ИД комплекта документов к отправке</param>
     public void CreateEmailRegisterRecord(Sungero.Docflow.IOutgoingDocumentBase letter,
                                                Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
-                                               int senderId,
+                                               long senderId,
                                                string documentsSetId)
     {
       try

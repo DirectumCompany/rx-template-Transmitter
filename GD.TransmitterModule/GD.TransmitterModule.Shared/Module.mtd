@@ -11,19 +11,19 @@
       "IsHandlerGenerated": true,
       "Parameters": [
         {
-          "NameGuid": "3797d078-5321-4e31-8d52-62e085867ef6",
-          "Name": "DocumentId",
-          "ParameterType": "Integer"
-        },
-        {
-          "NameGuid": "9a03d812-252e-4d08-9ad0-7b1ecd5d1431",
+          "NameGuid": "8cf973a7-c3ee-4795-a5ce-097a0fbdc5c9",
           "Name": "SenderId",
-          "ParameterType": "Integer"
+          "ParameterType": "LongInteger"
         },
         {
           "NameGuid": "dcbe0a75-c111-483d-a503-d3e538dd1e88",
           "Name": "DocumentsSetId",
           "ParameterType": "String"
+        },
+        {
+          "NameGuid": "f51beaf0-aac0-4bd1-b156-5e3b032412aa",
+          "Name": "DocumentId",
+          "ParameterType": "LongInteger"
         }
       ]
     },
@@ -35,9 +35,9 @@
       "IsHandlerGenerated": true,
       "Parameters": [
         {
-          "NameGuid": "0b022821-a3fa-4d16-aa5b-cc38cfa31e61",
+          "NameGuid": "4f50a03e-8ebc-4fbb-bb20-8038b9137b3c",
           "Name": "DocumentID",
-          "ParameterType": "Integer"
+          "ParameterType": "LongInteger"
         },
         {
           "NameGuid": "882ff9e5-ede3-4200-aed6-35d1c2fbecd5",
@@ -50,9 +50,9 @@
           "ParameterType": "Boolean"
         },
         {
-          "NameGuid": "f3e0c98f-e11c-4edb-8b7a-bf4548758ca5",
+          "NameGuid": "a66e59cb-6b9f-4216-bb4c-a6774de973dc",
           "Name": "RequestId",
-          "ParameterType": "Integer"
+          "ParameterType": "LongInteger"
         }
       ]
     },
@@ -69,9 +69,9 @@
           "ParameterType": "String"
         },
         {
-          "NameGuid": "b933dea4-fba0-4d79-9b64-72a29c664005",
+          "NameGuid": "a7ad8b86-c306-43c9-af86-6442fcadf473",
           "Name": "InternalMailRegisterId",
-          "ParameterType": "Integer"
+          "ParameterType": "LongInteger"
         }
       ]
     },
@@ -83,9 +83,9 @@
       "IsHandlerGenerated": true,
       "Parameters": [
         {
-          "NameGuid": "05bbc9c1-f5fb-47ff-bf7b-7b8639ef775d",
+          "NameGuid": "0511355e-c665-440b-8922-ba8290aaf910",
           "Name": "DocumentID",
-          "ParameterType": "Integer"
+          "ParameterType": "LongInteger"
         },
         {
           "NameGuid": "4fb7ec84-e088-4956-83a0-bf45b9b18784",
@@ -401,8 +401,8 @@
       "Parameters": [
         {
           "Name": "id",
-          "ParameterType": "global::System.Int32",
-          "ParameterTypeFullName": "System.Int32"
+          "ParameterType": "global::System.Int64",
+          "ParameterTypeFullName": "System.Int64"
         }
       ],
       "Placement": "Shared",

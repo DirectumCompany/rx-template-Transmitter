@@ -106,8 +106,8 @@ namespace GD.TransmitterModule.Server
           return;
         }
         
-        var request = args.RequestId != 0 ? Requests.Get(args.RequestId) : Requests.Null;
-        var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+        var request = args.RequestId != 0 ? GD.CitizenRequests.Requests.Get(args.RequestId) : GD.CitizenRequests.Requests.Null;
+        var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
         var relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relatedDocIDs.Contains(d.Id));
         
         Logger.Debug("SendDocumentToAddressees: start SendDocumentToAddressees.");
@@ -146,10 +146,10 @@ namespace GD.TransmitterModule.Server
         }
         
         var relatedDocs = Enumerable.Empty<Sungero.Content.IElectronicDocument>().AsQueryable();
-        var relatedDocIDs = new List<int>();
+        var relatedDocIDs = new List<long>();
         
         if (!string.IsNullOrEmpty(args.RelationDocumentIDs))
-          relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+          relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
         
         relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relatedDocIDs.Contains(d.Id));
         
