@@ -13,11 +13,11 @@ namespace GD.TransmitterModule.Server
     /// <summary>
     /// Обновить состояние отправки корреспондента в документе.
     /// </summary>
-    public virtual void UpdateCorrespondentSendState()
+    public virtual void UpdateDocumentsStateInternalMail()
     {
       Logger.DebugFormat("UpdateStateInSentDocuments. Start");
       var items = InternalMailRegisters.GetAll(r => r.Status == GD.TransmitterModule.InternalMailRegister.Status.Complete &&
-                                               r.NeedUpdateStatusInfoInDocument == true &&
+                                               r.SyncStateInDocument == GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess &&
                                                r.LeadingDocument != null &&
                                                r.Correspondent != null);
       foreach (var item in items)
@@ -38,22 +38,22 @@ namespace GD.TransmitterModule.Server
           Logger.DebugFormat("UpdateStateInSentDocuments. Processing document {0}", item.LeadingDocument.Id);
           
           if (GD.GovernmentSolution.OutgoingLetters.Is(item.LeadingDocument))
-            Functions.Module.UpdateCorrespondentSendState(GD.GovernmentSolution.OutgoingLetters.As(item.LeadingDocument),
-                                                          item.Correspondent,
-                                                          item.CounterpartyState,
-                                                          item.StateInfo,
-                                                          item.NewCorrespondent == true);
+            Functions.Module.UpdateDocumentsStateInternalMail(GD.GovernmentSolution.OutgoingLetters.As(item.LeadingDocument),
+                                                              item.Correspondent,
+                                                              item.CounterpartyState,
+                                                              item.CounterpartyStatusInfo,
+                                                              item.IsRedirect == true);
           
           if (GD.CitizenRequests.OutgoingRequestLetters.Is(item.LeadingDocument))
-            Functions.Module.UpdateCorrespondentSendState(GD.CitizenRequests.OutgoingRequestLetters.As(item.LeadingDocument),
-                                                          item.Correspondent,
-                                                          item.CounterpartyState,
-                                                          item.StateInfo,
-                                                          item.NewCorrespondent == true);
+            Functions.Module.UpdateDocumentsStateInternalMail(GD.CitizenRequests.OutgoingRequestLetters.As(item.LeadingDocument),
+                                                              item.Correspondent,
+                                                              item.CounterpartyState,
+                                                              item.CounterpartyStatusInfo,
+                                                              item.IsRedirect == true);
           
             
-          item.NeedUpdateStatusInfoInDocument = false;
-          item.NewCorrespondent = false;
+          item.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.Complete;
+          item.IsRedirect = false;
           item.Save();
         }
         catch (Exception ex)
@@ -88,8 +88,8 @@ namespace GD.TransmitterModule.Server
       
       var records = MailRegisters.GetAll(x => x.Status == GD.TransmitterModule.MailRegister.Status.ToProcess &&
                                          (x.MailType == null || x.MailType == GD.TransmitterModule.MailRegister.MailType.OutgoingLetter));
-      var maxRetryCount = settings.MaxProcessingRecordsPerRun;
-      records = maxRetryCount == null ? records : records.Take(maxRetryCount.Value);
+      var maxProcessingRecordsPerRun = settings.MaxProcessingRecordsPerRun;
+      records = maxProcessingRecordsPerRun == null ? records : records.Take(maxProcessingRecordsPerRun.Value);
       var attachmentPaths = new Dictionary<string, string>();
       
       foreach (var item in records)
@@ -117,7 +117,7 @@ namespace GD.TransmitterModule.Server
           attachmentPaths.Add(item.DocumentsSetId, pathToArchive);
         }
         
-        Functions.Module.SendDocumentAddresseesEMail(item, pathToArchive, maxRetryCount);
+        Functions.Module.SendDocumentAddresseesEMail(item, pathToArchive, settings.MaxRetrySendEmailCount);
       }
       
       foreach (var path in attachmentPaths)

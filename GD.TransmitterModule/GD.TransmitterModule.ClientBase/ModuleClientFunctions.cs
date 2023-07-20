@@ -265,7 +265,7 @@ namespace GD.TransmitterModule.Client
       {
         Functions.Module.Remote.WriteSendingDocsInHistory(document);
       
-        if (!document.IsManyAddressees.Value)
+        if (document.IsManyAddressees == false)
           document.DocumentState = Resources.AwaitingDispatch;
         
         document.Save();
@@ -464,7 +464,7 @@ namespace GD.TransmitterModule.Client
       {
         Functions.Module.Remote.WriteSendingDocsInHistory(document);
         
-        if (!document.IsManyAddressees.Value)
+        if (document.IsManyAddressees == false)
           document.DocumentState = Resources.AwaitingDispatch;
         
         document.Save();

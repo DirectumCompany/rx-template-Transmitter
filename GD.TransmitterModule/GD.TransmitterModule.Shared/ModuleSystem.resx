@@ -89,7 +89,7 @@
     <value>Sending document to addressees by MEDO</value>
   </data>
   <data name="JobDisplayName_6262541de389484686a97f487dffeb0c" xml:space="preserve">
-    <value>Outgoing. RX-RX. Updating state in sent documents</value>
+    <value>Outgoing. RX-RX. Updating statuses in sent documents within the system</value>
   </data>
   <data name="JobDescription_6262541de389484686a97f487dffeb0c" xml:space="preserve">
     <value>Updates document processing statuses for correspondents</value>

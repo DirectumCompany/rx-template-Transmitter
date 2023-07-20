@@ -26,21 +26,21 @@ namespace GD.TransmitterModule.Server
         return;
       
       register.CounterpartyState = state;
-      register.StateInfo = comment;
-      register.NeedUpdateStatusInfoInDocument = true;
+      register.CounterpartyStatusInfo = comment;
+      register.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
       
       register.Save();
     }
     
     /// <summary>
-    /// Обновить состояние отправки корреспондента в документе.
+    /// Обновить состояние отправки корреспондента в документе отправленного внутри системы.
     /// </summary>
     /// <param name="requestLetter">Исходящее письмо по обращению.</param>
     /// <param name="correspondent">Корреспондент.</param>
     /// <param name="state">Состояние.</param>
     /// <param name="comment">Комментарий.</param>
     /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
-    public virtual void UpdateCorrespondentSendState(IOutgoingRequestLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingRequestLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
@@ -70,14 +70,14 @@ namespace GD.TransmitterModule.Server
     }
     
     /// <summary>
-    /// Обновить состояние отправки корреспондента в документе.
+    /// Обновить состояние отправки корреспондента в документе отправленного внутри системы.
     /// </summary>
     /// <param name="requestLetter">Исходящее письмо.</param>
     /// <param name="correspondent">Корреспондент.</param>
     /// <param name="state">Состояние.</param>
     /// <param name="comment">Комментарий.</param>
     /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
-    public virtual void UpdateCorrespondentSendState(IOutgoingLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
@@ -677,7 +677,7 @@ namespace GD.TransmitterModule.Server
           var newAddendum = procTask.Addendums.AddNew();
           newAddendum.Reason = relatedDoc;
         }
-        procTask.CreatedFrom = internalMailRegister;
+        procTask.GeneratedFrom = internalMailRegister;
         
         procTask.Save();
         procTask.Start();
@@ -1096,9 +1096,6 @@ namespace GD.TransmitterModule.Server
         foreach (var addresse in awaitingDispatchAddresses)
           CreateMailRegisterRecord(letter, addresse.Correspondent, errors, IsRequestTransfer, request);
       }
-      
-      if (letter.State.Properties.Addressees.IsChanged)
-        letter.Save();
       
       SendErrorNoticesAuthor(letter, errors);
       

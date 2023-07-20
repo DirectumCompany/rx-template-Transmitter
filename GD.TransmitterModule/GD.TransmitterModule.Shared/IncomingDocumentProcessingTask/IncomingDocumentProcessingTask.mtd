@@ -213,9 +213,9 @@
     {
       "$type": "Sungero.Metadata.NavigationPropertyMetadata, Sungero.Metadata",
       "NameGuid": "e61f4415-10f0-4480-95fa-00307064a50f",
-      "Name": "CreatedFrom",
+      "Name": "GeneratedFrom",
       "CanBeSearch": false,
-      "Code": "CreatedFrom",
+      "Code": "GeneratedFrom",
       "EntityGuid": "cbe2e152-4c70-40ae-bd00-ff02fedec489",
       "FlatListInStandaloneLookup": true,
       "IsShowedInList": false,

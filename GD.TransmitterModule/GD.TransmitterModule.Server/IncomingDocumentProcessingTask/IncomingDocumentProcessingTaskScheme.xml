@@ -35,16 +35,19 @@
           <GroupId>fb2047a7-21bc-4bf5-9c29-3c30b5a56623</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>6eb00eea-b585-43ce-8a0a-a294146e0825</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>f3293285-c263-48bb-91b8-f27e766dde15</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>676a7c2d-f883-4528-b190-84fa0e3cc0f3</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>d550c07b-3bd6-4171-b052-9d76e31e6ef0</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>676a7c2d-f883-4528-b190-84fa0e3cc0f3</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
       <AttachmentGroupsSettings />
@@ -77,11 +80,13 @@
           <GroupId>d426ad5b-ee1a-441a-a24b-9aca06efc617</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>6eb00eea-b585-43ce-8a0a-a294146e0825</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>a337ace0-c98b-49fe-8af8-8fd4ca743279</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>179af257-a60f-44b8-97b5-1d5bbd06716b</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
       <AttachmentGroupsSettings />
