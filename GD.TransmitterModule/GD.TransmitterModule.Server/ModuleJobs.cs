@@ -53,7 +53,6 @@ namespace GD.TransmitterModule.Server
           
             
           item.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.Complete;
-          item.IsRedirect = false;
           item.Save();
         }
         catch (Exception ex)
