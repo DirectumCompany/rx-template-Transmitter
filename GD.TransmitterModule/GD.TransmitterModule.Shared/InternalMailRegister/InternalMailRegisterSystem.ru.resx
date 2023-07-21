@@ -107,7 +107,7 @@
     <value>Состояние синхронизации в документ</value>
   </data>
   <data name="Property_IsRedirect" xml:space="preserve">
-    <value>Перенаправлено</value>
+    <value>Переадресовано</value>
   </data>
   <data name="Property_CounterpartyState" xml:space="preserve">
     <value>Статус у контрагента</value>
