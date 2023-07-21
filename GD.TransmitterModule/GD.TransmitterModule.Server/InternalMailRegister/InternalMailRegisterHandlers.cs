@@ -13,6 +13,7 @@ namespace GD.TransmitterModule
     public override void Created(Sungero.Domain.CreatedEventArgs e)
     {
       _obj.IsRequestTransfer = false;
+      _obj.IsRedirect = false;
     }
   }
 

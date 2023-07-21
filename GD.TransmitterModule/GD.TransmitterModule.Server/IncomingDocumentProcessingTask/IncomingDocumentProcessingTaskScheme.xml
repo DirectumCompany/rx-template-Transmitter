@@ -5,11 +5,13 @@
       <Id>1</Id>
       <BlockTypeId xsi:nil="true" />
       <CustomProperties />
+      <ParameterOperations />
     </BlockBase>
     <BlockBase xsi:type="FinishBlock">
       <Id>2</Id>
       <BlockTypeId xsi:nil="true" />
       <CustomProperties />
+      <ParameterOperations />
       <UnderReview>false</UnderReview>
       <ReviewAssignmentId>0</ReviewAssignmentId>
     </BlockBase>
@@ -19,6 +21,7 @@
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Создание/синхронизациѝ входящего документа</Title>
       <CustomProperties />
+      <ParameterOperations />
     </BlockBase>
     <BlockBase xsi:type="AssignmentBlock">
       <Id>4</Id>
@@ -26,23 +29,28 @@
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Задание на региcтрацию</Title>
       <CustomProperties />
+      <ParameterOperations />
       <GroupsAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>fb2047a7-21bc-4bf5-9c29-3c30b5a56623</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>6eb00eea-b585-43ce-8a0a-a294146e0825</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>f3293285-c263-48bb-91b8-f27e766dde15</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>676a7c2d-f883-4528-b190-84fa0e3cc0f3</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>d550c07b-3bd6-4171-b052-9d76e31e6ef0</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>676a7c2d-f883-4528-b190-84fa0e3cc0f3</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
+      <AttachmentGroupsSettings />
       <TypeGuid>2fabb4be-1133-4579-9aff-fec24fb98851</TypeGuid>
       <CreatedEntitiesIds />
       <Performers />
@@ -58,6 +66,7 @@
       <RelativeStopDeadlineDays xsi:nil="true" />
       <RelativeStopDeadlineHours xsi:nil="true" />
       <AbsoluteStopAssignmentsDeadlineInternal>0001-01-01T00:00:00</AbsoluteStopAssignmentsDeadlineInternal>
+      <ExecutionResults />
     </BlockBase>
     <BlockBase xsi:type="AssignmentBlock">
       <Id>5</Id>
@@ -65,18 +74,22 @@
       <CreatedInTaskGuid>dbef401e-f8c3-424b-91e8-cb7dd914c8e5</CreatedInTaskGuid>
       <Title>Задание на доработку</Title>
       <CustomProperties />
+      <ParameterOperations />
       <GroupsAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>d426ad5b-ee1a-441a-a24b-9aca06efc617</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>6eb00eea-b585-43ce-8a0a-a294146e0825</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
         <GroupAttachmentsRights>
           <GroupId>a337ace0-c98b-49fe-8af8-8fd4ca743279</GroupId>
           <AttachmentsRights>AllPerformersAllAttachments</AttachmentsRights>
           <AttachmentsRightsType>179af257-a60f-44b8-97b5-1d5bbd06716b</AttachmentsRightsType>
+          <IsNotGreaterInitiatorRights>false</IsNotGreaterInitiatorRights>
         </GroupAttachmentsRights>
       </GroupsAttachmentsRights>
+      <AttachmentGroupsSettings />
       <TypeGuid>0e51b567-2880-4fdb-970a-6a4633399156</TypeGuid>
       <CreatedEntitiesIds />
       <Performers />
@@ -92,6 +105,7 @@
       <RelativeStopDeadlineDays xsi:nil="true" />
       <RelativeStopDeadlineHours xsi:nil="true" />
       <AbsoluteStopAssignmentsDeadlineInternal>0001-01-01T00:00:00</AbsoluteStopAssignmentsDeadlineInternal>
+      <ExecutionResults />
     </BlockBase>
   </Blocks>
   <Edges>

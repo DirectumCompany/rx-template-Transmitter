@@ -100,14 +100,8 @@ namespace GD.TransmitterModule.Server
       
       try
       {
-        if (!Locks.TryLock(letter))
-        {
-          args.Retry = true;
-          return;
-        }
-        
-        var request = args.RequestId != 0 ? Requests.Get(args.RequestId) : Requests.Null;
-        var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+        var request = args.RequestId != 0 ? GD.CitizenRequests.Requests.Get(args.RequestId) : GD.CitizenRequests.Requests.Null;
+        var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
         var relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relatedDocIDs.Contains(d.Id));
         
         Logger.Debug("SendDocumentToAddressees: start SendDocumentToAddressees.");
@@ -122,11 +116,6 @@ namespace GD.TransmitterModule.Server
         Logger.Error("SendDocumentToAddressees: document is locked.", ex);
         args.Retry = true;
         return;
-      }
-      finally
-      {
-        if (Locks.GetLockInfo(letter).IsLockedByMe)
-          Locks.Unlock(letter);
       }
     }
     
@@ -146,10 +135,10 @@ namespace GD.TransmitterModule.Server
         }
         
         var relatedDocs = Enumerable.Empty<Sungero.Content.IElectronicDocument>().AsQueryable();
-        var relatedDocIDs = new List<int>();
+        var relatedDocIDs = new List<long>();
         
         if (!string.IsNullOrEmpty(args.RelationDocumentIDs))
-          relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+          relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
         
         relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relatedDocIDs.Contains(d.Id));
         
@@ -198,12 +187,6 @@ namespace GD.TransmitterModule.Server
       
       try
       {
-        if (!Locks.TryLock(letter))
-        {
-          args.Retry = true;
-          return;
-        }
-        
         Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: FileName - " + string.Format(@"{0}.{1}", letter.Name, "pdf"));
         
         /*var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name,method.Name) ||
@@ -264,11 +247,6 @@ namespace GD.TransmitterModule.Server
       catch (Exception ex)
       {
         Logger.ErrorFormat("Debug SendDocumentToAddresseesEMail: Error = " + ex.Message);
-      }
-      finally
-      {
-        if (Locks.GetLockInfo(letter).IsLockedByMe)
-          Locks.Unlock(letter);
       }
     }
 

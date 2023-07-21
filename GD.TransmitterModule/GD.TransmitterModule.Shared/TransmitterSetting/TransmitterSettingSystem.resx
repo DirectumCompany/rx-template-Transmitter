@@ -73,4 +73,10 @@
   <data name="Property_MaxAttachmentFileSize" xml:space="preserve">
     <value>Maximum size of attachments to be sent by email (MB)</value>
   </data>
+  <data name="Property_MaxProcessingRecordsPerRun" xml:space="preserve">
+    <value>Limiting the number of elements of the send queue for one job launch</value>
+  </data>
+  <data name="Property_MaxRetrySendEmailCount" xml:space="preserve">
+    <value>Maximum number of attempts to send an email</value>
+  </data>
 </root>

@@ -103,4 +103,25 @@
   <data name="Property_IsRequestTransfer" xml:space="preserve">
     <value>Transferred of request </value>
   </data>
+  <data name="Property_SyncStateInDocument" xml:space="preserve">
+    <value>Synchronization status in the document</value>
+  </data>
+  <data name="Property_IsRedirect" xml:space="preserve">
+    <value>Is redirect</value>
+  </data>
+  <data name="Property_CounterpartyState" xml:space="preserve">
+    <value>Counterparty state</value>
+  </data>
+  <data name="Property_CounterpartyStatusInfo" xml:space="preserve">
+    <value>Counterparty status info</value>
+  </data>
+  <data name="Enum_SyncStateInDocument_ToProcess" xml:space="preserve">
+    <value>To process</value>
+  </data>
+  <data name="Enum_SyncStateInDocument_Complete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="Property_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
 </root>

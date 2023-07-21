@@ -139,4 +139,7 @@
   <data name="Property_DocumentsSetId" xml:space="preserve">
     <value>ID of the set of documents</value>
   </data>
+  <data name="Property_MaxProcessingRecordsPerRun" xml:space="preserve">
+    <value />
+  </data>
 </root>

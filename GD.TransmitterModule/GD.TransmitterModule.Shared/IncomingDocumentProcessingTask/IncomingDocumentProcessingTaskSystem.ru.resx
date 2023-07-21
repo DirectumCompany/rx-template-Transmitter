@@ -100,7 +100,7 @@
   <data name="AttachmentGroup_OtherGroupTitle" xml:space="preserve">
     <value>Дополнительно</value>
   </data>
-  <data name="Property_CreatedFrom" xml:space="preserve">
+  <data name="Property_GeneratedFrom" xml:space="preserve">
     <value>Создана из</value>
   </data>
 </root>

@@ -173,4 +173,7 @@
   <data name="MethodMedoNotFound" xml:space="preserve">
     <value>The delivery method "MEDO" was not found</value>
   </data>
+  <data name="DuplicatesCorrespondents" xml:space="preserve">
+    <value>There are duplicates of correspondents in the addressees</value>
+  </data>
 </root>

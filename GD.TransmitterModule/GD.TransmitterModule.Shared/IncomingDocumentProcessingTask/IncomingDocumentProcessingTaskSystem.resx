@@ -118,7 +118,7 @@
   <data name="AttachmentGroup_OtherGroupInformationMessage" xml:space="preserve">
     <value />
   </data>
-  <data name="Property_CreatedFrom" xml:space="preserve">
-    <value>Created from</value>
+  <data name="Property_GeneratedFrom" xml:space="preserve">
+    <value>Generated from</value>
   </data>
 </root>

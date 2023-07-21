@@ -15,6 +15,102 @@ namespace GD.TransmitterModule.Server
   public class ModuleFunctions
   {
     /// <summary>
+    /// Изменить информацию о состоянии отправки RX-RX в реестре
+    /// </summary>
+    /// <param name="register">Запись в реестре отправки RX-RX.</param>
+    /// <param name="state">Состояние отправки.</param>
+    /// <param name="comment">Комментарий.</param>
+    public virtual void ChangeDocumentStateInfoInRegister(IInternalMailRegister register, string state, string comment)
+    {
+      if (register == null)
+        return;
+      
+      register.CounterpartyState = state;
+      register.CounterpartyStatusInfo = comment;
+      register.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
+      
+      register.Save();
+    }
+    
+    /// <summary>
+    /// Обновить состояние отправки корреспондента в документе отправленного внутри системы.
+    /// </summary>
+    /// <param name="requestLetter">Исходящее письмо по обращению.</param>
+    /// <param name="correspondent">Корреспондент.</param>
+    /// <param name="state">Состояние.</param>
+    /// <param name="comment">Комментарий.</param>
+    /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingRequestLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    {
+      var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
+      var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
+                                                                                a.DeliveryMethod.Sid == deliveryMethodSid &&
+                                                                                Equals(a.Correspondent, correspondent)).LastOrDefault();
+      
+      if (append)
+      {
+        using (EntityEvents.Disable(OutgoingRequestLetters.Info.Properties.Addressees.Properties.Correspondent.Events.Changed))
+        {
+          addressee.Correspondent = correspondent;
+        }
+        addressee.DeliveryMethod = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Sid == deliveryMethodSid).FirstOrDefault();
+        ((IOutgoingRequestLetterAddressees)addressee).ForwardDate = Calendar.Today;
+      }
+      ((IOutgoingRequestLetterAddressees)addressee).DocumentState = state;
+      ((IOutgoingRequestLetterAddressees)addressee).StateInfo = comment ?? state;
+      
+      if (requestLetter.IsManyAddressees == false)
+      {
+        requestLetter.DocumentState = state;
+        requestLetter.StateInfo = comment ?? state;
+      }
+      
+      if (requestLetter.State.IsChanged)
+        requestLetter.Save();
+    }
+    
+    /// <summary>
+    /// Обновить состояние отправки корреспондента в документе отправленного внутри системы.
+    /// </summary>
+    /// <param name="requestLetter">Исходящее письмо.</param>
+    /// <param name="correspondent">Корреспондент.</param>
+    /// <param name="state">Состояние.</param>
+    /// <param name="comment">Комментарий.</param>
+    /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    {
+      var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
+      var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
+                                                                                a.DeliveryMethod.Sid == deliveryMethodSid &&
+                                                                                Equals(a.Correspondent, correspondent)).LastOrDefault();
+      
+      if (addressee != null)
+      {
+        if (append)
+        {
+          using (EntityEvents.Disable(OutgoingLetters.Info.Properties.Addressees.Properties.Correspondent.Events.Changed))
+          {
+            addressee.Correspondent = correspondent;
+          }
+          addressee.DeliveryMethod = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Sid == deliveryMethodSid).FirstOrDefault();
+          ((IOutgoingLetterAddressees)addressee).ForwardDateGD = Calendar.Today;
+        }
+        ((IOutgoingLetterAddressees)addressee).DocumentState = state;
+        ((IOutgoingLetterAddressees)addressee).StateInfo = comment ?? state;
+      }
+      
+      if (requestLetter.IsManyAddressees == false)
+      {
+        requestLetter.DocumentState = state;
+        requestLetter.StateInfo = comment ?? state;
+      }
+      
+      if (requestLetter.State.IsChanged)
+        requestLetter.Save();
+    }
+    
+    
+    /// <summary>
     /// Записать отправку в историю.
     /// </summary>
     /// <param name="letter">Исх., письмо.</param>
@@ -267,6 +363,7 @@ namespace GD.TransmitterModule.Server
       var settings = TransmitterSettings.Create();
       settings.Name = TransmitterSettings.Info.LocalizedName;
       settings.MaxAttachmentFileSize = 15;
+      settings.MaxRetrySendEmailCount = 1;
       settings.Save();
     }
     
@@ -295,51 +392,6 @@ namespace GD.TransmitterModule.Server
       copyAddendumVersion.AssociatedApplication = addendumDocVersion.AssociatedApplication;
       
       return copyAddendum;
-    }
-    
-    /// <summary>
-    /// Обновить статус у контрагента в исходящем письме.
-    /// <param name="doc">Документ к отправке.</param>
-    /// <param name="counterparty">Корреспондент.</param>
-    /// <param name="newState">Новый статус.</param>
-    /// <param name="comment">Комментарий.</param>
-    /// </summary>
-    public static void ChangeReasonDocState(Sungero.Docflow.IOfficialDocument doc, Sungero.Parties.ICounterparty counterparty, string newState, string comment)
-    {
-      if (Sungero.Docflow.OutgoingDocumentBases.Is(doc))
-      {
-        var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
-        var addressee = Sungero.Docflow.OutgoingDocumentBases.As(doc).Addressees
-          .Where(a => a.DeliveryMethod?.Sid == directumRXDeliveryMethodSid &&
-                 Equals(a.Correspondent, counterparty)).Last();
-        if (addressee != null)
-        {
-          if (OutgoingLetters.Is(doc))
-          {
-            ((IOutgoingLetterAddressees)addressee).DocumentState = newState;
-            ((IOutgoingLetterAddressees)addressee).StateInfo = comment != null ? comment : newState;
-          }
-          else
-          {
-            ((IOutgoingRequestLetterAddressees)addressee).DocumentState = newState;
-            ((IOutgoingRequestLetterAddressees)addressee).StateInfo = comment != null ? comment : newState;
-          }
-        }
-        if (Sungero.Docflow.OutgoingDocumentBases.As(doc).IsManyAddressees == false)
-        {
-          if (OutgoingLetters.Is(doc))
-          {
-            OutgoingLetters.As(doc).DocumentState = newState;
-            OutgoingLetters.As(doc).StateInfo = comment != null ? comment : newState;
-          }
-          else
-          {
-            OutgoingRequestLetters.As(doc).DocumentState = newState;
-            OutgoingRequestLetters.As(doc).StateInfo = comment != null ? comment : newState;
-          }
-        }
-      }
-      doc.Save();
     }
     
     /// <summary>
@@ -580,7 +632,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="document">Идентификатор документа.</param>
     /// </summary>
     [Remote(IsPure = true), Public]
-    public static Sungero.Core.Enumeration GetDocRegState(int id)
+    public static Sungero.Core.Enumeration GetDocRegState(long id)
     {
       return Sungero.Docflow.OfficialDocuments.Get(id).RegistrationState.Value;
     }
@@ -625,7 +677,7 @@ namespace GD.TransmitterModule.Server
           var newAddendum = procTask.Addendums.AddNew();
           newAddendum.Reason = relatedDoc;
         }
-        procTask.CreatedFrom = internalMailRegister;
+        procTask.GeneratedFrom = internalMailRegister;
         
         procTask.Save();
         procTask.Start();
@@ -643,6 +695,7 @@ namespace GD.TransmitterModule.Server
             addressee.StateInfo = Resources.DeliveryState_Sent;
             addressee.ForwardDateGD = Calendar.Today;
           }
+          
           if (outgoingLetter.IsManyAddressees == false)
           {
             outgoingLetter.DocumentState = Resources.DeliveryState_Sent;
@@ -697,7 +750,7 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="mailRegister">Запись реестра отправки.</param>
     /// <param name="zipName">Путь до архива с вложениями.</param>
-    public void SendDocumentAddresseesEMail(IMailRegister mailRegister, string zipName)
+    public void SendDocumentAddresseesEMail(IMailRegister mailRegister, string zipName, int? maxRetryCount)
     {
       var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
@@ -710,28 +763,28 @@ namespace GD.TransmitterModule.Server
         mailRegister.Save();
         
         var mail = Mail.CreateMailMessage();
-        mail.Body = Resources.MailTemplateFormat(letter.BusinessUnit != null ? letter.BusinessUnit.Name : string.Empty,
-                                                 mailRegister.Sender != null ? mailRegister.Sender.Name : string.Empty,
-                                                 letter.BusinessUnit != null ? letter.BusinessUnit.Email : string.Empty);
+        mail.Body = Resources.MailTemplateFormat(letter.BusinessUnit?.Name ?? string.Empty,
+                                                 mailRegister.Sender?.Name ?? string.Empty,
+                                                 letter.BusinessUnit?.Email ?? string.Empty);
         mail.IsBodyHtml = true;
         mail.Subject = Sungero.Docflow.OfficialDocuments.Resources.SendByEmailSubjectPrefixFormat(letter.Name);
         
         FileStream attachmentStream = null;
+        
         if (File.Exists(zipName))
         {
           attachmentStream = File.OpenRead(zipName);
           mail.AddAttachment(attachmentStream, "Документы к отправке.zip");
-          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 4-3 добавлен архив во вложение ");
         }
-        Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 5 ");
+        
         var isError = false;
+        
         if (!string.IsNullOrWhiteSpace(mailRegister.Correspondent.Email))
         {
           var email = mailRegister.Correspondent.Email;;
-          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 6 = " + email);
           var mailAddress = new System.Net.Mail.MailAddress(email);
           mail.To.Add(email);
-          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 7 Before Send");
+          
           try
           {
             Mail.Send(mail);
@@ -739,76 +792,78 @@ namespace GD.TransmitterModule.Server
             mailRegister.ErrorInfo = string.Empty;
             mailRegister.Save();
           }
-          //          catch (SmtpFailedRecipientsException ex)
-          //          {
-          //            isError = true;
-          //            var errorMessage = string.Empty;
-          //            errorMessage += ex.InnerExceptions.ToList().Select(x => x.Message) + "\n";
-          //            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
-          //            mailRegister.ErrorInfo = errorMessage;
-          //            mailRegister.Save();
-          //            /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
-          //                var att = new List<Sungero.Domain.Shared.IEntity>();
-          //                att.Add(mailRegister);
-          //                att.Add(letter);
-          //                if (config != null && config.NotifAddressees.Any())
-          //                  foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
-          //                    DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", errorMessage, att);*/
-          //          }
           catch (Exception ex)
           {
             Logger.Error("Отправка почтовых сообщений. Ошибка непосредственно при отправке.", ex);
-            isError = true;
-            mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
             mailRegister.ErrorInfo = ex.Message;
+            var isExceededEmailSendLimit = mailRegister.Iteration >= maxRetryCount;            
+            
+            if (isExceededEmailSendLimit)
+            {
+              mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
+              Logger.ErrorFormat("SendDocumentAddresseesEMail. When sending a message by Email, an exception occurred for the record id = {0}: The limit of attempts to send messages has been reached", 
+                                 mailRegister.Id);
+              isError = true;
+            }
+            
             mailRegister.Save();
-            /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
-                var att = new List<Sungero.Domain.Shared.IEntity>();
-                att.Add(mailRegister);
-                att.Add(letter);
-                if (config != null && config.NotifAddressees.Any())
-                  foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
-                    DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", ex.Message, att);*/
           }
-          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 8 After Send");
           
           var addressee = letter.Addressees.FirstOrDefault(x => x.Id == mailRegister.AddresseeId);
-          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 9  Update state and forward date to letter");
-          if (addressee != null && !isError)
+          
+          if (addressee != null)
           {
+            var state = isError ? Resources.DeliveryState_Error : Resources.DeliveryState_Sent;
+            
             if (OutgoingLetters.Is(letter))
             {
-              (addressee as IOutgoingLetterAddressees).DocumentState = Resources.DeliveryState_Sent;
-              (addressee as IOutgoingLetterAddressees).StateInfo = Resources.DeliveryState_Sent;
-              (addressee as IOutgoingLetterAddressees).ForwardDateGD = Calendar.Today;
+              var outgoingLetterAddressee = addressee as IOutgoingLetterAddressees;
+              outgoingLetterAddressee.DocumentState = state;
+              outgoingLetterAddressee.StateInfo = state;
+              
+              if (!isError)
+                outgoingLetterAddressee.ForwardDateGD = Calendar.Today;
+              
+              if (letter.IsManyAddressees == false)
+              {
+                var outgoingtLetter = OutgoingLetters.As(letter);
+                outgoingtLetter.DocumentState = state;
+                
+                if (!isError)
+                  outgoingtLetter.StateInfo = Resources.DeliveryState_Sent;
+              }
             }
             else if (OutgoingRequestLetters.Is(letter))
             {
-              (addressee as IOutgoingRequestLetterAddressees).DocumentState = Resources.DeliveryState_Sent;
-              (addressee as IOutgoingRequestLetterAddressees).StateInfo = Resources.DeliveryState_Sent;
-              (addressee as IOutgoingRequestLetterAddressees).ForwardDate = Calendar.Today;
+              var outgoingRequestLetterAddressee = addressee as IOutgoingRequestLetterAddressees;
+              outgoingRequestLetterAddressee.DocumentState = state;
+              outgoingRequestLetterAddressee.StateInfo = state;
+              
+              if (!isError)
+                outgoingRequestLetterAddressee.ForwardDate = Calendar.Today;
+              
+              if (letter.IsManyAddressees == false)
+              {
+                var requestLetter = OutgoingRequestLetters.As(letter);
+                requestLetter.DocumentState = state;
+                
+                if (!isError)
+                  requestLetter.StateInfo = Resources.DeliveryState_Sent;
+              }
             }
           }
-          Logger.DebugFormat("Debug SendDocumentAddresseesEMail - 10  Finally");
         }
-        attachmentStream.Dispose();
+        
+        attachmentStream?.Dispose();
         letter.Save();
       }
       catch (Exception ex)
       {
-        //Logger.Error(ex.Message);
         Logger.Error("Отправка почтовых сообщений. Ошибка при обработке.", ex);
         mailRegister.ErrorInfo = ex.Message.Substring(0, ex.Message.Length < 1000 ? ex.Message.Length : 1000);
         mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
         mailRegister.Extension = letter != null ? letter.LastVersion.AssociatedApplication.Extension : string.Empty;
         mailRegister.Save();
-        /*var config = DirRX.Support.PublicFunctions.Configuration.Remote.DefaultConfiguration();
-        var att = new List<Sungero.Domain.Shared.IEntity>();
-        att.Add(mailRegister);
-        att.Add(letter);
-        if (config != null && config.NotifAddressees.Any())
-          foreach (var addresseeItem in config.NotifAddressees.Select(x => x.Addressee))
-            DirRX.SiberlinkConnect.PublicFunctions.Module.Remote.SendNotification(false, addresseeItem, "Отправка почтовых сообщений. Ошибка при отправке сообщения.", ex.Message, att);*/
       }
       finally
       {
@@ -965,7 +1020,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="documentsSetId">ИД комплекта документов к отправке</param>
     public void CreateEmailRegisterRecord(Sungero.Docflow.IOutgoingDocumentBase letter,
                                                Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
-                                               int senderId,
+                                               long senderId,
                                                string documentsSetId)
     {
       try
@@ -1041,9 +1096,6 @@ namespace GD.TransmitterModule.Server
         foreach (var addresse in awaitingDispatchAddresses)
           CreateMailRegisterRecord(letter, addresse.Correspondent, errors, IsRequestTransfer, request);
       }
-      
-      if (letter.State.Properties.Addressees.IsChanged)
-        letter.Save();
       
       SendErrorNoticesAuthor(letter, errors);
       
@@ -1130,6 +1182,9 @@ namespace GD.TransmitterModule.Server
       
       if (addresses.Any())
       {
+        if (addresses.GroupBy(a => a.Correspondent).Where(a => a.Count() > 1).Any())
+          errors.Add(GD.TransmitterModule.Resources.DuplicatesCorrespondents);
+        
         var incommingLetterDocumentKind = Sungero.Docflow.DocumentKinds.GetAll().Where(k => k.Name == Sungero.RecordManagement.Resources.IncomingLetterKindName).FirstOrDefault();
         
         foreach (var addresse in addresses)

@@ -14,6 +14,7 @@ namespace GD.TransmitterModule.Server
     {
       CreateTransmitterSettings();
       CreateRoles();
+      GrantRightsForAllUsers();
     }
     
     /// <summary>
@@ -36,6 +37,19 @@ namespace GD.TransmitterModule.Server
         role.RecipientLinks.AddNew().Member = Roles.Administrators;
         role.Save();
       }
+    }
+    
+    /// <summary>
+    /// Выдать права всем пользователям.
+    /// </summary>
+    public static void GrantRightsForAllUsers()
+    {
+      InitializationLogger.Debug("Init: Grant rights to all users.");
+      var allUsers = Roles.AllUsers;
+      
+      // Настройки модуля отправки документов адресатам.
+      TransmitterSettings.AccessRights.Grant(allUsers, DefaultAccessRightsTypes.Read);
+      TransmitterSettings.AccessRights.Save();
     }
   }
 }

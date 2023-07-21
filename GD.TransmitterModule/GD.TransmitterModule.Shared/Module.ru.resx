@@ -173,4 +173,7 @@
   <data name="MethodMedoNotFound" xml:space="preserve">
     <value>Способ доставки "МЭДО" не был найден</value>
   </data>
+  <data name="DuplicatesCorrespondents" xml:space="preserve">
+    <value>В адресатах присутствуют дубли корреспондентов</value>
+  </data>
 </root>
