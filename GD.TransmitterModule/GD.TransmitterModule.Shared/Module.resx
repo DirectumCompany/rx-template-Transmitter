@@ -143,9 +143,6 @@
   <data name="IncomingRequestLetter" xml:space="preserve">
     <value>Incoming Request Letter</value>
   </data>
-  <data name="DirectumRXDeliveryMethod" xml:space="preserve">
-    <value>Directum RX</value>
-  </data>
   <data name="CounterpartyIsNotEmail" xml:space="preserve">
     <value>У корреспондента {0} не заполнен E-mail</value>
   </data>
@@ -166,5 +163,17 @@
   </data>
   <data name="DeliveryState_Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="DocumentNotFound" xml:space="preserve">
+    <value>Document not found</value>
+  </data>
+  <data name="EmailMethodNotFound" xml:space="preserve">
+    <value>The delivery method "Email" was not found</value>
+  </data>
+  <data name="MethodMedoNotFound" xml:space="preserve">
+    <value>The delivery method "MEDO" was not found</value>
+  </data>
+  <data name="DuplicatesCorrespondents" xml:space="preserve">
+    <value>There are duplicates of correspondents in the addressees</value>
   </data>
 </root>

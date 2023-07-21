@@ -86,6 +86,18 @@
     "Controls": [],
     "IsAncestorMetadata": true
   },
+  "Forms": [
+    {
+      "$type": "Sungero.Metadata.WorkflowEntityStandaloneFormMetadata, Sungero.Workflow.Shared",
+      "NameGuid": "a4d6d92a-261a-4c7e-826d-742b7d4062ee",
+      "Name": "Card",
+      "Controls": [],
+      "IsAncestorMetadata": true,
+      "Overridden": [
+        "SettingsResourceKey"
+      ]
+    }
+  ],
   "HandledEvents": [
     "CreatedServer",
     "BeforeStartServer"
@@ -201,9 +213,9 @@
     {
       "$type": "Sungero.Metadata.NavigationPropertyMetadata, Sungero.Metadata",
       "NameGuid": "e61f4415-10f0-4480-95fa-00307064a50f",
-      "Name": "CreatedFrom",
+      "Name": "GeneratedFrom",
       "CanBeSearch": false,
-      "Code": "CreatedFrom",
+      "Code": "GeneratedFrom",
       "EntityGuid": "cbe2e152-4c70-40ae-bd00-ff02fedec489",
       "FlatListInStandaloneLookup": true,
       "IsShowedInList": false,
@@ -250,7 +262,7 @@
   "Versions": [
     {
       "Type": "TaskMetadata",
-      "Number": 1
+      "Number": 2
     },
     {
       "Type": "WorkflowEntityMetadata",
@@ -258,7 +270,7 @@
     },
     {
       "Type": "EntityMetadata",
-      "Number": 11
+      "Number": 12
     }
   ]
 }

@@ -62,9 +62,18 @@
     <value>Отправка документов адресатам по e-mail.  </value>
   </data>
   <data name="AsyncHandler_Description_9d048f7c1b7844fcb37c4cb894a7db97" xml:space="preserve">
-    <value>Отправка документов адресатам</value>
+    <value>Отправка документов адресатам RX-RX</value>
   </data>
   <data name="AsyncHandler_Description_ec4fa070216a4b5cb01de7b00e00dc07" xml:space="preserve">
     <value>Обработчик ошибок в сценарии создания входящего документа в задаче RX-RX</value>
+  </data>
+  <data name="AsyncHandler_Description_a21c3b60728d4eee927df734f406f5d3" xml:space="preserve">
+    <value>Отправка документов адресатам по МЭДО </value>
+  </data>
+  <data name="JobDisplayName_6262541de389484686a97f487dffeb0c" xml:space="preserve">
+    <value>Исходящие. RX-RX. Актуализация статусов в отправленных документах в рамках системы</value>
+  </data>
+  <data name="JobDescription_6262541de389484686a97f487dffeb0c" xml:space="preserve">
+    <value>Актуализирует статусы обработки документа у корреспондентов</value>
   </data>
 </root>

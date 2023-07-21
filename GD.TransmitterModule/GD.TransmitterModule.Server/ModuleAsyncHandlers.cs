@@ -10,7 +10,6 @@ namespace GD.TransmitterModule.Server
 {
   public class ModuleAsyncHandlers
   {
-
     public virtual void HandleErrorInDocumentProcessingTask(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.HandleErrorInDocumentProcessingTaskInvokeArgs args)
     {
       var item = InternalMailRegisters.GetAll(i => i.Id == args.InternalMailRegisterId).FirstOrDefault();
@@ -92,31 +91,24 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="DocumentID">ИД Документа.</param>
     /// <param name="RelationDocumentIDs">Список связанных документов.</param>
-    public virtual void SendDocumentToAddressees(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.SendDocumentToAddresseesInvokeArgs args)
+    public virtual void SendDocumentToAddresseesInternalMail(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.SendDocumentToAddresseesInternalMailInvokeArgs args)
     {
-      var letter = Sungero.Docflow.OfficialDocuments.GetAll(d => d.Id == args.DocumentID).FirstOrDefault();
+      var letter = Sungero.Docflow.OfficialDocuments.Get(args.DocumentID);
+
       if (letter == null)
         return;
-      var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-      var intList = new List<int>();
-      foreach (var ids in relatedDocIDs)
-      {
-        var intId = 0;
-        if (int.TryParse(ids, out intId))
-          intList.Add(intId);
-      }
-      var relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => intList.Contains(d.Id));
       
-      if (Locks.GetLockInfo(letter).IsLocked)
-      {
-        args.Retry = true;
-        return;
-      }
       try
       {
+        var request = args.RequestId != 0 ? GD.CitizenRequests.Requests.Get(args.RequestId) : GD.CitizenRequests.Requests.Null;
+        var relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
+        var relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relatedDocIDs.Contains(d.Id));
+        
         Logger.Debug("SendDocumentToAddressees: start SendDocumentToAddressees.");
+        
         if (Sungero.Docflow.OutgoingDocumentBases.Is(letter))
-          Functions.Module.SendDocumentToAddressees(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs);
+          Functions.Module.SendDocumentToAddresseesInternalMail(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs, args.IsRequestTransfer, request);
+        
         Logger.Debug("SendDocumentToAddressees: end SendDocumentToAddressees.");
       }
       catch (Exception ex)
@@ -124,6 +116,49 @@ namespace GD.TransmitterModule.Server
         Logger.Error("SendDocumentToAddressees: document is locked.", ex);
         args.Retry = true;
         return;
+      }
+    }
+    
+    public virtual void SendDocumentToAddresseesMedo(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.SendDocumentToAddresseesMedoInvokeArgs args)
+    {
+      var letter = Sungero.Docflow.OfficialDocuments.Get(args.DocumentID);
+      
+      if (letter == null)
+        return;
+      
+      try
+      {
+        if (!Locks.TryLock(letter))
+        {
+          args.Retry = true;
+          return;
+        }
+        
+        var relatedDocs = Enumerable.Empty<Sungero.Content.IElectronicDocument>().AsQueryable();
+        var relatedDocIDs = new List<long>();
+        
+        if (!string.IsNullOrEmpty(args.RelationDocumentIDs))
+          relatedDocIDs = args.RelationDocumentIDs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
+        
+        relatedDocs = Sungero.Content.ElectronicDocuments.GetAll(d => relatedDocIDs.Contains(d.Id));
+        
+        Logger.Debug("SendDocumentToAddresseesMedo: start SendDocumentToAddresseesMedo.");
+        
+        if (Sungero.Docflow.OutgoingDocumentBases.Is(letter))
+          Functions.Module.SendDocumentToAddresseesMedo(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs);
+        
+        Logger.Debug("SendDocumentToAddresseesMedo: end SendDocumentToAddresseesMedo.");
+      }
+      catch (Exception ex)
+      {
+        Logger.Error("SendDocumentToAddresseesMedo: Error occured : {0}", ex);
+        args.Retry = true;
+        return;
+      }
+      finally
+      {
+        if (Locks.GetLockInfo(letter).IsLockedByMe)
+          Locks.Unlock(letter);
       }
     }
 
@@ -134,24 +169,24 @@ namespace GD.TransmitterModule.Server
     /// <param name="DocumentID">ИД Документа.</param>
     public virtual void SendDocumentToAddresseesEMail(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.SendDocumentToAddresseesEMailInvokeArgs args)
     {
+      var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
+      
+      if (method == null)
+      {
+        Logger.Error("Debug SendDocumentToAddresseesEMail: Error = Не найден способ доставки по e-mail.");
+        return;
+      }
+      
+      var letter = Sungero.Docflow.OutgoingDocumentBases.Get(args.DocumentId);
+      
+      if (letter == null)
+      {
+        Logger.Error("Debug SendDocumentToAddresseesEMail: Error = Исходящее письмо не найдено.");
+        return;
+      }
+      
       try
       {
-        var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
-        
-        if (method == null)
-        {
-          Logger.Error("Debug SendDocumentToAddresseesEMail: Error = Не найден способ доставки по e-mail.");
-          return;
-        }
-        
-        var letter = Sungero.Docflow.OutgoingDocumentBases.GetAll(x => x.Id == args.DocumentId).FirstOrDefault();
-        
-        if (letter == null)
-        {
-          Logger.Error("Debug SendDocumentToAddresseesEMail: Error = Исходящее письмо не найдено.");
-          return;
-        }
-        
         Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: FileName - " + string.Format(@"{0}.{1}", letter.Name, "pdf"));
         
         /*var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name,method.Name) ||
@@ -182,11 +217,11 @@ namespace GD.TransmitterModule.Server
           // Создание сообщения для копии.
           if (!string.IsNullOrEmpty(copyTo) && isCopyNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.Sender, copyTo);
+            Functions.Module.CreateEmailRegisterRecord(letter, item, args.Sender, copyTo);
           }
           if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.Sender, string.Empty);
+            Functions.Module.CreateEmailRegisterRecord(letter, item, args.Sender, string.Empty);
           }
         }*/
         
@@ -201,16 +236,17 @@ namespace GD.TransmitterModule.Server
           {
             isStateNotSent = (item as IOutgoingRequestLetterAddressees).DocumentState != Resources.DeliveryState_Sent;
           }
+          
           // Создание сообщения для копии.
           if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
           {
-            Functions.Module.CreateMailRegisterItem(letter, item, args.SenderId, args.DocumentsSetId);
+            Functions.Module.CreateEmailRegisterRecord(letter, item, args.SenderId, args.DocumentsSetId);
           }
         }
       }
       catch (Exception ex)
       {
-        Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: Error = " + ex.Message);
+        Logger.ErrorFormat("Debug SendDocumentToAddresseesEMail: Error = " + ex.Message);
       }
     }
 

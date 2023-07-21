@@ -351,13 +351,11 @@
       "PreviousPropertyGuid": "77abad8f-2457-48b0-8449-425f56e6533f"
     },
     {
-      "$type": "Sungero.Metadata.IntegerPropertyMetadata, Sungero.Metadata",
+      "$type": "Sungero.Metadata.LongIntegerPropertyMetadata, Sungero.Metadata",
       "NameGuid": "47ebd004-f14a-47b1-a447-01ac4a300d2e",
       "Name": "MainTaskId",
-      "CanBeSearch": false,
       "Code": "MainTaskId",
       "IsEnabled": false,
-      "IsShowedInList": false,
       "IsVisibility": false,
       "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.NumericEditorToIntAndDoubleBinder",
       "PreviousPropertyGuid": "0204cd64-1d29-40a5-89a9-5d15c898a7cb"
@@ -375,7 +373,7 @@
       "PreviousPropertyGuid": "47ebd004-f14a-47b1-a447-01ac4a300d2e"
     },
     {
-      "$type": "Sungero.Metadata.IntegerPropertyMetadata, Sungero.Metadata",
+      "$type": "Sungero.Metadata.LongIntegerPropertyMetadata, Sungero.Metadata",
       "NameGuid": "b329c9a7-a877-483e-95ea-28c7b5976cf7",
       "Name": "TaskId",
       "Code": "TaskId",
@@ -446,7 +444,7 @@
   "Versions": [
     {
       "Type": "EntityMetadata",
-      "Number": 11
+      "Number": 12
     }
   ]
 }

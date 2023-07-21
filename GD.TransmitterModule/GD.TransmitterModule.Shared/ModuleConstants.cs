@@ -12,13 +12,6 @@ namespace GD.TransmitterModule.Constants
     [Public]
     public static readonly Guid EmailSendingResponsibleRoleGuid = Guid.Parse("B405A458-2F6A-4D43-8B07-3605967CAB62");
     
-    // ГУИДы способов доставки.
-    public static class DeliveryMethod
-    {
-      [Public]
-      public const string DirectumRX = "DB866210-2F13-4B7F-AD6C-1857AA078843";
-    }
-    
     /// <summary>
     /// Действие в историю "Отправка адресатам".
     /// </summary>
