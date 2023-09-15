@@ -121,4 +121,13 @@
   <data name="Property_GeneratedFrom" xml:space="preserve">
     <value>Generated from</value>
   </data>
+  <data name="Block_b2ac50bcf87443e5963071b7d361ff8e" xml:space="preserve">
+    <value>Incoming document creation/synchronization</value>
+  </data>
+  <data name="Block_9868d256c88943ac9919331f84b15743" xml:space="preserve">
+    <value>Registration assignment</value>
+  </data>
+  <data name="Block_3d0f729a4f764ec994b580841fefbf3a" xml:space="preserve">
+    <value>Rework assignment</value>
+  </data>
 </root>

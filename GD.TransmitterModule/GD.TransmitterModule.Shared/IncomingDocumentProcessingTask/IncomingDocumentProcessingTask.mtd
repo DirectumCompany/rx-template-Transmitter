@@ -71,6 +71,44 @@
   ],
   "BaseGuid": "d795d1f6-45c1-4e5e-9677-b53fb7280c7e",
   "BlockIds": [],
+  "Blocks": [
+    {
+      "$type": "Sungero.Metadata.ScriptBlockMetadata, Sungero.Workflow.Shared",
+      "NameGuid": "b2ac50bc-f874-43e5-9630-71b7d361ff8e",
+      "Name": "CreateSynchronizeIncomingDocument",
+      "BaseGuid": "1f76cc5d-f096-4062-b34a-51b3c02269f2",
+      "HandledEvents": [
+        "CreateSynchronizeIncomingDocumentExecute"
+      ],
+      "Properties": []
+    },
+    {
+      "$type": "Sungero.Metadata.AssignmentBlockMetadata, Sungero.Workflow.Shared",
+      "NameGuid": "9868d256-c889-43ac-9919-331f84b15743",
+      "Name": "IncomingDocumentProcessingRegistrationAssignment",
+      "BaseGuid": "9cc122a7-f93b-4053-9219-cd2f22af0365",
+      "EntityType": "2fabb4be-1133-4579-9aff-fec24fb98851",
+      "HandledEvents": [
+        "IncomingDocumentProcessingRegistrationAssignmentStart",
+        "IncomingDocumentProcessingRegistrationAssignmentStartAssignment",
+        "IncomingDocumentProcessingRegistrationAssignmentCompleteAssignment"
+      ],
+      "Properties": []
+    },
+    {
+      "$type": "Sungero.Metadata.AssignmentBlockMetadata, Sungero.Workflow.Shared",
+      "NameGuid": "3d0f729a-4f76-4ec9-94b5-80841fefbf3a",
+      "Name": "IncomingDocumentProcessingReworkAssignment",
+      "BaseGuid": "9cc122a7-f93b-4053-9219-cd2f22af0365",
+      "EntityType": "0e51b567-2880-4fdb-970a-6a4633399156",
+      "HandledEvents": [
+        "IncomingDocumentProcessingReworkAssignmentStart",
+        "IncomingDocumentProcessingReworkAssignmentStartAssignment",
+        "IncomingDocumentProcessingReworkAssignmentCompleteAssignment"
+      ],
+      "Properties": []
+    }
+  ],
   "CanBeNavigationPropertyType": true,
   "CanBeSearch": true,
   "CreationAreaMetadata": {
@@ -259,6 +297,7 @@
     ],
     "VersionsCounter": 1
   },
+  "UseSchemeFromSettings": true,
   "Versions": [
     {
       "Type": "TaskMetadata",
