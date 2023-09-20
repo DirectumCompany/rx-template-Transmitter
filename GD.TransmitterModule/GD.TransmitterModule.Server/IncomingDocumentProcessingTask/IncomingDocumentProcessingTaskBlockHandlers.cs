@@ -10,6 +10,15 @@ using GD.CitizenRequests;
 
 namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
 {
+  partial class SetCounterpartyStateHandlers
+  {
+
+    public virtual void SetCounterpartyStateExecute()
+    {
+      Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, _block.DocumentState, _block.Comment);
+    }
+  }
+
   partial class IncomingDocumentProcessingReworkAssignmentHandlers
   {
 
@@ -24,15 +33,6 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         reworkDocumentAssignment.ActiveText = IncomingDocumentProcessingTasks.Resources.RegistrationCompleteOtherUserFormat(assignment.Performer.Name);
         reworkDocumentAssignment.Complete(result);
       }
-      
-      if (result == GD.TransmitterModule.IncomingDocumentProcessingReworkAssignment.Result.Corrected)
-       Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Sent, null);
-    }
-
-    public virtual void IncomingDocumentProcessingReworkAssignmentStartAssignment(GD.TransmitterModule.IIncomingDocumentProcessingReworkAssignment assignment)
-    {
-      var subject = Sungero.Docflow.PublicFunctions.Module.TrimSpecialSymbols(IncomingDocumentProcessingReworkAssignments.Resources.AssignmentSubject, _obj.ReasonDoc.Name);
-      assignment.Subject = subject.Substring(0, subject.Length > 250 ? 250 : subject.Length);
     }
 
     public virtual void IncomingDocumentProcessingReworkAssignmentStart()
@@ -83,12 +83,8 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         registerDocumentAssignment.Complete(result);
       }
       
-      if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.Register)
-        Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Registered,
-                                                           IncomingDocumentProcessingTasks.Resources.RegistrationStringFormat(_obj.ResultDoc.RegistrationNumber,
-                                                                                                                              _obj.ResultDoc.RegistrationDate.Value.ToShortDateString()));
-      else if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.Rework)
-        Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Return, assignment.ActiveText);
+      if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.Rework)
+        _obj.ReworkText = assignment.ActiveText;
       
       if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.RedirectToBusinessUnit)
       {
@@ -98,8 +94,6 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         
         if (_obj.ReasonDoc != null)
         {
-          Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_RedirectedTo, Resources.DeliveryState_RedirectedTo);
-          
           var newItem = InternalMailRegisters.Create();
           newItem.LeadingDocument = _obj.ReasonDoc;
           newItem.Correspondent = assignment.ToCounterparty;
@@ -119,12 +113,6 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
       {
         _obj.Registrar = assignment.Registrar;
       }
-    }
-
-    public virtual void IncomingDocumentProcessingRegistrationAssignmentStartAssignment(GD.TransmitterModule.IIncomingDocumentProcessingRegistrationAssignment assignment)
-    {
-      var subject = Sungero.Docflow.PublicFunctions.Module.TrimSpecialSymbols(IncomingDocumentProcessingRegistrationAssignments.Resources.AssignmentSubject, _obj.ResultDoc.Name);
-      assignment.Subject = subject.Substring(0, subject.Length > 250 ? 250 : subject.Length);
     }
 
     public virtual void IncomingDocumentProcessingRegistrationAssignmentStart()
@@ -149,10 +137,19 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
       {
         var reasonDoc = _obj.ReasonDoc;
         var reasonDocSubject = string.Empty;
+        var secCategory = GD.MEDO.SecurityCategories.Null;
         if (OutgoingLetters.Is(reasonDoc))
-          reasonDocSubject = OutgoingLetters.As(reasonDoc).Subject;
+        {
+          var reasonOutgoingLetter = OutgoingLetters.As(reasonDoc);
+          reasonDocSubject = reasonOutgoingLetter.Subject;
+          secCategory = reasonOutgoingLetter.SecCategoryGD;
+        }
         if (OutgoingRequestLetters.Is(reasonDoc))
-          reasonDocSubject = OutgoingRequestLetters.As(reasonDoc).Subject;
+        {
+          var reasonOutgoingRequestLetter = OutgoingRequestLetters.As(reasonDoc);
+          reasonDocSubject = reasonOutgoingRequestLetter.Subject;
+          secCategory = reasonOutgoingRequestLetter.SecCategory;
+        }
         
         if (string.IsNullOrEmpty(reasonDocSubject) || string.IsNullOrWhiteSpace(reasonDocSubject))
           reasonDocSubject = reasonDoc.Subject;
@@ -186,6 +183,7 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         document.InResponseTo = Sungero.Docflow.OutgoingDocumentBases.As(inResponseTo?.LeadingDocument);
         document.Correspondent = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Correspondent : */Companies.As(reasonDoc.BusinessUnit.Company);
         document.BusinessUnit = businessUnit;
+        document.SecCategoryGD = secCategory;
         document.Addressee = businessUnit.CEO;
         document.Department = _obj.Registrar != null ? _obj.Registrar.Department : businessUnit.CEO.Department;
         //document.AddresseeDepartment = businessUnit.CEO.Department;

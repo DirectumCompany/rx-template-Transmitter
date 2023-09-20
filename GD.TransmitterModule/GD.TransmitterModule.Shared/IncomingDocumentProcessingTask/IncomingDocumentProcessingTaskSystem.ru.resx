@@ -112,4 +112,16 @@
   <data name="Block_3d0f729a4f764ec994b580841fefbf3a" xml:space="preserve">
     <value>Задание на доработку</value>
   </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594" xml:space="preserve">
+    <value>Установить статус у контрагента</value>
+  </data>
+  <data name="Property_ReworkText" xml:space="preserve">
+    <value>Текст доработки</value>
+  </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594_Property_362d55aaf2db4f34a8225f6551747dbf" xml:space="preserve">
+    <value>Состояние документа</value>
+  </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594_Property_e4f67966b9864c608dbeefaf3192779d" xml:space="preserve">
+    <value>Комментарий</value>
+  </data>
 </root>

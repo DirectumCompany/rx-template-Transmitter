@@ -130,4 +130,16 @@
   <data name="Block_3d0f729a4f764ec994b580841fefbf3a" xml:space="preserve">
     <value>Rework assignment</value>
   </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594" xml:space="preserve">
+    <value>Set counterparty state</value>
+  </data>
+  <data name="Property_ReworkText" xml:space="preserve">
+    <value>Rework text</value>
+  </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594_Property_362d55aaf2db4f34a8225f6551747dbf" xml:space="preserve">
+    <value>Document state</value>
+  </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594_Property_e4f67966b9864c608dbeefaf3192779d" xml:space="preserve">
+    <value>Comment</value>
+  </data>
 </root>
