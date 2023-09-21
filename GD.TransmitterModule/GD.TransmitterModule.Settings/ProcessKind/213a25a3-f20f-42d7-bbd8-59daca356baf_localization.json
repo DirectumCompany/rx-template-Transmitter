@@ -30,11 +30,6 @@
     "default": "Redirected",
     "ru-RU": "Перенаправлено"
   },
-  "Subject_SE_2": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Register document {0}",
-    "ru-RU": "Зарегистрируйте документ {0}"
-  },
   "DocumentState_SE_8": {
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
     "default": "Return",
@@ -44,5 +39,10 @@
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
     "default": "{0}",
     "ru-RU": "{0}"
+  },
+  "Subject_SE_2": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Register document {0}",
+    "ru-RU": "Зарегистрируйте документ {0}"
   }
 }
