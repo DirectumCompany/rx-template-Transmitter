@@ -7,8 +7,5 @@ using GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment;
 
 namespace GD.TransmitterModule
 {
-  partial class IncomingDocumentProcessingRegistrationAssignmentClientHandlers
-  {
 
-  }
 }

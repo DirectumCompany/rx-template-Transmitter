@@ -94,7 +94,8 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRework(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
-      return IncomingDocumentProcessingTasks.Is(_obj.Task);
+      var document = IncomingDocumentProcessingTasks.As(_obj.Task)?.MainDocGroupNew.OfficialDocuments.FirstOrDefault();
+      return document == null || document.RegistrationState != Sungero.Docflow.OfficialDocument.RegistrationState.Registered;
     }
 
     public virtual void Register(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -123,7 +124,8 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRegistration(Sungero.Domain.Client.CanExecuteActionArgs e)
     {
-      return IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupNew.OfficialDocuments.Any();
+      return IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupNew.OfficialDocuments.Any() &&
+        IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupNew.OfficialDocuments.First().RegistrationState != Sungero.Docflow.OfficialDocument.RegistrationState.Registered;
     }
 
   }
