@@ -28,17 +28,27 @@ namespace GD.TransmitterModule.Client
     [Public]
     public static bool CheckExtForMedo(Sungero.Docflow.IOfficialDocument document)
     {
-      bool needDialog = false;
+      var incorrectExtension = false;
+      var incorrectExtensionLength = false;
       
       if (OutgoingLetters.Is(document))
       {
         var outDocLet = OutgoingLetters.As(document);
+        
         foreach (var addendum in outDocLet.DocsToSendGD)
         {
           var docAdd = addendum.Document;
           var ext = docAdd.LastVersion.AssociatedApplication.Extension.ToLower();
+          
+          // отсеивание файлов с длиной расширения меньше 3 или больше 4 символов осуществляетсяв разделяемой функции StartStartSendingDocumentToAddresseesMedo
+          if (ext.Length < 3 || ext.Length > 4)
+          {
+            incorrectExtension = true;
+            incorrectExtensionLength = true;
+            break;
+          }
           if (ext != "pdf" && ext != "tif" && ext != "doc" && ext != "txt" && ext != "xml")
-            needDialog = true;
+            incorrectExtension = true;
         }
       }
       else
@@ -48,15 +58,26 @@ namespace GD.TransmitterModule.Client
         {
           var docAdd = addendum.Document;
           var ext = docAdd.LastVersion.AssociatedApplication.Extension.ToLower();
+          
+          if (ext.Length < 3 || ext.Length > 4)
+          {
+            incorrectExtension = true;
+            incorrectExtensionLength = true;
+            break;
+          }
           if (ext != "pdf" && ext != "tif" && ext != "doc" && ext != "txt" && ext != "xml")
-            needDialog = true;
+            incorrectExtension = true;
         }
       }
       
-      if (needDialog)
+      if (incorrectExtension || incorrectExtensionLength)
       {
+        var dialogText = Resources.NeedCorrectExt;
+        if (incorrectExtensionLength)
+          dialogText = Resources.IncorrectExtLength + dialogText;
+        
         var confirmationDialog = Dialogs.CreateTaskDialog(string.Empty,
-                                                          Resources.NeedCorrectExt,
+                                                          dialogText,
                                                           MessageType.Question);
         var abort = confirmationDialog.Buttons.AddCustom(Resources.Abort);
         confirmationDialog.Buttons.Default = abort;
