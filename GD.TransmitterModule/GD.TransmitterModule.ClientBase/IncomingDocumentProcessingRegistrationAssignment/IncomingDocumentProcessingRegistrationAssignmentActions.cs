@@ -28,8 +28,7 @@ namespace GD.TransmitterModule.Client
     public virtual bool CanRedirectToBusinessUnit(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
       var task = IncomingDocumentProcessingTasks.As(_obj.Task);
-      var document = task.MainDocGroupNew.OfficialDocuments.FirstOrDefault();
-      return document == null ? false : Functions.Module.Remote.GetDocRegState(document.Id) != Sungero.Docflow.OfficialDocument.RegistrationState.Registered && task.Registrar == null;
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj) && task.Registrar == null;
     }
 
     public virtual void RedirectToDepartment(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -82,8 +81,7 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRedirectToDepartment(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
-      var document = IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupNew.OfficialDocuments.FirstOrDefault();
-      return document == null ? false : Functions.Module.Remote.GetDocRegState(document.Id) != Sungero.Docflow.OfficialDocument.RegistrationState.Registered;
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj);
     }
 
     public virtual void Rework(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -94,8 +92,7 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRework(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
-      var document = IncomingDocumentProcessingTasks.As(_obj.Task)?.MainDocGroupNew.OfficialDocuments.FirstOrDefault();
-      return document == null || document.RegistrationState != Sungero.Docflow.OfficialDocument.RegistrationState.Registered;
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj);
     }
 
     public virtual void Register(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -124,8 +121,7 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRegistration(Sungero.Domain.Client.CanExecuteActionArgs e)
     {
-      return IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupNew.OfficialDocuments.Any() &&
-        IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupNew.OfficialDocuments.First().RegistrationState != Sungero.Docflow.OfficialDocument.RegistrationState.Registered;
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj);
     }
 
   }
