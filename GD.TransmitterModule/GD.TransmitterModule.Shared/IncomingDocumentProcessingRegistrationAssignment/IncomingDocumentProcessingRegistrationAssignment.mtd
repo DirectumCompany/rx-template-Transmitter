@@ -274,7 +274,8 @@
       "IsAncestorMetadata": true,
       "Overridden": [
         "Controls",
-        "UseAncestorControls"
+        "UseAncestorControls",
+        "SettingsResourceKey"
       ]
     }
   ],
