@@ -176,4 +176,9 @@
   <data name="DuplicatesCorrespondents" xml:space="preserve">
     <value>There are duplicates of correspondents in the addressees</value>
   </data>
+  <data name="IncorrectExtLength" xml:space="preserve">
+    <value>Some attachments will be excluded from list to send, because MEDO permits loading files with extension length of 3 or 4 symbols only.
+
+</value>
+  </data>
 </root>

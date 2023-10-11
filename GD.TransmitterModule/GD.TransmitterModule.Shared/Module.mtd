@@ -629,7 +629,8 @@
     "DocumentNotFound",
     "EmailMethodNotFound",
     "MethodMedoNotFound",
-    "DuplicatesCorrespondents"
+    "DuplicatesCorrespondents",
+    "IncorrectExtLength"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

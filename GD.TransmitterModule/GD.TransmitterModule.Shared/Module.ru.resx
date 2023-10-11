@@ -176,4 +176,9 @@
   <data name="DuplicatesCorrespondents" xml:space="preserve">
     <value>В адресатах присутствуют дубли корреспондентов</value>
   </data>
+  <data name="IncorrectExtLength" xml:space="preserve">
+    <value>Некоторые приложения будут исключены из списка для отправки, так как в МЭДО допускается загружать файлы только с длиной расширения 3 или 4 символа.
+
+</value>
+  </data>
 </root>

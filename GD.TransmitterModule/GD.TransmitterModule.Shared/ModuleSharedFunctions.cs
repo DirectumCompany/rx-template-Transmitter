@@ -120,8 +120,12 @@ namespace GD.TransmitterModule.Shared
     public virtual void StartStartSendingDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase document)
     {
       var relatedDocuments = OutgoingLetters.Is(document) ?
-        OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList() :
-        OutgoingRequestLetters.As(document).DocsToSendGD.Where(d => d.Document != null).Select(d => d.Document.Id).ToList();
+        OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null &&
+                                                        d.Document.AssociatedApplication.Extension.Length >= 3 && 
+                                                        d.Document.AssociatedApplication.Extension.Length <= 4).Select(d => d.Document.Id).ToList() :
+        OutgoingRequestLetters.As(document).DocsToSendGD.Where(d => d.Document != null && 
+                                                        d.Document.AssociatedApplication.Extension.Length >= 3 &&
+                                                        d.Document.AssociatedApplication.Extension.Length <= 4).Select(d => d.Document.Id).ToList();
       var relatedDocumentsIds = string.Join(",", relatedDocuments);
       var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesMedo.Create();
       asyncSendingHandler.DocumentID = document.Id;
