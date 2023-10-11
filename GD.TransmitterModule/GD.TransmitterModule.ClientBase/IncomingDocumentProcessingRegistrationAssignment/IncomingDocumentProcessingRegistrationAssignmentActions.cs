@@ -28,7 +28,7 @@ namespace GD.TransmitterModule.Client
     public virtual bool CanRedirectToBusinessUnit(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
       var task = IncomingDocumentProcessingTasks.As(_obj.Task);
-      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj) && task.Registrar == null;
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.IsMainDocumentRegistered(_obj) && task.Registrar == null;
     }
 
     public virtual void RedirectToDepartment(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -81,7 +81,7 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRedirectToDepartment(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
-      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj);
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.IsMainDocumentRegistered(_obj);
     }
 
     public virtual void Rework(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -92,7 +92,7 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRework(Sungero.Workflow.Client.CanExecuteResultActionArgs e)
     {
-      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj);
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.IsMainDocumentRegistered(_obj);
     }
 
     public virtual void Register(Sungero.Workflow.Client.ExecuteResultActionArgs e)
@@ -121,7 +121,7 @@ namespace GD.TransmitterModule.Client
 
     public virtual bool CanRegistration(Sungero.Domain.Client.CanExecuteActionArgs e)
     {
-      return !Functions.IncomingDocumentProcessingRegistrationAssignment.Remote.IsMainDocumentRegistered(_obj);
+      return !Functions.IncomingDocumentProcessingRegistrationAssignment.IsMainDocumentRegistered(_obj);
     }
 
   }
