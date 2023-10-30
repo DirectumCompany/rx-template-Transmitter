@@ -54,14 +54,6 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         if (addresses != null)
           sender = addresses.Addresser;
       }
-      // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-      /*else if (IncomingLetters.Is(_obj.ReasonDoc))
-      {
-        var addresses = IncomingLetters.As(_obj.ReasonDoc).FanSendingGD
-          .Where(a => Sungero.Parties.Companies.Equals(a.Correspondent, _obj.ResultDoc.BusinessUnit.Company)).FirstOrDefault();
-        if (addresses != null)
-          sender = addresses.Sender;
-      }*/
       if (sender == null || sender.IsSystem == true)
         sender = PublicFunctions.Module.Remote.GetRegistrarForBusinessUnit(document.BusinessUnit, document.DocumentKind);
       _block.Performers.Add(sender);
@@ -159,13 +151,6 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         // Создать/обновить входящее письмо
         if (document == null)
         {
-          // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-          /*if (IncomingLetters.Is(reasonDoc))
-        {
-          document = IncomingLetters.Copy(IncomingLetters.As(reasonDoc));
-          document.RegAGOData = string.Format("{0} {1} {2}", reasonDoc.RegistrationNumber, Sungero.Docflow.OfficialDocuments.Resources.DateFrom, reasonDoc.RegistrationDate).Replace(" 0:00:00", "");
-        }
-        else*/
           var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
           document = IncomingLetters.Create();
           document.DeliveryMethod = GovernmentSolution.MailDeliveryMethods.GetAll().Where(m => m.Sid == directumRXDeliveryMethodSid).FirstOrDefault();
@@ -181,20 +166,19 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         
         var inResponseTo = Sungero.Docflow.OutgoingDocumentBases.As(reasonDoc).InResponseTo;
         document.InResponseTo = Sungero.Docflow.OutgoingDocumentBases.As(inResponseTo?.LeadingDocument);
-        document.Correspondent = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Correspondent : */Companies.As(reasonDoc.BusinessUnit.Company);
+        document.Correspondent = Companies.As(reasonDoc.BusinessUnit.Company);
         document.BusinessUnit = businessUnit;
         document.SecCategoryGD = secCategory;
         document.Addressee = businessUnit.CEO;
         document.Department = _obj.Registrar != null ? _obj.Registrar.Department : businessUnit.CEO.Department;
-        //document.AddresseeDepartment = businessUnit.CEO.Department;
         if (reasonDoc.OurSignatory != null)
         {
           var contact = Sungero.Parties.Contacts.GetAll().Where(d => d.Person.Equals(reasonDoc.OurSignatory.Person) && d.Company.Equals(reasonDoc.BusinessUnit.Company)).FirstOrDefault();
           document.SignedBy = contact;
         }
         // Добавление возможности перенаправления входящих писем с помощью реализованного механизма.
-        document.Dated = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).Dated : */reasonDoc.RegistrationDate;
-        document.InNumber = /*IncomingLetters.Is(reasonDoc) ? IncomingLetters.As(reasonDoc).InNumber : */reasonDoc.RegistrationNumber;
+        document.Dated = reasonDoc.RegistrationDate;
+        document.InNumber = reasonDoc.RegistrationNumber;
         var subjectCustom = reasonDocSubject;
         
         if (string.IsNullOrEmpty(reasonDocSubject) || string.IsNullOrWhiteSpace(reasonDocSubject))
