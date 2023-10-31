@@ -1,0 +1,48 @@
+{
+  "$type": "Sungero.NoCode.Settings.Models.SettingsLayerLocalization, Sungero.NoCode.Settings.Interfaces",
+  "Subject_SE_3": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Registration denied {0}",
+    "ru-RU": "Отказано в регистрации {0}"
+  },
+  "DocumentState_SE_7": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Registered",
+    "ru-RU": "Зарегистрировано"
+  },
+  "Comment_SE_7": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "№ {0} {1}",
+    "ru-RU": "№ {0} от {1}"
+  },
+  "DocumentState_SE_6": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Sent",
+    "ru-RU": "Отправлено"
+  },
+  "DocumentState_SE_10": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Redirected",
+    "ru-RU": "Перенаправлено"
+  },
+  "Comment_SE_10": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Redirected",
+    "ru-RU": "Перенаправлено"
+  },
+  "DocumentState_SE_8": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Return",
+    "ru-RU": "Возврат"
+  },
+  "Comment_SE_8": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "{0}",
+    "ru-RU": "{0}"
+  },
+  "Subject_SE_2": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Register document {0}",
+    "ru-RU": "Зарегистрируйте документ {0}"
+  }
+}
