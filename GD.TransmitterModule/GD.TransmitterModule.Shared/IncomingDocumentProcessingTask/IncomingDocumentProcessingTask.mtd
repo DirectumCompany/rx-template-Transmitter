@@ -168,7 +168,8 @@
   "OperationsClass": "",
   "Overridden": [
     "CanBeSearch",
-    "IsAutoCreated"
+    "IsAutoCreated",
+    "UseSchemeFromSettings"
   ],
   "Properties": [
     {
@@ -333,7 +334,7 @@
   "Versions": [
     {
       "Type": "TaskMetadata",
-      "Number": 2
+      "Number": 3
     },
     {
       "Type": "WorkflowEntityMetadata",
