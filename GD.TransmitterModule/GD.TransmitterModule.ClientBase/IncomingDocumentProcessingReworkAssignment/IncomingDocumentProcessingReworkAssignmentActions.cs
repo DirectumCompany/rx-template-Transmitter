@@ -23,13 +23,9 @@ namespace GD.TransmitterModule.Client
     {
       var documents = _obj.AddendaGroup.ElectronicDocuments.Where(x => Sungero.Content.ElectronicDocuments.Is(x)).ToList();
       var documentProcessingTask = IncomingDocumentProcessingTasks.As(_obj.MainTask).AddendaGroup.ElectronicDocuments.ToList();
-      var addendumDocuments = new List<Sungero.Content.IElectronicDocument>();
       var addendums = new List<Sungero.Docflow.IAddendum>();
-
-      var elements = documents.Except(documentProcessingTask);
-      addendumDocuments.AddRange(elements);
       
-      foreach (var document in addendumDocuments)
+      foreach (var document in documents.Except(documentProcessingTask))
       {
         if (Sungero.Content.ElectronicDocuments.Is(document))
         {
