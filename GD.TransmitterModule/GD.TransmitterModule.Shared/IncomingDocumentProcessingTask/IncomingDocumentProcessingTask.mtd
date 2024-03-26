@@ -79,8 +79,7 @@
       "BaseGuid": "1f76cc5d-f096-4062-b34a-51b3c02269f2",
       "HandledEvents": [
         "CreateSynchronizeIncomingDocumentExecute"
-      ],
-      "Properties": []
+      ]
     },
     {
       "$type": "Sungero.Metadata.AssignmentBlockMetadata, Sungero.Workflow.Shared",
@@ -91,8 +90,7 @@
       "HandledEvents": [
         "IncomingDocumentProcessingRegistrationAssignmentStart",
         "IncomingDocumentProcessingRegistrationAssignmentCompleteAssignment"
-      ],
-      "Properties": []
+      ]
     },
     {
       "$type": "Sungero.Metadata.AssignmentBlockMetadata, Sungero.Workflow.Shared",
@@ -103,8 +101,7 @@
       "HandledEvents": [
         "IncomingDocumentProcessingReworkAssignmentStart",
         "IncomingDocumentProcessingReworkAssignmentCompleteAssignment"
-      ],
-      "Properties": []
+      ]
     },
     {
       "$type": "Sungero.Metadata.ScriptBlockMetadata, Sungero.Workflow.Shared",
@@ -168,7 +165,8 @@
   "OperationsClass": "",
   "Overridden": [
     "CanBeSearch",
-    "IsAutoCreated"
+    "IsAutoCreated",
+    "UseSchemeFromSettings"
   ],
   "Properties": [
     {
@@ -333,7 +331,7 @@
   "Versions": [
     {
       "Type": "TaskMetadata",
-      "Number": 2
+      "Number": 3
     },
     {
       "Type": "WorkflowEntityMetadata",
