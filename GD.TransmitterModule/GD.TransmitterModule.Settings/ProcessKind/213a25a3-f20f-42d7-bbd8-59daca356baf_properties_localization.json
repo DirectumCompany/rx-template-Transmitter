@@ -4,5 +4,15 @@
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
     "default": "По умолчанию",
     "ru-RU": "По умолчанию"
+  },
+  "Name_a8da422f-4d9f-47ba-af53-574acb43494e": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Входящий документ",
+    "ru-RU": "Входящий документ"
+  },
+  "Name_1e91df70-fb01-4f63-b8eb-9b5d233cdba3": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+    "default": "Исходящий документ",
+    "ru-RU": "Исходящий документ"
   }
 }
