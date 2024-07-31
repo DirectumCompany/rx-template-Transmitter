@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -57,6 +57,7 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
       if (sender == null || sender.IsSystem == true)
         sender = PublicFunctions.Module.Remote.GetRegistrarForBusinessUnit(document.BusinessUnit, document.DocumentKind);
       _block.Performers.Add(sender);
+      _obj.AccessRights.Grant(sender, DefaultAccessRightsTypes.Change);
     }
   }
 
