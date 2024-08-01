@@ -59,13 +59,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DisplayName" xml:space="preserve">
-    <value>Обработка входящего документа</value>
+    <value>Обработка входящего документа (Отправка сообщений RX-RX)</value>
   </data>
   <data name="AccusativeDisplayName" xml:space="preserve">
-    <value>Задачу по обработке входящего документа</value>
+    <value>Задачу по обработке входящего документа (Отправка сообщений RX-RX)</value>
   </data>
   <data name="CollectionDisplayName" xml:space="preserve">
-    <value>Задачи по обработке входящего документа</value>
+    <value>Задачи по обработке входящего документа (Отправка сообщений RX-RX)</value>
   </data>
   <data name="Property_ReasonDoc" xml:space="preserve">
     <value>Документ-основание</value>

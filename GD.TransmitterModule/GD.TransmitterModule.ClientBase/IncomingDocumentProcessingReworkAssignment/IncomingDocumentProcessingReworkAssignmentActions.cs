@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -20,8 +20,15 @@ namespace GD.TransmitterModule.Client
     }
 
     public virtual void Corrected(Sungero.Workflow.Client.ExecuteResultActionArgs e)
-    {
-      
+    { 
+      var documents = _obj.AddendaGroup.ElectronicDocuments.Where(doc => Sungero.Content.ElectronicDocuments.Is(doc)).ToList();
+      var documentProcessingTask = IncomingDocumentProcessingTasks.As(_obj.Task).AddendaGroup.ElectronicDocuments.ToList();
+
+      foreach (var document in documents.Except(documentProcessingTask))
+      {
+        var addendumsIncomingDocumentProcessingTasks = IncomingDocumentProcessingTasks.As(_obj.Task).Addendums.AddNew();
+        addendumsIncomingDocumentProcessingTasks.Reason = document;
+      }
     }
 
     public virtual bool CanCorrected(Sungero.Workflow.Client.CanExecuteResultActionArgs e)

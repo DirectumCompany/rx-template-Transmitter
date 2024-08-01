@@ -59,13 +59,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DisplayName" xml:space="preserve">
-    <value>Task for processing incoming document</value>
+    <value>Task for processing incoming document (Sending RX-RX messages)</value>
   </data>
   <data name="AccusativeDisplayName" xml:space="preserve">
-    <value>Task for processing incoming document</value>
+    <value>Task for processing incoming document (Sending RX-RX messages)</value>
   </data>
   <data name="CollectionDisplayName" xml:space="preserve">
-    <value>Tasks for processing incoming document</value>
+    <value>Tasks for processing incoming document(Sending RX-RX messages)</value>
   </data>
   <data name="Property_ReasonDoc" xml:space="preserve">
     <value>Reason document</value>
