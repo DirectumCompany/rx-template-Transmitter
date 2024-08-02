@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -126,6 +126,7 @@ namespace GD.TransmitterModule.Server
       if (letter == null)
         return;
       
+      var sender = args.SenderId != null ? Users.GetAll(x => x.Id == args.SenderId).FirstOrDefault() : null;
       try
       {
         if (!Locks.TryLock(letter))
@@ -145,7 +146,7 @@ namespace GD.TransmitterModule.Server
         Logger.Debug("SendDocumentToAddresseesMedo: start SendDocumentToAddresseesMedo.");
         
         if (Sungero.Docflow.OutgoingDocumentBases.Is(letter))
-          Functions.Module.SendDocumentToAddresseesMedo(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs);
+          Functions.Module.SendDocumentToAddresseesMedo(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs, sender);
         
         Logger.Debug("SendDocumentToAddresseesMedo: end SendDocumentToAddresseesMedo.");
       }
