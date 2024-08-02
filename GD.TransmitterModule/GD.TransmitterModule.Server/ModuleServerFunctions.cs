@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -899,7 +899,8 @@ namespace GD.TransmitterModule.Server
     /// <param name="company">Адресат.</param>
     /// <returns>Ошибки при отправке.</returns>
     [Public]
-    public void MEDOSendToCounterparty(Sungero.Docflow.IOutgoingDocumentBase document, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, ICompany company, List<string> errors)
+    public void MEDOSendToCounterparty(Sungero.Docflow.IOutgoingDocumentBase document, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, 
+                                       ICompany company, List<string> errors, IUser sender)
     {
       var documentPages = new List<string>();
       
@@ -910,7 +911,7 @@ namespace GD.TransmitterModule.Server
       
       try
       {
-        var package = MEDO.PublicFunctions.Module.Remote.CreatePackage(document, company, documentPages, !OutgoingLetters.Is(document));
+        var package = MEDO.PublicFunctions.Module.Remote.CreatePackage(document, company, documentPages, !OutgoingLetters.Is(document), sender);
         if (OutgoingLetters.Is(document))
         {
           MEDO.PublicFunctions.Module.Remote.SetDocumentMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, OutgoingLetters.As(document), package);
@@ -1103,7 +1104,7 @@ namespace GD.TransmitterModule.Server
       return errors;
     }
     
-    public List<string> SendDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs)
+    public List<string> SendDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, IUser sender)
     {
       Logger.Debug("SendDocumentToAddresseesMedo - start");
       var errors = new List<string>();
@@ -1120,7 +1121,7 @@ namespace GD.TransmitterModule.Server
         {
           var addressee = item.FirstOrDefault();
           var company = Companies.As(addressee.Correspondent);
-          MEDOSendToCounterparty(letter, relatedDocs, company, errors);
+          MEDOSendToCounterparty(letter, relatedDocs, company, errors, sender);
         }
       }
       else
@@ -1134,7 +1135,7 @@ namespace GD.TransmitterModule.Server
         foreach (var addresse in awaitingDispatchAddresses)
         {
           var company = Companies.As(addresse.Correspondent);
-          MEDOSendToCounterparty(letter, relatedDocs, company, errors);
+          MEDOSendToCounterparty(letter, relatedDocs, company, errors, sender);
         }
       }
       
