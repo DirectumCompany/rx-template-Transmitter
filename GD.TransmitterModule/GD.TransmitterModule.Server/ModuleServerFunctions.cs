@@ -779,9 +779,9 @@ namespace GD.TransmitterModule.Server
         
         var isError = false;
         
-        if (!string.IsNullOrWhiteSpace(mailRegister.Correspondent.Email))
+        var email = mailRegister.Email ?? mailRegister.Correspondent.Email;
+        if (!string.IsNullOrWhiteSpace(email))
         {
-          var email = mailRegister.Correspondent.Email;;
           var mailAddress = new System.Net.Mail.MailAddress(email);
           mail.To.Add(email);
           
