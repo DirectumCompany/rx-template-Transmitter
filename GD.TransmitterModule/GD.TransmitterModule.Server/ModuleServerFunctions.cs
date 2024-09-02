@@ -207,7 +207,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="maxAttachmentFileSize">Максимальный разрешенный размер вложения (Мб).</param>
     /// <returns>true, если размер архива вложений не больше, чем значение из настроек модуля, иначе - false.</returns>
     [Public, Remote(IsPure=true)]
-    public virtual bool CheckPackageSize(IOutgoingDocumentBase letter, double maxAttachmentFileSize)
+    public virtual bool CheckPackageSize(Sungero.Docflow.IOutgoingDocumentBase letter, double maxAttachmentFileSize)
     {
       var result = false;
       try
@@ -401,7 +401,7 @@ namespace GD.TransmitterModule.Server
     /// <returns>Путь до сформированного файла архива.</returns>
     public virtual string GenerateArchiveWithAttachments(IMailRegister mailRegister)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = Sungero.Docflow.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -752,7 +752,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="zipName">Путь до архива с вложениями.</param>
     public void SendDocumentAddresseesEMail(IMailRegister mailRegister, string zipName, int? maxRetryCount)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = Sungero.Docflow.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -817,7 +817,7 @@ namespace GD.TransmitterModule.Server
             
             if (OutgoingLetters.Is(letter))
             {
-              var outgoingLetterAddressee = addressee as IOutgoingLetterAddressees;
+              var outgoingLetterAddressee = addressee as GovernmentSolution.IOutgoingLetterAddressees;
               outgoingLetterAddressee.DocumentState = state;
               outgoingLetterAddressee.StateInfo = state;
               
@@ -1026,7 +1026,7 @@ namespace GD.TransmitterModule.Server
     {
       try
       {
-        var emailFromLetter = (addressee as Overrides.IOutgoingDocumentBaseAddressees).EmailGD;
+        var emailFromLetter = (addressee as GovernmentSolution.IOutgoingDocumentBaseAddressees).EmailGD;
         if (!MailRegisters.GetAll(x => x.Correspondent == addressee.Correspondent &&
                                   x.LeadingDocument == letter &&
                                   (string.IsNullOrEmpty(emailFromLetter) || !string.IsNullOrEmpty(emailFromLetter) && Equals(x.Email, emailFromLetter)) &&
@@ -1154,7 +1154,7 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="letter"></param>
     /// <param name="errors"></param>
-    public virtual void SendErrorNoticesAuthor(IOutgoingDocumentBase letter, List<string> errors)
+    public virtual void SendErrorNoticesAuthor(Sungero.Docflow.IOutgoingDocumentBase letter, List<string> errors)
     {
 
       if (errors.Count == 0)
