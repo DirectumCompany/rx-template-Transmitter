@@ -91,6 +91,11 @@
           "NameGuid": "4fb7ec84-e088-4956-83a0-bf45b9b18784",
           "Name": "RelationDocumentIDs",
           "ParameterType": "String"
+        },
+        {
+          "NameGuid": "a8df91eb-06cc-4b9a-84a6-2e57e95e437d",
+          "Name": "SenderId",
+          "ParameterType": "LongInteger"
         }
       ]
     }
@@ -458,6 +463,11 @@
           "Name": "errors",
           "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
           "ParameterTypeFullName": "System.Collections.Generic.List"
+        },
+        {
+          "Name": "sender",
+          "ParameterType": "global::Sungero.CoreEntities.IUser",
+          "ParameterTypeFullName": "Sungero.CoreEntities.IUser, Sungero.Domain.Shared"
         }
       ],
       "ReturnType": "void",
@@ -552,6 +562,11 @@
           "Name": "document",
           "ParameterType": "global::Sungero.Docflow.IOutgoingDocumentBase",
           "ParameterTypeFullName": "Sungero.Docflow.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
+        },
+        {
+          "Name": "sender",
+          "ParameterType": "global::Sungero.CoreEntities.IUser",
+          "ParameterTypeFullName": "Sungero.CoreEntities.IUser, Sungero.Domain.Shared"
         }
       ],
       "Placement": "Shared",

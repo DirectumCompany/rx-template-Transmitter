@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -117,7 +117,7 @@ namespace GD.TransmitterModule.Shared
     /// </summary>
     /// <param name="document">Документ.</param>
     [Public]
-    public virtual void StartStartSendingDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase document)
+    public virtual void StartStartSendingDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase document, IUser sender)
     {
       var relatedDocuments = OutgoingLetters.Is(document) ?
         OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null &&
@@ -130,6 +130,7 @@ namespace GD.TransmitterModule.Shared
       var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesMedo.Create();
       asyncSendingHandler.DocumentID = document.Id;
       asyncSendingHandler.RelationDocumentIDs = relatedDocumentsIds;
+      asyncSendingHandler.SenderId = sender == null ? 0 : sender.Id;
       asyncSendingHandler.ExecuteAsync();
     }
   }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -240,13 +240,14 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsMEDO.Any())
         {
+          var sender = Users.Current.IsSystem == true ? null : Users.Current;
           Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по МЭДО, ИД документа = {0}", document.Id);
-          Functions.Module.StartStartSendingDocumentToAddresseesMedo(document);
+          Functions.Module.StartStartSendingDocumentToAddresseesMedo(document, sender);
           
           foreach (var addresse in addressesMedo)
           {
             addresse.DocumentState = Resources.AwaitingDispatch;
-            addresse.AddresserGD = Users.Current.IsSystem == true ? null : Users.Current;
+            addresse.AddresserGD = sender;
           }
           
           existSending = true;
@@ -441,13 +442,14 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsMEDO.Any())
         {
+          var sender = Users.Current.IsSystem == true ? null : Users.Current;
           Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по МЭДО, ИД документа = {0}", document.Id);
-          Functions.Module.StartStartSendingDocumentToAddresseesMedo(document);
+          Functions.Module.StartStartSendingDocumentToAddresseesMedo(document, sender);
           
           foreach (var addresse in addressesMedo)
           {
             addresse.DocumentState = Resources.AwaitingDispatch;
-            addresse.Addresser = Users.Current.IsSystem == true ? null : Users.Current;
+            addresse.Addresser = sender;
           }
           
           existSending = true;
