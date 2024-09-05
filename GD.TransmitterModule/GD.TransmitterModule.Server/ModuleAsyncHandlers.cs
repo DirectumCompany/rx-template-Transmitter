@@ -190,41 +190,9 @@ namespace GD.TransmitterModule.Server
       {
         Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: FileName - " + string.Format(@"{0}.{1}", letter.Name, "pdf"));
         
-        /*var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name,method.Name) ||
-                                                 OutgoingLetters.Is(x.RootEntity) && !string.IsNullOrEmpty((x as IOutgoingLetterAddressees).CopyTo) ||
-                                                 OutgoingRequestLetters.Is(x.RootEntity) && !string.IsNullOrEmpty((x as IOutgoingRequestLetterAddressees).CopyTo));*/
-        var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name,method.Name));
+        var addressees = letter.Addressees.Where(x => x.DeliveryMethod != null && Equals(x.DeliveryMethod.Name, method.Name));
         
         Logger.DebugFormat("Debug SendDocumentToAddresseesEMail: Count = " + addressees.Count());
-        
-        // Добавление возможности отправки копии письма на указанный адрес электронной почты.
-        /*foreach (var item in addressees)
-        {
-          var copyTo = string.Empty;
-          var isStateNotSent = false;
-          var isCopyNotSent = false;
-          if (OutgoingLetters.Is(letter))
-          {
-            copyTo = (item as IOutgoingLetterAddressees).CopyTo;
-            isStateNotSent = (item as IOutgoingLetterAddressees).DocumentState != Resources.DeliveryState_Sent;
-            isCopyNotSent = (item as IOutgoingLetterAddressees).CopyStatus != Resources.DeliveryState_Sent;
-          }
-          else if (OutgoingRequestLetters.Is(letter))
-          {
-            copyTo = (item as IOutgoingRequestLetterAddressees).CopyTo;
-            isStateNotSent = (item as IOutgoingRequestLetterAddressees).DocumentState != Resources.DeliveryState_Sent;
-            isCopyNotSent = (item as IOutgoingRequestLetterAddressees).CopyStatus != Resources.DeliveryState_Sent;
-          }
-          // Создание сообщения для копии.
-          if (!string.IsNullOrEmpty(copyTo) && isCopyNotSent)
-          {
-            Functions.Module.CreateEmailRegisterRecord(letter, item, args.Sender, copyTo);
-          }
-          if (item.DeliveryMethod != null && item.DeliveryMethod.Equals(method) && isStateNotSent)
-          {
-            Functions.Module.CreateEmailRegisterRecord(letter, item, args.Sender, string.Empty);
-          }
-        }*/
         
         foreach (var item in addressees)
         {

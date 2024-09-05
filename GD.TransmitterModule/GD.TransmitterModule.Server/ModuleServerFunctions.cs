@@ -44,8 +44,8 @@ namespace GD.TransmitterModule.Server
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
-                                                                                a.DeliveryMethod.Sid == deliveryMethodSid &&
-                                                                                Equals(a.Correspondent, correspondent)).LastOrDefault();
+                                                                                                  a.DeliveryMethod.Sid == deliveryMethodSid &&
+                                                                                                  Equals(a.Correspondent, correspondent)).LastOrDefault();
       
       if (append)
       {
@@ -81,8 +81,8 @@ namespace GD.TransmitterModule.Server
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
-                                                                                a.DeliveryMethod.Sid == deliveryMethodSid &&
-                                                                                Equals(a.Correspondent, correspondent)).LastOrDefault();
+                                                                                                  a.DeliveryMethod.Sid == deliveryMethodSid &&
+                                                                                                  Equals(a.Correspondent, correspondent)).LastOrDefault();
       
       if (addressee != null)
       {
@@ -121,7 +121,7 @@ namespace GD.TransmitterModule.Server
       var operation = new Enumeration(Constants.Module.SendAddressees);
       
       letter.History.Write(operation, operation, letter.Name);
-        
+      
       foreach (var doc in letter.DocsToSendGD)
       {
         letter.History.Write(operation, operation, doc.Document.Name);
@@ -139,7 +139,7 @@ namespace GD.TransmitterModule.Server
       var operation = new Enumeration(Constants.Module.SendAddressees);
       
       letter.History.Write(operation, operation, letter.Name);
-        
+      
       foreach (var doc in letter.DocsToSendGD)
       {
         letter.History.Write(operation, operation, doc.Document.Name);
@@ -207,7 +207,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="maxAttachmentFileSize">Максимальный разрешенный размер вложения (Мб).</param>
     /// <returns>true, если размер архива вложений не больше, чем значение из настроек модуля, иначе - false.</returns>
     [Public, Remote(IsPure=true)]
-    public virtual bool CheckPackageSize(IOutgoingDocumentBase letter, double maxAttachmentFileSize)
+    public virtual bool CheckPackageSize(Sungero.Docflow.IOutgoingDocumentBase letter, double maxAttachmentFileSize)
     {
       var result = false;
       try
@@ -401,7 +401,7 @@ namespace GD.TransmitterModule.Server
     /// <returns>Путь до сформированного файла архива.</returns>
     public virtual string GenerateArchiveWithAttachments(IMailRegister mailRegister)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = Sungero.Docflow.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -752,7 +752,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="zipName">Путь до архива с вложениями.</param>
     public void SendDocumentAddresseesEMail(IMailRegister mailRegister, string zipName, int? maxRetryCount)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = Sungero.Docflow.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -779,9 +779,9 @@ namespace GD.TransmitterModule.Server
         
         var isError = false;
         
-        if (!string.IsNullOrWhiteSpace(mailRegister.Correspondent.Email))
+        var email = mailRegister.Email ?? mailRegister.Correspondent.Email;
+        if (!string.IsNullOrWhiteSpace(email))
         {
-          var email = mailRegister.Correspondent.Email;;
           var mailAddress = new System.Net.Mail.MailAddress(email);
           mail.To.Add(email);
           
@@ -796,12 +796,12 @@ namespace GD.TransmitterModule.Server
           {
             Logger.Error("Отправка почтовых сообщений. Ошибка непосредственно при отправке.", ex);
             mailRegister.ErrorInfo = ex.Message;
-            var isExceededEmailSendLimit = mailRegister.Iteration >= maxRetryCount;            
+            var isExceededEmailSendLimit = mailRegister.Iteration >= maxRetryCount;
             
             if (isExceededEmailSendLimit)
             {
               mailRegister.Status = GD.TransmitterModule.MailRegister.Status.Error;
-              Logger.ErrorFormat("SendDocumentAddresseesEMail. When sending a message by Email, an exception occurred for the record id = {0}: The limit of attempts to send messages has been reached", 
+              Logger.ErrorFormat("SendDocumentAddresseesEMail. When sending a message by Email, an exception occurred for the record id = {0}: The limit of attempts to send messages has been reached",
                                  mailRegister.Id);
               isError = true;
             }
@@ -817,7 +817,7 @@ namespace GD.TransmitterModule.Server
             
             if (OutgoingLetters.Is(letter))
             {
-              var outgoingLetterAddressee = addressee as IOutgoingLetterAddressees;
+              var outgoingLetterAddressee = addressee as GovernmentSolution.IOutgoingLetterAddressees;
               outgoingLetterAddressee.DocumentState = state;
               outgoingLetterAddressee.StateInfo = state;
               
@@ -899,7 +899,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="company">Адресат.</param>
     /// <returns>Ошибки при отправке.</returns>
     [Public]
-    public void MEDOSendToCounterparty(Sungero.Docflow.IOutgoingDocumentBase document, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, 
+    public void MEDOSendToCounterparty(Sungero.Docflow.IOutgoingDocumentBase document, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
                                        ICompany company, List<string> errors, IUser sender)
     {
       var documentPages = new List<string>();
@@ -946,9 +946,9 @@ namespace GD.TransmitterModule.Server
     /// <param name="errors">Ошибки при отправке.</param>
     [Public]
     public void CreateDirectumRXTransferRegisterRecord(Sungero.Docflow.IOfficialDocument document,
-                                        IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
-                                        Sungero.Parties.ICounterparty correspondent,
-                                        List<string> errors)
+                                                       IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
+                                                       Sungero.Parties.ICounterparty correspondent,
+                                                       List<string> errors)
     {
       try
       {
@@ -984,10 +984,10 @@ namespace GD.TransmitterModule.Server
     /// <param name="request">Обращение для перенаправления.</param>
     [Public]
     public void CreateMailRegisterRecord(Sungero.Docflow.IOfficialDocument document,
-                                                 Sungero.Parties.ICounterparty correspondent,
-                                                 List<string> errors,
-                                                 bool IsRequestTransfer,
-                                                 IRequest request)
+                                         Sungero.Parties.ICounterparty correspondent,
+                                         List<string> errors,
+                                         bool IsRequestTransfer,
+                                         IRequest request)
     {
       try
       {
@@ -1020,20 +1020,22 @@ namespace GD.TransmitterModule.Server
     /// <param name="copyTo">e-mail для отправки копии</param>
     /// <param name="documentsSetId">ИД комплекта документов к отправке</param>
     public void CreateEmailRegisterRecord(Sungero.Docflow.IOutgoingDocumentBase letter,
-                                               Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
-                                               long senderId,
-                                               string documentsSetId)
+                                          Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
+                                          long senderId,
+                                          string documentsSetId)
     {
       try
       {
+        var emailFromLetter = (addressee as GovernmentSolution.IOutgoingDocumentBaseAddressees).EmailGD;
         if (!MailRegisters.GetAll(x => x.Correspondent == addressee.Correspondent &&
                                   x.LeadingDocument == letter &&
+                                  (string.IsNullOrEmpty(emailFromLetter) || !string.IsNullOrEmpty(emailFromLetter) && Equals(x.Email, emailFromLetter)) &&
                                   x.Status == GD.TransmitterModule.MailRegister.Status.ToProcess).Any())
         {
           var registerItem = MailRegisters.Create();
           registerItem.Correspondent = addressee.Correspondent;
           if (addressee.Correspondent != null)
-            registerItem.Email = addressee.Correspondent.Email;
+            registerItem.Email = emailFromLetter ?? addressee.Correspondent.Email;
           registerItem.LeadingDocument = letter;
           
           if (OutgoingLetters.Is(letter))
@@ -1152,7 +1154,7 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="letter"></param>
     /// <param name="errors"></param>
-    public virtual void SendErrorNoticesAuthor(IOutgoingDocumentBase letter, List<string> errors)
+    public virtual void SendErrorNoticesAuthor(Sungero.Docflow.IOutgoingDocumentBase letter, List<string> errors)
     {
 
       if (errors.Count == 0)
