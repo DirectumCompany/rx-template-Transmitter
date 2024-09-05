@@ -25,7 +25,7 @@ namespace GD.TransmitterModule.Shared
       if (OutgoingLetters.Is(document))
       {
         var addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState));
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) && string.IsNullOrEmpty(a.EmailGD));
         Logger.DebugFormat("Debug CheckRequisitesForEmail - 1");
         
         if (addresses.Count() > 0)
@@ -42,7 +42,7 @@ namespace GD.TransmitterModule.Shared
       else if (OutgoingRequestLetters.Is(document))
       {
         var addresses = OutgoingRequestLetters.As(document).Addressees.Cast<IOutgoingRequestLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState));
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) && string.IsNullOrEmpty(a.EmailGD));
         Logger.DebugFormat("Debug CheckRequisitesForEmail - 1");
         
         if (addresses.Count() > 0)
