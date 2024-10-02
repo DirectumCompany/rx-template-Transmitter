@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -279,7 +279,7 @@ namespace GD.TransmitterModule.Server
                 }
               }
               // Добавить к группе приложения к входящему документу.
-              _obj.InAttachmentGroup.Addendums.Add(copyAddendum);
+              _obj.InAttachmentGroup.ElectronicDocuments.Add(copyAddendum);
               addendumStr.Result = copyAddendum;
             }
             else
