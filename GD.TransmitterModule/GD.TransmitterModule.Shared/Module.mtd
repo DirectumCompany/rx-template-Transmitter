@@ -324,6 +324,20 @@
       "ReturnTypeFullName": "Sungero.Docflow.IAddendum, Sungero.Domain.Interfaces"
     },
     {
+      "Name": "CopyElectronicDocument",
+      "IsRemote": true,
+      "Parameters": [
+        {
+          "Name": "document",
+          "ParameterType": "global::Sungero.Content.IElectronicDocument",
+          "ParameterTypeFullName": "Sungero.Content.IElectronicDocument, Sungero.Content.Shared"
+        }
+      ],
+      "Placement": "Shared",
+      "ReturnType": "global::Sungero.Content.IElectronicDocument",
+      "ReturnTypeFullName": "Sungero.Content.IElectronicDocument, Sungero.Content.Shared"
+    },
+    {
       "Name": "CreateDirectumRXTransferRegisterRecord",
       "Parameters": [
         {

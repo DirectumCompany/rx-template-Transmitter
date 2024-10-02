@@ -20,14 +20,25 @@ namespace GD.TransmitterModule.Client
     }
 
     public virtual void Corrected(Sungero.Workflow.Client.ExecuteResultActionArgs e)
-    { 
-      var documents = _obj.AddendaGroup.ElectronicDocuments.Where(doc => Sungero.Content.ElectronicDocuments.Is(doc)).ToList();
-      var documentProcessingTask = IncomingDocumentProcessingTasks.As(_obj.Task).AddendaGroup.ElectronicDocuments.ToList();
+    {
+      var documents = _obj.AddendaGroup.ElectronicDocuments.Where(doc => Sungero.Content.ElectronicDocuments.Is(doc))
+        .Union(_obj.OtherGroup.ElectronicDocuments).ToList();
 
-      foreach (var document in documents.Except(documentProcessingTask))
+      foreach (var document in documents)
       {
-        var addendumsIncomingDocumentProcessingTasks = IncomingDocumentProcessingTasks.As(_obj.Task).Addendums.AddNew();
-        addendumsIncomingDocumentProcessingTasks.Reason = document;
+        if (!IncomingDocumentProcessingTasks.As(_obj.Task).Addendums.Where(d => d.Reason.Equals(document)).Any())
+        {
+          var addendumsIncomingDocumentProcessingTasks = IncomingDocumentProcessingTasks.As(_obj.Task).Addendums.AddNew();
+          addendumsIncomingDocumentProcessingTasks.Reason = document;
+          if (_obj.AddendaGroup.ElectronicDocuments.Where(d => Equals(d, document)).Any())
+            document.Relations.AddFrom(Sungero.Docflow.PublicConstants.Module.AddendumRelationName,
+                                       IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupReason.OfficialDocuments.FirstOrDefault());
+          else
+          {
+            document.Relations.AddFrom(Sungero.Docflow.PublicConstants.Module.SimpleRelationName,
+                                       IncomingDocumentProcessingTasks.As(_obj.Task).MainDocGroupReason.OfficialDocuments.FirstOrDefault());
+          }
+        }
       }
     }
 
