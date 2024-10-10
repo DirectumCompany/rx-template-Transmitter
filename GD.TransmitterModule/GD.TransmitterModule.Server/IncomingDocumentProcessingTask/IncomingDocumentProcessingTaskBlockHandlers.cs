@@ -236,58 +236,57 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
           var isAddendumRelation = reasonDoc.Relations.GetRelatedDocuments(Sungero.Docflow.PublicConstants.Module.AddendumRelationName)
             .Any(d => d.Equals(relatedDoc));
           
-          if (addendumStr.Result == null)
+          if (isAddendumRelation)
           {
-            var isAddendumInOtherGroup = Sungero.Docflow.Addendums.Is(relatedDoc) && _obj.OtherGroup.ElectronicDocuments.Any(d => d.Equals(relatedDoc));
-            if (isAddendumRelation && !isAddendumInOtherGroup)
+            if (!_obj.AddendaGroup.All.Any(d => d.Equals(relatedDoc)))
+              _obj.AddendaGroup.ElectronicDocuments.Add(relatedDoc);
+          }
+          else
+          {
+            if (!_obj.OtherGroup.All.Any(d => d.Equals(relatedDoc)))
+              _obj.OtherGroup.ElectronicDocuments.Add(relatedDoc);
+          }
+          
+          if (addendumStr.Result == null && isAddendumRelation)
+          {
+            var isAddendum = Sungero.Docflow.Addendums.Is(relatedDoc);
+            // Создать копию приложений и вложить в задачу.
+            Sungero.Content.IElectronicDocument copiedDocument = null;
+            
+            if (isAddendum)
             {
-              var isAddendum = Sungero.Docflow.Addendums.Is(relatedDoc);
-              // Создать копию приложений и вложить в задачу.
-              Sungero.Content.IElectronicDocument electronicDocument = null;
-              Sungero.Docflow.IAddendum copyAddendum = null;
-              
-              if (isAddendum)
-                copyAddendum = Sungero.Docflow.Addendums.As(relatedDoc);
-              else
-                electronicDocument = Sungero.Content.ElectronicDocuments.As(relatedDoc);
-              
-              if (isAddendum)
-              {
-                copyAddendum = PublicFunctions.Module.Remote.CopyAddendum(copyAddendum);
-                copyAddendum.LeadingDocument = document;
-                electronicDocument = Sungero.Content.ElectronicDocuments.As(copyAddendum);
-              }
-              else
-              {
-                electronicDocument = PublicFunctions.Module.Remote.CopyElectronicDocument(electronicDocument);
-                electronicDocument = Sungero.Content.ElectronicDocuments.As(electronicDocument);
-              }
-              electronicDocument.Save();
-
-              // Перенести подписи.
-              foreach (var signature in Signatures.Get(electronicDocument).Where(s => s.SignCertificate != null))
-              {
-                var signatureText = signature.GetDataSignature();
-                try
-                {
-                  Signatures.Import(copyAddendum, signature.SignatureType, signature.SignatoryFullName, signatureText, copyAddendum.LastVersion);
-                }
-                catch (Exception ex)
-                {
-                  Logger.Error(ex.Message);
-                }
-              }
-              
-              // Добавить к группе приложения к входящему документу.
-              _obj.InAttachmentGroup.ElectronicDocuments.Add(electronicDocument);
-              electronicDocument.Relations.AddFrom(Sungero.Docflow.PublicConstants.Module.AddendumRelationName, document);
-              addendumStr.Result = electronicDocument;
+              var copiedAddendum = PublicFunctions.Module.Remote.CopyAddendum(Sungero.Docflow.Addendums.As(relatedDoc));
+              copiedAddendum.LeadingDocument = document;
+              copiedDocument = Sungero.Content.ElectronicDocuments.As(copiedAddendum);
             }
             else
+              copiedDocument = PublicFunctions.Module.Remote.CopyElectronicDocument(Sungero.Content.ElectronicDocuments.As(relatedDoc));
+            
+            copiedDocument.Save();
+
+            // Перенести подписи.
+            foreach (var signature in Signatures.Get(relatedDoc).Where(s => s.SignCertificate != null))
             {
-              relatedDoc.Relations.Add(Sungero.Docflow.PublicConstants.Module.SimpleRelationName, document);
-              addendumStr.Result = relatedDoc;
+              var signatureText = signature.GetDataSignature();
+              try
+              {
+                Signatures.Import(copiedDocument, signature.SignatureType, signature.SignatoryFullName, signatureText, copiedDocument.LastVersion);
+              }
+              catch (Exception ex)
+              {
+                Logger.Error(ex.Message);
+              }
             }
+            
+            // Добавить к группе приложения к входящему документу.
+            _obj.InAttachmentGroup.ElectronicDocuments.Add(copiedDocument);
+            copiedDocument.Relations.AddFrom(Sungero.Docflow.PublicConstants.Module.AddendumRelationName, document);
+            addendumStr.Result = copiedDocument;
+          }
+          else
+          {
+            relatedDoc.Relations.Add(Sungero.Docflow.PublicConstants.Module.SimpleRelationName, document);
+            addendumStr.Result = relatedDoc;
           }
         }
         
