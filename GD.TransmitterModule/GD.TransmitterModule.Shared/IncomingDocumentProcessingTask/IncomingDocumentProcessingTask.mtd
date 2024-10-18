@@ -49,8 +49,8 @@
       "Constraints": [
         {
           "NameGuid": "41cc0f56-c5a1-4dd0-baec-355132245530",
-          "Name": "Addendums",
-          "ConstraintTypeId": "58b9ed35-9c84-46cd-aa79-9b5ef5a82f5d"
+          "Name": "ElectronicDocuments",
+          "ConstraintTypeId": "030d8d67-9b94-4f0d-bcc6-691016eb70f3"
         }
       ],
       "IsEnabled": false,
