@@ -30,7 +30,7 @@
             <property name="Name">MailRegister_RelatedDocuments_Document</property>
             <property name="FieldName">Document</property>
             <property name="VisibleIndex">0</property>
-            <property name="Width">88</property>
+            <property name="Width">77</property>
             <property name="ActualWidth">8*</property>
           </property>
         </property>

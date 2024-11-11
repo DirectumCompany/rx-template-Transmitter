@@ -136,4 +136,7 @@
   <data name="Property_DocumentsSetId" xml:space="preserve">
     <value>ИД комплекта документов</value>
   </data>
+  <data name="Property_Addressee" xml:space="preserve">
+    <value>Адресат</value>
+  </data>
 </root>
