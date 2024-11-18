@@ -402,7 +402,7 @@
           "ParameterTypeFullName": "System.Collections.Generic.List"
         },
         {
-          "Name": "IsRequestTransfer",
+          "Name": "isRequestTransfer",
           "ParameterType": "global::System.Boolean",
           "ParameterTypeFullName": "System.Boolean"
         },
