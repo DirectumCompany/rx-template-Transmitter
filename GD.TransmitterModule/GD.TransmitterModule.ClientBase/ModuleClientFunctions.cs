@@ -315,8 +315,7 @@ namespace GD.TransmitterModule.Client
         
         foreach (var relationName in RelationTypes.GetAll().Select(r => r.Name))
         {
-          allRelatedDocuments.AddRange(document.Relations.GetRelated(relationName)
-                                       .Union(document.Relations.GetRelatedFrom(relationName))
+          allRelatedDocuments.AddRange(document.Relations.GetRelatedAndRelatedFromDocuments(relationName)                                       
                                        .Where(d => d.HasVersions)
                                        .OrderBy(d => d.Name));
         }
