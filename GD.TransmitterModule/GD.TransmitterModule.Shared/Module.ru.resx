@@ -181,4 +181,10 @@
 
 </value>
   </data>
+  <data name="CounterpartyAndAddresseeIsNotEmail" xml:space="preserve">
+    <value>У адресата {0} корреспондента {1} не заполнен E-mail</value>
+  </data>
+  <data name="EmailDuplicate" xml:space="preserve">
+    <value>E-mail {0} повторяется для нескольких адресатов</value>
+  </data>
 </root>
