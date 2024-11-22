@@ -207,7 +207,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="maxAttachmentFileSize">Максимальный разрешенный размер вложения (Мб).</param>
     /// <returns>true, если размер архива вложений не больше, чем значение из настроек модуля, иначе - false.</returns>
     [Public, Remote(IsPure=true)]
-    public virtual bool CheckPackageSize(IOutgoingDocumentBase letter, double maxAttachmentFileSize)
+    public virtual bool CheckPackageSize(GovernmentSolution.IOutgoingDocumentBase letter, double maxAttachmentFileSize)
     {
       var result = false;
       try
@@ -426,7 +426,7 @@ namespace GD.TransmitterModule.Server
     /// <returns>Путь до сформированного файла архива.</returns>
     public virtual string GenerateArchiveWithAttachments(IMailRegister mailRegister)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = GovernmentSolution.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -777,7 +777,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="zipName">Путь до архива с вложениями.</param>
     public void SendDocumentAddresseesEMail(IMailRegister mailRegister, string zipName, int? maxRetryCount)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = GovernmentSolution.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -1088,7 +1088,7 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="document">Основной документ для отправки.</param>
     /// <param name="relatedDocs">Связанные документы для отправки.</param>
-    public List<string> SendDocumentToAddresseesInternalMail(Sungero.Docflow.IOutgoingDocumentBase letter,
+    public List<string> SendDocumentToAddresseesInternalMail(GovernmentSolution.IOutgoingDocumentBase letter,
                                                              IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
                                                              bool IsRequestTransfer,
                                                              IRequest request)
@@ -1129,7 +1129,7 @@ namespace GD.TransmitterModule.Server
       return errors;
     }
     
-    public List<string> SendDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, IUser sender)
+    public List<string> SendDocumentToAddresseesMedo(GovernmentSolution.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, IUser sender)
     {
       Logger.Debug("SendDocumentToAddresseesMedo - start");
       var errors = new List<string>();
@@ -1177,7 +1177,7 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="letter"></param>
     /// <param name="errors"></param>
-    public virtual void SendErrorNoticesAuthor(IOutgoingDocumentBase letter, List<string> errors)
+    public virtual void SendErrorNoticesAuthor(GovernmentSolution.IOutgoingDocumentBase letter, List<string> errors)
     {
 
       if (errors.Count == 0)

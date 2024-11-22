@@ -264,8 +264,8 @@
       "Parameters": [
         {
           "Name": "letter",
-          "ParameterType": "global::Sungero.Docflow.IOutgoingDocumentBase",
-          "ParameterTypeFullName": "Sungero.Docflow.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
+          "ParameterType": "global::GD.GovernmentSolution.IOutgoingDocumentBase",
+          "ParameterTypeFullName": "GD.GovernmentSolution.IOutgoingDocumentBase, Sungero.Domain.Interfaces"
         },
         {
           "Name": "maxAttachmentFileSize",
