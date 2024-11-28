@@ -402,7 +402,7 @@
           "ParameterTypeFullName": "System.Collections.Generic.List"
         },
         {
-          "Name": "IsRequestTransfer",
+          "Name": "isRequestTransfer",
           "ParameterType": "global::System.Boolean",
           "ParameterTypeFullName": "System.Boolean"
         },
@@ -660,7 +660,9 @@
     "EmailMethodNotFound",
     "MethodMedoNotFound",
     "DuplicatesCorrespondents",
-    "IncorrectExtLength"
+    "IncorrectExtLength",
+    "CounterpartyAndAddresseeIsNotEmail",
+    "EmailDuplicate"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

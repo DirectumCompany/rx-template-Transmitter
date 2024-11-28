@@ -142,4 +142,7 @@
   <data name="Property_MaxProcessingRecordsPerRun" xml:space="preserve">
     <value />
   </data>
+  <data name="Property_Addressee" xml:space="preserve">
+    <value>Addressee</value>
+  </data>
 </root>

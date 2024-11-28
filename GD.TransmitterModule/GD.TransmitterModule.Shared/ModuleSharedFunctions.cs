@@ -25,38 +25,41 @@ namespace GD.TransmitterModule.Shared
       if (OutgoingLetters.Is(document))
       {
         var addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState));
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
+                 a.Correspondent != null && string.IsNullOrEmpty(a.Correspondent.Email) && (a.Addressee == null || string.IsNullOrEmpty(a.Addressee.Email)));
         Logger.DebugFormat("Debug CheckRequisitesForEmail - 1");
-        
-        if (addresses.Count() > 0)
+        foreach (var addresse in addresses)
         {
-          foreach (var addresse in addresses)
-          {
-            var email = addresse.Correspondent.Email;
-            
-            if (string.IsNullOrEmpty(email))
-              errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
-          }
+          if (addresse.Addressee == null)
+            errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
+          else
+            errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
         }
       }
       else if (OutgoingRequestLetters.Is(document))
       {
         var addresses = OutgoingRequestLetters.As(document).Addressees.Cast<IOutgoingRequestLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState));
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
+                 a.Correspondent != null && string.IsNullOrEmpty(a.Correspondent.Email) && (a.Addressee == null || string.IsNullOrEmpty(a.Addressee.Email)));
         Logger.DebugFormat("Debug CheckRequisitesForEmail - 1");
-        
-        if (addresses.Count() > 0)
+        foreach (var addresse in addresses)
         {
-          foreach (var addresse in addresses)
-          {
-            var email = addresse.Correspondent.Email;
-            
-            if (string.IsNullOrEmpty(email))
-              errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
-          }
+          if (addresse.Addressee == null)
+            errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
+          else
+            errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
         }
       }
       
+      if (OutgoingDocumentBases.Is(document))
+      {
+        var emailDuplicate = OutgoingDocumentBases.As(document).Addressees
+          .Where(x => Equals(x.DeliveryMethod, method))
+          .GroupBy(x => (x.Addressee == null || string.IsNullOrEmpty(x.Addressee.Email)) ? x.Correspondent.Email : x.Addressee.Email)
+          .Where(x => x.Count() > 1).Select(x => x.Key);
+        foreach (var email in emailDuplicate)
+          errors.Add(Resources.EmailDuplicateFormat(email));
+      }
       Logger.DebugFormat("Debug CheckRequisitesForEmail - end");
       return errors;
     }
@@ -86,7 +89,7 @@ namespace GD.TransmitterModule.Shared
       var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesInternalMail.Create();
       asyncSendingHandler.DocumentID = document.Id;
       asyncSendingHandler.RelationDocumentIDs = relatedDocumentsIds;
-      asyncSendingHandler.IsRequestTransfer = isTransfer; 
+      asyncSendingHandler.IsRequestTransfer = isTransfer;
       
       if (isTransfer)
       {
@@ -121,11 +124,11 @@ namespace GD.TransmitterModule.Shared
     {
       var relatedDocuments = OutgoingLetters.Is(document) ?
         OutgoingLetters.As(document).DocsToSendGD.Where(d => d.Document != null &&
-                                                        d.Document.AssociatedApplication.Extension.Length >= 3 && 
-                                                        d.Document.AssociatedApplication.Extension.Length <= 4).Select(d => d.Document.Id).ToList() :
-        OutgoingRequestLetters.As(document).DocsToSendGD.Where(d => d.Document != null && 
                                                         d.Document.AssociatedApplication.Extension.Length >= 3 &&
-                                                        d.Document.AssociatedApplication.Extension.Length <= 4).Select(d => d.Document.Id).ToList();
+                                                        d.Document.AssociatedApplication.Extension.Length <= 4).Select(d => d.Document.Id).ToList() :
+        OutgoingRequestLetters.As(document).DocsToSendGD.Where(d => d.Document != null &&
+                                                               d.Document.AssociatedApplication.Extension.Length >= 3 &&
+                                                               d.Document.AssociatedApplication.Extension.Length <= 4).Select(d => d.Document.Id).ToList();
       var relatedDocumentsIds = string.Join(",", relatedDocuments);
       var asyncSendingHandler = AsyncHandlers.SendDocumentToAddresseesMedo.Create();
       asyncSendingHandler.DocumentID = document.Id;

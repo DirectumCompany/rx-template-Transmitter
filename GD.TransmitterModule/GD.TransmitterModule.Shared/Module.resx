@@ -181,4 +181,10 @@
 
 </value>
   </data>
+  <data name="CounterpartyAndAddresseeIsNotEmail" xml:space="preserve">
+    <value>The addressee {0} of the correspondent {1} has an empty email address</value>
+  </data>
+  <data name="EmailDuplicate" xml:space="preserve">
+    <value>E-mail {0} is repeated for multiple addressee</value>
+  </data>
 </root>
