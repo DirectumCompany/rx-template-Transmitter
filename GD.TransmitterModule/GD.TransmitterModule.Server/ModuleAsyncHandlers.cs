@@ -107,7 +107,7 @@ namespace GD.TransmitterModule.Server
         Logger.Debug("SendDocumentToAddressees: start SendDocumentToAddressees.");
         
         if (Sungero.Docflow.OutgoingDocumentBases.Is(letter))
-          Functions.Module.SendDocumentToAddresseesInternalMail(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs, args.IsRequestTransfer, request);
+          Functions.Module.SendDocumentToAddresseesInternalMail(GovernmentSolution.OutgoingDocumentBases.As(letter), relatedDocs, args.IsRequestTransfer, request);
         
         Logger.Debug("SendDocumentToAddressees: end SendDocumentToAddressees.");
       }
@@ -146,7 +146,7 @@ namespace GD.TransmitterModule.Server
         Logger.Debug("SendDocumentToAddresseesMedo: start SendDocumentToAddresseesMedo.");
         
         if (Sungero.Docflow.OutgoingDocumentBases.Is(letter))
-          Functions.Module.SendDocumentToAddresseesMedo(Sungero.Docflow.OutgoingDocumentBases.As(letter), relatedDocs, sender);
+          Functions.Module.SendDocumentToAddresseesMedo(GovernmentSolution.OutgoingDocumentBases.As(letter), relatedDocs, sender);
         
         Logger.Debug("SendDocumentToAddresseesMedo: end SendDocumentToAddresseesMedo.");
       }

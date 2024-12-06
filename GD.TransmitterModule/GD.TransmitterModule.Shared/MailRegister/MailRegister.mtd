@@ -73,7 +73,7 @@
           "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.DropDownEditorToNavigationBinder",
           "ParentGuid": "295e74f5-9837-4445-901f-de40cd5b5128",
           "PropertyGuid": "86901f85-7bfa-474e-81ea-352d167bec0f",
-          "RowNumber": 1,
+          "RowNumber": 2,
           "RowSpan": 1,
           "Settings": []
         },
@@ -82,11 +82,11 @@
           "NameGuid": "a0b3d9da-6856-4784-812d-7abf87439b7c",
           "Name": "Sender",
           "ColumnNumber": 0,
-          "ColumnSpan": 2,
+          "ColumnSpan": 1,
           "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.DropDownEditorToNavigationBinder",
           "ParentGuid": "295e74f5-9837-4445-901f-de40cd5b5128",
           "PropertyGuid": "a3d12625-67ac-40e2-9479-6efb87e4fcec",
-          "RowNumber": 2,
+          "RowNumber": 3,
           "RowSpan": 1,
           "Settings": []
         },
@@ -94,12 +94,12 @@
           "$type": "Sungero.Metadata.ControlMetadata, Sungero.Metadata",
           "NameGuid": "ed40f930-0123-4353-bcfe-e706e0c48f2d",
           "Name": "Email",
-          "ColumnNumber": 0,
+          "ColumnNumber": 1,
           "ColumnSpan": 1,
           "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.StringEditorToStringBinder",
           "ParentGuid": "295e74f5-9837-4445-901f-de40cd5b5128",
           "PropertyGuid": "77abad8f-2457-48b0-8449-425f56e6533f",
-          "RowNumber": 3,
+          "RowNumber": 1,
           "RowSpan": 1,
           "Settings": []
         },
@@ -125,7 +125,7 @@
           "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.StringEditorToStringBinder",
           "ParentGuid": "295e74f5-9837-4445-901f-de40cd5b5128",
           "PropertyGuid": "0317e787-51bc-48b7-a49e-1658760365fe",
-          "RowNumber": 1,
+          "RowNumber": 2,
           "RowSpan": 1,
           "Settings": []
         },
@@ -179,6 +179,19 @@
           "ParentGuid": "295e74f5-9837-4445-901f-de40cd5b5128",
           "PropertyGuid": "f3507a52-dc33-40ed-aa88-ec184ff94802",
           "RowNumber": 3,
+          "RowSpan": 1,
+          "Settings": []
+        },
+        {
+          "$type": "Sungero.Metadata.ControlMetadata, Sungero.Metadata",
+          "NameGuid": "a2e13048-f0ea-4321-aed6-9ebc40ef5557",
+          "Name": "Addressee",
+          "ColumnNumber": 0,
+          "ColumnSpan": 1,
+          "DataBinderTypeName": "Sungero.Presentation.CommonDataBinders.DropDownEditorToNavigationBinder",
+          "ParentGuid": "295e74f5-9837-4445-901f-de40cd5b5128",
+          "PropertyGuid": "020dddd0-b2b4-4928-8d04-0bf845c3fb26",
+          "RowNumber": 1,
           "RowSpan": 1,
           "Settings": []
         }
@@ -418,6 +431,16 @@
       "Length": 50,
       "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.StringEditorToStringBinder",
       "PreviousPropertyGuid": "f4c99378-360f-4a9a-8a9b-ea4a57b66d8e"
+    },
+    {
+      "$type": "Sungero.Metadata.NavigationPropertyMetadata, Sungero.Metadata",
+      "NameGuid": "020dddd0-b2b4-4928-8d04-0bf845c3fb26",
+      "Name": "Addressee",
+      "Code": "Addressee",
+      "EntityGuid": "c8daaef9-a679-4a29-ac01-b93c1637c72e",
+      "FlatListInStandaloneLookup": true,
+      "ListDataBinderTypeName": "Sungero.Presentation.CommonDataBinders.DropDownEditorToNavigationBinder",
+      "PreviousPropertyGuid": "f3507a52-dc33-40ed-aa88-ec184ff94802"
     }
   ],
   "PublicStructures": [],

@@ -77,10 +77,10 @@ namespace GD.TransmitterModule.Server
     /// <param name="state">Состояние.</param>
     /// <param name="comment">Комментарий.</param>
     /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
-    public virtual void UpdateDocumentsStateInternalMail(IOutgoingLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingLetter letter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
-      var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
+      var addressee = append ? letter.Addressees.AddNew() : letter.Addressees.Where(a => a.DeliveryMethod != null &&
                                                                                                   a.DeliveryMethod.Sid == deliveryMethodSid &&
                                                                                                   Equals(a.Correspondent, correspondent)).LastOrDefault();
       
@@ -99,21 +99,21 @@ namespace GD.TransmitterModule.Server
         ((IOutgoingLetterAddressees)addressee).StateInfo = comment ?? state;
       }
       
-      if (requestLetter.IsManyAddressees == false)
+      if (letter.IsManyAddressees == false)
       {
-        requestLetter.DocumentState = state;
-        requestLetter.StateInfo = comment ?? state;
+        letter.DocumentState = state;
+        letter.StateInfo = comment ?? state;
       }
       
-      if (requestLetter.State.IsChanged)
-        requestLetter.Save();
+      if (letter.State.IsChanged)
+        letter.Save();
     }
     
     
     /// <summary>
     /// Записать отправку в историю.
     /// </summary>
-    /// <param name="letter">Исх., письмо.</param>
+    /// <param name="letter">Исх. письмо.</param>
     [Remote]
     public virtual void WriteSendingDocsInHistory(IOutgoingLetter letter)
     {
@@ -131,7 +131,7 @@ namespace GD.TransmitterModule.Server
     /// <summary>
     /// Записать отправку в историю.
     /// </summary>
-    /// <param name="letter">Исх., письмо по обращению.</param>
+    /// <param name="letter">Исх. письмо по обращению.</param>
     [Remote]
     public virtual void WriteSendingDocsInHistory(IOutgoingRequestLetter letter)
     {
@@ -147,7 +147,7 @@ namespace GD.TransmitterModule.Server
     }
     
     /// <summary>
-    /// Отправить исх., документ перенаправлением.
+    /// Отправить исх. документ перенаправлением.
     /// </summary>
     /// <param name="internalMailRegister">Запись реестра для отправки в рамках системы.</param>
     [Public]
@@ -207,7 +207,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="maxAttachmentFileSize">Максимальный разрешенный размер вложения (Мб).</param>
     /// <returns>true, если размер архива вложений не больше, чем значение из настроек модуля, иначе - false.</returns>
     [Public, Remote(IsPure=true)]
-    public virtual bool CheckPackageSize(IOutgoingDocumentBase letter, double maxAttachmentFileSize)
+    public virtual bool CheckPackageSize(GovernmentSolution.IOutgoingDocumentBase letter, double maxAttachmentFileSize)
     {
       var result = false;
       try
@@ -307,6 +307,10 @@ namespace GD.TransmitterModule.Server
       return result;
     }
 
+    /// <summary>
+    /// Отправить уведомлением запись реестра отправки по эл. почте.
+    /// </summary>
+    /// <param name="mailRegister">Запись реестра отправки по эл. почте.</param>
     public virtual void SendNoticeToResponsible(IMailRegister mailRegister)
     {
       var letter = mailRegister != null ? Sungero.Docflow.OfficialDocuments.As(mailRegister.LeadingDocument) : Sungero.Docflow.OfficialDocuments.Null;
@@ -326,6 +330,10 @@ namespace GD.TransmitterModule.Server
       task.Start();
     }
     
+    /// <summary>
+    /// Отправить уведомлением запись реестра внутренней отправки.
+    /// </summary>
+    /// <param name="mailRegister">Запись реестра внутренней отправки.</param>
     public virtual void SendNoticeToResponsible(IInternalMailRegister mailRegister)
     {
       var letter = mailRegister != null ? Sungero.Docflow.OfficialDocuments.As(mailRegister.LeadingDocument) : Sungero.Docflow.OfficialDocuments.Null;
@@ -340,7 +348,11 @@ namespace GD.TransmitterModule.Server
       task.ActiveText = mailRegister.ErrorInfo;
       task.Start();
     }
-    
+        
+    /// <summary>
+    /// Получить ответственного за отправку по e-mail.
+    /// </summary>
+    /// <returns>Настройки модуля отправки писем.</returns>
     public virtual IRecipient GetResponsibleForEmailSending()
     {
       return Roles.GetAll(r => r.Sid == Guid.Empty).FirstOrDefault() ?? Roles.Administrators;
@@ -349,6 +361,7 @@ namespace GD.TransmitterModule.Server
     /// <summary>
     /// Получить настройки модуля отправки писем.
     /// </summary>
+    /// <returns>Настройки модуля отправки писем.</returns>
     [Public, Remote]
     public virtual ITransmitterSetting GetTransmitterSettings()
     {
@@ -395,10 +408,10 @@ namespace GD.TransmitterModule.Server
     }
     
     /// <summary>
-    /// Создать копию приложения.
+    /// Создать копию документа.
     /// </summary>
-    /// <param name="addendum">Копируемое приложение.</param>
-    /// <returns>Копия приложения.</returns>
+    /// <param name="document">Копируемый документ.</param>
+    /// <returns>Копия документа.</returns>
     [Remote, Public]
     public static Sungero.Content.IElectronicDocument CopyElectronicDocument(Sungero.Content.IElectronicDocument document)
     {
@@ -426,7 +439,7 @@ namespace GD.TransmitterModule.Server
     /// <returns>Путь до сформированного файла архива.</returns>
     public virtual string GenerateArchiveWithAttachments(IMailRegister mailRegister)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = GovernmentSolution.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -627,9 +640,9 @@ namespace GD.TransmitterModule.Server
     
     /// <summary>
     /// Создать архив.
+    /// </summary>
     /// <param name="archivePath">Путь до папки с архивом.</param>
     /// <param name="zipName">Наименование архива.</param>
-    /// </summary>
     [Public, Remote]
     public static void CreateFromDirectoryPublic(string archivePath, string zipName)
     {
@@ -638,11 +651,12 @@ namespace GD.TransmitterModule.Server
     
     /// <summary>
     /// Генерировать полный путь к файлу.
+    /// </summary>
     /// <param name="folderPath">Путь до папки.</param>
     /// <param name="documentName">Наименование файла.</param>
     /// <param name="extensionName">Расширение.</param>
     /// <param name="maxDocNameLength">Максимальная длина наименования файла.</param>
-    /// </summary>
+    /// <returns>Полный путь.</returns>
     public string GenerateFilePath(string folderPath, string documentName, string extensionName, int maxDocNameLength)
     {
       var fileName = documentName.Replace(@"/", "_").Replace("\"", "_");
@@ -656,6 +670,7 @@ namespace GD.TransmitterModule.Server
     /// Получить значение свойства "Регистрация" документа.
     /// <param name="document">Идентификатор документа.</param>
     /// </summary>
+    /// <returns>Статус документа из свойства "Регистрация".</returns>
     [Remote(IsPure = true), Public]
     public static Sungero.Core.Enumeration GetDocRegState(long id)
     {
@@ -666,6 +681,7 @@ namespace GD.TransmitterModule.Server
     /// Проверить на валидность все вложения задачи.
     /// </summary>
     /// <param name="task">Задача.</param>
+    /// <returns>Признак валидности вложений.</returns>
     [Public]
     public static bool CheckAttachmentIsValid(Sungero.Workflow.ITask task)
     {
@@ -775,9 +791,10 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="mailRegister">Запись реестра отправки.</param>
     /// <param name="zipName">Путь до архива с вложениями.</param>
+    /// <param name="maxRetryCount">Максимальное количество попыток отправки.</param>
     public void SendDocumentAddresseesEMail(IMailRegister mailRegister, string zipName, int? maxRetryCount)
     {
-      var letter = OutgoingDocumentBases.As(mailRegister.LeadingDocument);
+      var letter = GovernmentSolution.OutgoingDocumentBases.As(mailRegister.LeadingDocument);
       
       try
       {
@@ -804,9 +821,9 @@ namespace GD.TransmitterModule.Server
         
         var isError = false;
         
-        if (!string.IsNullOrWhiteSpace(mailRegister.Correspondent.Email))
+        if (!string.IsNullOrWhiteSpace(mailRegister.Addressee?.Email) || !string.IsNullOrWhiteSpace(mailRegister.Correspondent?.Email))
         {
-          var email = mailRegister.Correspondent.Email;;
+          var email = mailRegister.Addressee?.Email ?? mailRegister.Correspondent?.Email;
           var mailAddress = new System.Net.Mail.MailAddress(email);
           mail.To.Add(email);
           
@@ -899,10 +916,10 @@ namespace GD.TransmitterModule.Server
     
     /// <summary>
     /// Получить ответственного регистратора для организации и вида документа.
+    /// </summary>
     /// <param name="businessUnit">Наша организация.</param>
     /// <param name="documentKind">Вид документа.</param>
-    /// <returns></returns>
-    /// </summary>
+    /// <returns>Регистратор.</returns>
     [Public, Remote]
     public Sungero.Company.IEmployee GetRegistrarForBusinessUnit(Sungero.Company.IBusinessUnit businessUnit, Sungero.Docflow.IDocumentKind documentKind)
     {
@@ -921,8 +938,10 @@ namespace GD.TransmitterModule.Server
     /// Отправка исходящего документа по МЭДО.
     /// </summary>
     /// <param name="document">Документ к отправке.</param>
+    /// <param name="relatedDocs">Связанные документы.</param>
     /// <param name="company">Адресат.</param>
-    /// <returns>Ошибки при отправке.</returns>
+    /// <param name="errors">Ошибки при отправке.</param>
+    /// <param name="sender">Отправитель.</param>v
     [Public]
     public void MEDOSendToCounterparty(Sungero.Docflow.IOutgoingDocumentBase document, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
                                        ICompany company, List<string> errors, IUser sender)
@@ -1005,13 +1024,13 @@ namespace GD.TransmitterModule.Server
     /// <param name="document">Документ к отправке..</param>
     /// <param name="correspondent">Адресат.</param>
     /// <param name="errors">Ошибки при отправке.</param>
-    /// <param name="IsRequestTransfer">Перенаправление обращения</param>
+    /// <param name="isRequestTransfer">Перенаправление обращения</param>
     /// <param name="request">Обращение для перенаправления.</param>
     [Public]
     public void CreateMailRegisterRecord(Sungero.Docflow.IOfficialDocument document,
                                          Sungero.Parties.ICounterparty correspondent,
                                          List<string> errors,
-                                         bool IsRequestTransfer,
+                                         bool isRequestTransfer,
                                          IRequest request)
     {
       try
@@ -1023,7 +1042,7 @@ namespace GD.TransmitterModule.Server
           var registerItem = InternalMailRegisters.Create();
           registerItem.Correspondent = correspondent;
           registerItem.LeadingDocument = document;
-          registerItem.IsRequestTransfer = IsRequestTransfer;
+          registerItem.IsRequestTransfer = isRequestTransfer;
           registerItem.Request = request;
           registerItem.Status = GD.TransmitterModule.InternalMailRegister.Status.ToProcess;
           registerItem.Save();
@@ -1042,7 +1061,6 @@ namespace GD.TransmitterModule.Server
     /// <param name="letter">Исх. письмо</param>
     /// <param name="addressee">Ссылка на строку в коллекции Адресаты</param>
     /// <param name="senderId">ИД отправителя</param>
-    /// <param name="copyTo">e-mail для отправки копии</param>
     /// <param name="documentsSetId">ИД комплекта документов к отправке</param>
     public void CreateEmailRegisterRecord(Sungero.Docflow.IOutgoingDocumentBase letter,
                                           Sungero.Docflow.IOutgoingDocumentBaseAddressees addressee,
@@ -1051,13 +1069,17 @@ namespace GD.TransmitterModule.Server
     {
       try
       {
-        if (!MailRegisters.GetAll(x => x.Correspondent == addressee.Correspondent &&
-                                  x.LeadingDocument == letter &&
+        if (!MailRegisters.GetAll(x => Equals(x.Correspondent, addressee.Correspondent) &&
+                                  Equals(x.Addressee, addressee.Addressee) &&
+                                  Equals(x.LeadingDocument, letter) &&
                                   x.Status == GD.TransmitterModule.MailRegister.Status.ToProcess).Any())
         {
           var registerItem = MailRegisters.Create();
           registerItem.Correspondent = addressee.Correspondent;
-          if (addressee.Correspondent != null)
+          registerItem.Addressee = addressee.Addressee;
+          if (addressee.Addressee != null)
+            registerItem.Email = addressee.Addressee.Email;
+          if (addressee.Correspondent != null && string.IsNullOrEmpty(registerItem.Email))
             registerItem.Email = addressee.Correspondent.Email;
           registerItem.LeadingDocument = letter;
           
@@ -1088,9 +1110,12 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     /// <param name="document">Основной документ для отправки.</param>
     /// <param name="relatedDocs">Связанные документы для отправки.</param>
-    public List<string> SendDocumentToAddresseesInternalMail(Sungero.Docflow.IOutgoingDocumentBase letter,
+    /// <param name="isRequestTransfer">Перенаправление обращения</param>
+    /// <param name="request">Обращение для перенаправления.</param>
+    /// <returns>Ошибки при отправке.</returns>
+    public List<string> SendDocumentToAddresseesInternalMail(GovernmentSolution.IOutgoingDocumentBase letter,
                                                              IQueryable<Sungero.Content.IElectronicDocument> relatedDocs,
-                                                             bool IsRequestTransfer,
+                                                             bool isRequestTransfer,
                                                              IRequest request)
     {
       Logger.DebugFormat("Debug SendDocumentToAddressees - start");
@@ -1120,7 +1145,7 @@ namespace GD.TransmitterModule.Server
           .ToList();
         
         foreach (var addresse in awaitingDispatchAddresses)
-          CreateMailRegisterRecord(letter, addresse.Correspondent, errors, IsRequestTransfer, request);
+          CreateMailRegisterRecord(letter, addresse.Correspondent, errors, isRequestTransfer, request);
       }
       
       SendErrorNoticesAuthor(letter, errors);
@@ -1129,7 +1154,14 @@ namespace GD.TransmitterModule.Server
       return errors;
     }
     
-    public List<string> SendDocumentToAddresseesMedo(Sungero.Docflow.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, IUser sender)
+    /// <summary>
+    /// Отправить документ адресатам в рамках системы.
+    /// </summary>
+    /// <param name="document">Основной документ для отправки.</param>
+    /// <param name="relatedDocs">Связанные документы для отправки.</param>
+    /// <param name="sender">Отправитель.</param>
+    /// <returns>Ошибки при отправке.</returns>
+    public List<string> SendDocumentToAddresseesMedo(GovernmentSolution.IOutgoingDocumentBase letter, IQueryable<Sungero.Content.IElectronicDocument> relatedDocs, IUser sender)
     {
       Logger.Debug("SendDocumentToAddresseesMedo - start");
       var errors = new List<string>();
@@ -1173,11 +1205,11 @@ namespace GD.TransmitterModule.Server
     }
     
     /// <summary>
-    /// Отправить уведомление об ошибках автору задачи.
+    /// Отправить уведомление об ошибках автору документа.
     /// </summary>
-    /// <param name="letter"></param>
-    /// <param name="errors"></param>
-    public virtual void SendErrorNoticesAuthor(IOutgoingDocumentBase letter, List<string> errors)
+    /// <param name="letter">Исходящий документ.</param>
+    /// <param name="errors">Список ошибок.</param>
+    public virtual void SendErrorNoticesAuthor(GovernmentSolution.IOutgoingDocumentBase letter, List<string> errors)
     {
 
       if (errors.Count == 0)
