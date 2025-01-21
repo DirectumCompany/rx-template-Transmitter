@@ -286,7 +286,7 @@ namespace GD.TransmitterModule.Client
       if (existSending)
       {
         Functions.Module.Remote.WriteSendingDocsInHistory(document);
-      
+        
         if (document.IsManyAddressees == false)
           document.DocumentState = Resources.AwaitingDispatch;
         
@@ -315,7 +315,7 @@ namespace GD.TransmitterModule.Client
         
         foreach (var relationName in RelationTypes.GetAll().Select(r => r.Name))
         {
-          allRelatedDocuments.AddRange(document.Relations.GetRelatedAndRelatedFromDocuments(relationName)                                       
+          allRelatedDocuments.AddRange(document.Relations.GetRelatedAndRelatedFromDocuments(relationName)
                                        .Where(d => d.HasVersions)
                                        .OrderBy(d => d.Name));
         }
@@ -458,6 +458,7 @@ namespace GD.TransmitterModule.Client
       var errorsTransfer = new List<string>();
       var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressesTransfer = document.Addressees.Cast<IOutgoingRequestLetterAddressees>().Where(a => a.DeliveryMethod?.Sid == directumRXDeliveryMethodSid && string.IsNullOrEmpty(a.DocumentState));
+      var needStartInternalSendingDocuments = false;
       
       // Проверки для отправки перенаправлением.
       if (addressesTransfer.Any())
@@ -467,15 +468,12 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsTransfer.Any())
         {
-          Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
-          PublicFunctions.Module.StartInternalSendingDocuments(document);
-          
           foreach (var addresse in addressesTransfer)
           {
             addresse.DocumentState = Resources.AwaitingDispatch;
             addresse.Addresser = Users.Current;
           }
-          
+          needStartInternalSendingDocuments = true;
           existSending = true;
         }
       }
@@ -491,6 +489,13 @@ namespace GD.TransmitterModule.Client
         
         document.Save();
         information.Add(Resources.DocumentWasSending);
+      }
+      
+      // Запустить АО после сохранения карточки, для того чтобы в фильтрацию попали адресаты со статусом отправки "Ожидает отправки". 
+      if (needStartInternalSendingDocuments)
+      {
+        Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
+        PublicFunctions.Module.StartInternalSendingDocuments(document);
       }
       
       var addresseesWithoutDeliveryMethod = document.Addressees.Where(a => a.DeliveryMethod == null);
