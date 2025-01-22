@@ -260,6 +260,7 @@ namespace GD.TransmitterModule.Client
       // Если проверки для отправки не пройдены - не менять статус для адресатов.
       var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressesTransfer = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(a => a.DeliveryMethod?.Sid == directumRXDeliveryMethodSid && string.IsNullOrEmpty(a.DocumentState));
+      var needStartInternalSendingDocuments = false;
       
       if (addressesTransfer.Any())
       {
@@ -268,9 +269,6 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsRX.Any())
         {
-          Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
-          PublicFunctions.Module.StartInternalSendingDocuments(document);
-          
           foreach (var addresse in addressesTransfer)
           {
             addresse.DocumentState = Resources.AwaitingDispatch;
@@ -292,6 +290,13 @@ namespace GD.TransmitterModule.Client
         
         document.Save();
         information.Add(Resources.DocumentWasSending);
+      }
+      
+      // Запустить АО после сохранения карточки, для того чтобы в фильтрацию попали адресаты со статусом отправки "Ожидает отправки".
+      if (needStartInternalSendingDocuments)
+      {
+        Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
+        PublicFunctions.Module.StartInternalSendingDocuments(document);
       }
       
       var addresseesWithoutDeliveryMethod = document.Addressees.Where(a => a.DeliveryMethod == null);
@@ -491,7 +496,7 @@ namespace GD.TransmitterModule.Client
         information.Add(Resources.DocumentWasSending);
       }
       
-      // Запустить АО после сохранения карточки, для того чтобы в фильтрацию попали адресаты со статусом отправки "Ожидает отправки". 
+      // Запустить АО после сохранения карточки, для того чтобы в фильтрацию попали адресаты со статусом отправки "Ожидает отправки".
       if (needStartInternalSendingDocuments)
       {
         Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
