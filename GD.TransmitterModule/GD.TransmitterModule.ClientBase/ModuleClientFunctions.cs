@@ -159,6 +159,7 @@ namespace GD.TransmitterModule.Client
       
       var errorsEmail = new List<string>();
       var addresseesEmail = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(x => Equals(x.DeliveryMethod, methodEmail) && string.IsNullOrEmpty(x.DocumentState));
+      var needStartSendingDocumentToAddresseesEMail = false;
       
       if (addresseesEmail.Any())
       {
@@ -171,15 +172,12 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsEmail.Any())
         {
-          Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по Email, ИД документа = {0}", document.Id);
-          Functions.Module.StartSendingDocumentToAddresseesEMail(document);
-          
           foreach(var addressee in addresseesEmail)
           {
             addressee.DocumentState = Resources.AwaitingDispatch;
             addressee.AddresserGD = Users.Current;
           }
-          
+          needStartSendingDocumentToAddresseesEMail = true;
           existSending = true;
         }
       }
@@ -192,6 +190,7 @@ namespace GD.TransmitterModule.Client
         AppliedCodeException.Create(GD.TransmitterModule.Resources.MethodMedoNotFound);
       
       var addressesMedo = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(a => Equals(a.DeliveryMethod, methodMedo) && string.IsNullOrEmpty(a.DocumentState));
+      var needStartStartSendingDocumentToAddresseesMedo = false;
       
       if (addressesMedo.Any())
       {
@@ -241,15 +240,13 @@ namespace GD.TransmitterModule.Client
         if (!errorsMEDO.Any())
         {
           var sender = Users.Current.IsSystem == true ? null : Users.Current;
-          Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по МЭДО, ИД документа = {0}", document.Id);
-          Functions.Module.StartStartSendingDocumentToAddresseesMedo(document, sender);
           
           foreach (var addresse in addressesMedo)
           {
             addresse.DocumentState = Resources.AwaitingDispatch;
             addresse.AddresserGD = sender;
           }
-          
+          needStartStartSendingDocumentToAddresseesMedo = true;
           existSending = true;
         }
       }
@@ -274,7 +271,7 @@ namespace GD.TransmitterModule.Client
             addresse.DocumentState = Resources.AwaitingDispatch;
             addresse.AddresserGD = Users.Current.IsSystem == true ? null : Users.Current;
           }
-          
+          needStartInternalSendingDocuments = true;
           existSending = true;
         }
       }
@@ -293,6 +290,19 @@ namespace GD.TransmitterModule.Client
       }
       
       // Запустить АО после сохранения карточки, для того чтобы в фильтрацию попали адресаты со статусом отправки "Ожидает отправки".
+      if (needStartSendingDocumentToAddresseesEMail)
+      {
+        Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по Email, ИД документа = {0}", document.Id);
+        Functions.Module.StartSendingDocumentToAddresseesEMail(document);
+      }
+      
+      if (needStartStartSendingDocumentToAddresseesMedo)
+      {
+        var sender = Users.Current.IsSystem == true ? null : Users.Current;
+        Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по МЭДО, ИД документа = {0}", document.Id);
+        Functions.Module.StartStartSendingDocumentToAddresseesMedo(document, sender);
+      }
+      
       if (needStartInternalSendingDocuments)
       {
         Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
@@ -364,6 +374,7 @@ namespace GD.TransmitterModule.Client
       
       var errorsEmail = new List<string>();
       var addresseesEmail = document.Addressees.Cast<IOutgoingRequestLetterAddressees>().Where(x => Equals(x.DeliveryMethod, methodEmail) && string.IsNullOrEmpty(x.DocumentState));
+      var needStartSendingDocumentToAddresseesEMail = false;
       
       if (addresseesEmail.Any())
       {
@@ -376,15 +387,12 @@ namespace GD.TransmitterModule.Client
         
         if (!errorsEmail.Any())
         {
-          Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по Email, ИД документа = {0}", document.Id);
-          Functions.Module.StartSendingDocumentToAddresseesEMail(document);
-          
           foreach(var addressee in addresseesEmail)
           {
             addressee.DocumentState = Resources.AwaitingDispatch;
             addressee.Addresser = Users.Current;
           }
-          
+          needStartSendingDocumentToAddresseesEMail = true;
           existSending = true;
         }
       }
@@ -397,6 +405,7 @@ namespace GD.TransmitterModule.Client
         AppliedCodeException.Create(GD.TransmitterModule.Resources.MethodMedoNotFound);
       
       var addressesMedo = document.Addressees.Cast<IOutgoingRequestLetterAddressees>().Where(a => Equals(a.DeliveryMethod, methodMedo) && string.IsNullOrEmpty(a.DocumentState));
+      var needStartStartSendingDocumentToAddresseesMedo = false;
       
       if (addressesMedo.Any())
       {
@@ -447,15 +456,13 @@ namespace GD.TransmitterModule.Client
         if (!errorsMEDO.Any())
         {
           var sender = Users.Current.IsSystem == true ? null : Users.Current;
-          Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по МЭДО, ИД документа = {0}", document.Id);
-          Functions.Module.StartStartSendingDocumentToAddresseesMedo(document, sender);
           
           foreach (var addresse in addressesMedo)
           {
             addresse.DocumentState = Resources.AwaitingDispatch;
             addresse.Addresser = sender;
           }
-          
+          needStartStartSendingDocumentToAddresseesMedo = true;
           existSending = true;
         }
       }
@@ -497,6 +504,19 @@ namespace GD.TransmitterModule.Client
       }
       
       // Запустить АО после сохранения карточки, для того чтобы в фильтрацию попали адресаты со статусом отправки "Ожидает отправки".
+      if (needStartSendingDocumentToAddresseesEMail)
+      {
+        Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по Email, ИД документа = {0}", document.Id);
+        Functions.Module.StartSendingDocumentToAddresseesEMail(document);
+      }
+      
+      if (needStartStartSendingDocumentToAddresseesMedo)
+      {
+        var sender = Users.Current.IsSystem == true ? null : Users.Current;
+        Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам по МЭДО, ИД документа = {0}", document.Id);
+        Functions.Module.StartStartSendingDocumentToAddresseesMedo(document, sender);
+      }
+      
       if (needStartInternalSendingDocuments)
       {
         Logger.DebugFormat("SendToAddressee. Стартовать АО для отправки документа адресатам в рамках системы, ИД документа = {0}", document.Id);
