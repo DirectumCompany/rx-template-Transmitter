@@ -732,15 +732,15 @@ namespace GD.TransmitterModule.Server
                                                                                      x.DeliveryMethod?.Sid == directumRXDeliveryMethodSid).FirstOrDefault();
           if (addressee != null)
           {
-            addressee.DocumentState = Resources.DeliveryState_Sent;
-            addressee.StateInfo = Resources.DeliveryState_Sent;
+            addressee.DocumentState = Resources.DeliveryState_Delivered;
+            addressee.StateInfo = Resources.DeliveryState_Delivered;
             addressee.ForwardDateGD = Calendar.Today;
           }
           
           if (outgoingLetter.IsManyAddressees == false)
           {
-            outgoingLetter.DocumentState = Resources.DeliveryState_Sent;
-            outgoingLetter.StateInfo = Resources.DeliveryState_Sent;
+         //   outgoingLetter.DocumentState = Resources.DeliveryState_Delivered;
+            outgoingLetter.StateInfo = Resources.DeliveryState_Delivered;
           }
           
           outgoingLetter.Save();
@@ -760,8 +760,8 @@ namespace GD.TransmitterModule.Server
           
           if (outgoingRequestLetter.IsManyAddressees == false)
           {
-            outgoingRequestLetter.DocumentState = Resources.DeliveryState_Sent;
-            outgoingRequestLetter.StateInfo = Resources.DeliveryState_Sent;
+           // outgoingRequestLetter.DocumentState = Resources.DeliveryState_Delivered;
+            outgoingRequestLetter.StateInfo = Resources.DeliveryState_Delivered;
           }
           
           outgoingRequestLetter.Save();

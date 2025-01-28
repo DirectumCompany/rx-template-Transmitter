@@ -662,7 +662,8 @@
     "DuplicatesCorrespondents",
     "IncorrectExtLength",
     "CounterpartyAndAddresseeIsNotEmail",
-    "EmailDuplicate"
+    "EmailDuplicate",
+    "DeliveryState_Delivered"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",

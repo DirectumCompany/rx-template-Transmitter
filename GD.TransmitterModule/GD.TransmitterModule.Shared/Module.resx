@@ -135,7 +135,7 @@
     <value>Sent</value>
   </data>
   <data name="DeliveryState_Return" xml:space="preserve">
-    <value>Return</value>
+    <value>Registration denied</value>
   </data>
   <data name="DeliveryState_RedirectedTo" xml:space="preserve">
     <value>Redirected</value>
@@ -186,5 +186,8 @@
   </data>
   <data name="EmailDuplicate" xml:space="preserve">
     <value>E-mail {0} is repeated for multiple addressee</value>
+  </data>
+  <data name="DeliveryState_Delivered" xml:space="preserve">
+    <value>Delivered</value>
   </data>
 </root>
