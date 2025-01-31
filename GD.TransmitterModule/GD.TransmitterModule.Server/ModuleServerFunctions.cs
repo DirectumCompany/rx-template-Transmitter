@@ -57,12 +57,19 @@ namespace GD.TransmitterModule.Server
         ((IOutgoingRequestLetterAddressees)addressee).ForwardDate = Calendar.Today;
       }
       ((IOutgoingRequestLetterAddressees)addressee).DocumentState = state;
-      ((IOutgoingRequestLetterAddressees)addressee).StateInfo = comment ?? state;
-      
+      if (!string.IsNullOrEmpty(comment))
+      {
+        var stateInfo = ((IOutgoingRequestLetterAddressees)addressee).StateInfo;
+        ((IOutgoingRequestLetterAddressees)addressee).StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+      }
       if (requestLetter.IsManyAddressees == false)
       {
-        requestLetter.DocumentState = state;
-        requestLetter.StateInfo = comment ?? state;
+        //requestLetter.DocumentState = state;
+        if (!string.IsNullOrEmpty(comment))
+        {
+          var stateInfo = requestLetter.StateInfo;
+          requestLetter.StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+        }
       }
       
       if (requestLetter.State.IsChanged)
@@ -81,8 +88,8 @@ namespace GD.TransmitterModule.Server
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? letter.Addressees.AddNew() : letter.Addressees.Where(a => a.DeliveryMethod != null &&
-                                                                                                  a.DeliveryMethod.Sid == deliveryMethodSid &&
-                                                                                                  Equals(a.Correspondent, correspondent)).LastOrDefault();
+                                                                                    a.DeliveryMethod.Sid == deliveryMethodSid &&
+                                                                                    Equals(a.Correspondent, correspondent)).LastOrDefault();
       
       if (addressee != null)
       {
@@ -96,13 +103,21 @@ namespace GD.TransmitterModule.Server
           ((IOutgoingLetterAddressees)addressee).ForwardDateGD = Calendar.Today;
         }
         ((IOutgoingLetterAddressees)addressee).DocumentState = state;
-        ((IOutgoingLetterAddressees)addressee).StateInfo = comment ?? state;
+        if (!string.IsNullOrEmpty(comment))
+        {
+          var stateInfo = ((IOutgoingLetterAddressees)addressee).StateInfo;
+          ((IOutgoingLetterAddressees)addressee).StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+        }
       }
       
       if (letter.IsManyAddressees == false)
       {
-        letter.DocumentState = state;
-        letter.StateInfo = comment ?? state;
+        //letter.DocumentState = state;
+        if (!string.IsNullOrEmpty(comment))
+        {
+          var stateInfo = letter.StateInfo;
+          letter.StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+        }
       }
       
       if (letter.State.IsChanged)
@@ -348,7 +363,7 @@ namespace GD.TransmitterModule.Server
       task.ActiveText = mailRegister.ErrorInfo;
       task.Start();
     }
-        
+    
     /// <summary>
     /// Получить ответственного за отправку по e-mail.
     /// </summary>
@@ -733,16 +748,15 @@ namespace GD.TransmitterModule.Server
           if (addressee != null)
           {
             addressee.DocumentState = Resources.DeliveryState_Delivered;
-            addressee.StateInfo = Resources.DeliveryState_Delivered;
             addressee.ForwardDateGD = Calendar.Today;
           }
-          
+          /*
           if (outgoingLetter.IsManyAddressees == false)
           {
          //   outgoingLetter.DocumentState = Resources.DeliveryState_Delivered;
             outgoingLetter.StateInfo = Resources.DeliveryState_Delivered;
           }
-          
+           */
           outgoingLetter.Save();
         }
         else if (OutgoingRequestLetters.Is(document))
@@ -755,15 +769,14 @@ namespace GD.TransmitterModule.Server
           if (addressee != null)
           {
             addressee.DocumentState = Resources.DeliveryState_Sent;
-            addressee.StateInfo = Resources.DeliveryState_Sent;
           }
-          
+          /*
           if (outgoingRequestLetter.IsManyAddressees == false)
           {
            // outgoingRequestLetter.DocumentState = Resources.DeliveryState_Delivered;
             outgoingRequestLetter.StateInfo = Resources.DeliveryState_Delivered;
           }
-          
+           */
           outgoingRequestLetter.Save();
         }
         
@@ -861,40 +874,41 @@ namespace GD.TransmitterModule.Server
             {
               var outgoingLetterAddressee = addressee as IOutgoingLetterAddressees;
               outgoingLetterAddressee.DocumentState = state;
-              outgoingLetterAddressee.StateInfo = state;
               
               if (!isError)
                 outgoingLetterAddressee.ForwardDateGD = Calendar.Today;
-              
+              /*
               if (letter.IsManyAddressees == false)
               {
                 var outgoingtLetter = OutgoingLetters.As(letter);
                 outgoingtLetter.DocumentState = state;
-                
+             
                 if (!isError)
                   outgoingtLetter.StateInfo = Resources.DeliveryState_Sent;
               }
+               */
             }
+            
             else if (OutgoingRequestLetters.Is(letter))
             {
               var outgoingRequestLetterAddressee = addressee as IOutgoingRequestLetterAddressees;
               outgoingRequestLetterAddressee.DocumentState = state;
-              outgoingRequestLetterAddressee.StateInfo = state;
               
               if (!isError)
                 outgoingRequestLetterAddressee.ForwardDate = Calendar.Today;
-              
-              if (letter.IsManyAddressees == false)
-              {
-                var requestLetter = OutgoingRequestLetters.As(letter);
-                requestLetter.DocumentState = state;
-                
-                if (!isError)
-                  requestLetter.StateInfo = Resources.DeliveryState_Sent;
-              }
+              /*
+                if (letter.IsManyAddressees == false)
+                {
+                  var requestLetter = OutgoingRequestLetters.As(letter);
+                  requestLetter.DocumentState = state;
+                  
+                  if (!isError)
+                    requestLetter.StateInfo = Resources.DeliveryState_Sent;
+                }*/
             }
           }
         }
+        
         
         attachmentStream?.Dispose();
         letter.Save();

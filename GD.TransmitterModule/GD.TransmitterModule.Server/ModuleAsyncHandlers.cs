@@ -49,15 +49,9 @@ namespace GD.TransmitterModule.Server
           
           var addressee = (IOutgoingLetterAddressees)outgoingLetter.Addressees.Where(x => Equals(x.Correspondent, correspondent) && x.DeliveryMethod != null).FirstOrDefault();
           if (addressee != null)
-          {
             addressee.DocumentState = error;
-            addressee.StateInfo = error;
-          }
           if (outgoingLetter.IsManyAddressees == false)
-          {
             outgoingLetter.DocumentState = error;
-            outgoingLetter.StateInfo = error;
-          }
           
           outgoingLetter.Save();
         }
@@ -67,16 +61,9 @@ namespace GD.TransmitterModule.Server
           
           var addressee = (IOutgoingRequestLetterAddressees)outgoingRequestLetter.Addressees.Where(x => Equals(x.Correspondent, correspondent) && x.DeliveryMethod != null).FirstOrDefault();
           if (addressee != null)
-          {
             addressee.DocumentState = error;
-            addressee.StateInfo = error;
-          }
           if (outgoingRequestLetter.IsManyAddressees == false)
-          {
             outgoingRequestLetter.DocumentState = error;
-            outgoingRequestLetter.StateInfo = error;
-          }
-          
           outgoingRequestLetter.Save();
         }
       }
