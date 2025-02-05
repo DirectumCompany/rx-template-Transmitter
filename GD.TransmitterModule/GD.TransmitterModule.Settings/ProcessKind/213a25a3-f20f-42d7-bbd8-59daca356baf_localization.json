@@ -1,48 +1,53 @@
 {
-  "$type": "Sungero.NoCode.Settings.Models.SettingsLayerLocalization, Sungero.NoCode.Settings.Interfaces",
-  "Subject_SE_3": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Registration denied {0}",
-    "ru-RU": "Отказано в регистрации {0}"
-  },
-  "DocumentState_SE_7": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Registered",
-    "ru-RU": "Зарегистрировано"
+  "Comment_SE_10": {
+    "en-US": "Redirected",
+    "ru-RU": "Перенаправлено"
   },
   "Comment_SE_7": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "№ {0} {1}",
+    "en-US": "№ {0} {1}",
     "ru-RU": "№ {0} от {1}"
   },
-  "DocumentState_SE_6": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Sent",
-    "ru-RU": "Отправлено"
-  },
-  "DocumentState_SE_10": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Redirected",
-    "ru-RU": "Перенаправлено"
-  },
-  "Comment_SE_10": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Redirected",
-    "ru-RU": "Перенаправлено"
-  },
-  "DocumentState_SE_8": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Return",
-    "ru-RU": "Возврат"
-  },
   "Comment_SE_8": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "{0}",
+    "en-US": "{0}",
     "ru-RU": "{0}"
   },
+  "Description": {},
+  "Description_1e91df70-fb01-4f63-b8eb-9b5d233cdba3": {},
+  "Description_a8da422f-4d9f-47ba-af53-574acb43494e": {},
+  "DocumentState_SE_10": {
+    "en-US": "Redirected",
+    "ru-RU": "Перенаправлено"
+  },
+  "DocumentState_SE_6": {
+    "en-US": "Sent",
+    "ru-RU": "Отправлено"
+  },
+  "DocumentState_SE_7": {
+    "en-US": "Registered",
+    "ru-RU": "Зарегистрировано"
+  },
+  "DocumentState_SE_8": {
+    "en-US": "Return",
+    "ru-RU": "Возврат"
+  },
+  "Name": {
+    "en-US": "По умолчанию",
+    "ru-RU": "По умолчанию"
+  },
+  "Name_1e91df70-fb01-4f63-b8eb-9b5d233cdba3": {
+    "en-US": "Исходящий документ",
+    "ru-RU": "Исходящий документ"
+  },
+  "Name_a8da422f-4d9f-47ba-af53-574acb43494e": {
+    "en-US": "Входящий документ",
+    "ru-RU": "Входящий документ"
+  },
   "Subject_SE_2": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-    "default": "Register document {0}",
+    "en-US": "Register document {0}",
     "ru-RU": "Зарегистрируйте документ {0}"
+  },
+  "Subject_SE_3": {
+    "en-US": "Registration denied {0}",
+    "ru-RU": "Отказано в регистрации {0}"
   }
 }
