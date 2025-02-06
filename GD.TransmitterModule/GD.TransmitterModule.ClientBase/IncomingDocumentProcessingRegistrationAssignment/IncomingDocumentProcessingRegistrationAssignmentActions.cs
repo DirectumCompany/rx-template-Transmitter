@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -13,6 +13,16 @@ namespace GD.TransmitterModule.Client
     {
       if (_obj.SendTo != null)
       {
+        var businessUnit = _obj.SendTo;
+        if (businessUnit.CEO == null)
+          e.AddError(Resources.BusinessUnitCEOIsEmptyFormat(businessUnit.Name));
+        
+        var mainDoc = _obj.MainDocGroupNew.OfficialDocuments.FirstOrDefault();
+        
+        if (mainDoc != null && mainDoc.DocumentKind != null &&
+            Functions.Module.Remote.GetRegistrarForBusinessUnit(businessUnit, mainDoc.DocumentKind) == null)
+          e.AddError(Resources.NoRegistrarInBusinessUnitFormat(businessUnit.Name, mainDoc.DocumentKind.Name));
+        
         var task = IncomingDocumentProcessingTasks.As(_obj.Task);
         _obj.ToBusinessUnitBefore = task.ToBusinessUnit;
         _obj.ToBusinessUnit = _obj.SendTo;
