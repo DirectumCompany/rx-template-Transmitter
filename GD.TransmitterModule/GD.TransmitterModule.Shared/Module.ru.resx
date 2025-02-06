@@ -159,7 +159,7 @@
     <value>У корреспондента {0} не заполнен способ доставки</value>
   </data>
   <data name="BusinessUnitCEOIsEmpty" xml:space="preserve">
-    <value>В организации {0} не указан руководитель</value>
+    <value>В организации {0} не указан руководитель.</value>
   </data>
   <data name="DeliveryState_Error" xml:space="preserve">
     <value>Ошибки отправки</value>
