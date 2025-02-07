@@ -769,6 +769,7 @@ namespace GD.TransmitterModule.Server
           if (addressee != null)
           {
             addressee.DocumentState = Resources.DeliveryState_Sent;
+            addressee.ForwardDate = Calendar.Today;
           }
           /*
           if (outgoingRequestLetter.IsManyAddressees == false)

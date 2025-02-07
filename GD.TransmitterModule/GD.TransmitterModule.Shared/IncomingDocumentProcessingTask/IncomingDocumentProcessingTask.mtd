@@ -123,6 +123,12 @@
           "NameGuid": "e4f67966-b986-4c60-8dbe-efaf3192779d",
           "Name": "Comment",
           "PreviousPropertyGuid": "362d55aa-f2db-4f34-a822-5f6551747dbf"
+        },
+        {
+          "$type": "Sungero.Metadata.BooleanBlockPropertyMetadata, Sungero.Metadata",
+          "NameGuid": "7feea017-f6ab-4a77-9afa-0c88c993d3b6",
+          "Name": "IsCorrespondentChanged",
+          "PreviousPropertyGuid": "e4f67966-b986-4c60-8dbe-efaf3192779d"
         }
       ]
     }
