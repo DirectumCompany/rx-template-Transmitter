@@ -170,7 +170,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="DocumentID">ИД Документа.</param>
     public virtual void SendDocumentToAddresseesEMail(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.SendDocumentToAddresseesEMailInvokeArgs args)
     {
-      var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
+      var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Sid == GD.CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethodSid()).FirstOrDefault();
       
       if (method == null)
       {
