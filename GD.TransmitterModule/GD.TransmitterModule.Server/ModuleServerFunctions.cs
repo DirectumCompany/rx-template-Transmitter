@@ -747,7 +747,7 @@ namespace GD.TransmitterModule.Server
                                                                                      x.DeliveryMethod?.Sid == directumRXDeliveryMethodSid).FirstOrDefault();
           if (addressee != null)
           {
-            addressee.DocumentState = Resources.DeliveryState_Delivered;
+            addressee.DocumentState = Resources.DeliveryState_Sent;
             addressee.ForwardDateGD = Calendar.Today;
           }
           /*
