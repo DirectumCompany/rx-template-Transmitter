@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -51,7 +51,8 @@ namespace GD.TransmitterModule.Server
                                                               item.CounterpartyStatusInfo,
                                                               item.IsRedirect == true);
           
-            
+          
+          item.IsRedirect = false;
           item.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.Complete;
           item.Save();
         }

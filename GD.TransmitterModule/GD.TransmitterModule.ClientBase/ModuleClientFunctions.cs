@@ -152,7 +152,7 @@ namespace GD.TransmitterModule.Client
       var information = new List<string>();
       
       // Отправка адресатам по E-mail.
-      var methodEmail = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Sid == GD.CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethodSid()).FirstOrDefault();
+      var methodEmail = CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethod();
       
       if (methodEmail == null)
         AppliedCodeException.Create(GD.TransmitterModule.Resources.EmailMethodNotFound);
@@ -367,7 +367,7 @@ namespace GD.TransmitterModule.Client
       var information = new List<string>();
       
       // Отправка адресатам по E-mail.
-      var methodEmail = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Sid == GD.CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethodSid()).FirstOrDefault();
+      var methodEmail = CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethod();
       
       if (methodEmail == null)
         AppliedCodeException.Create(GD.TransmitterModule.Resources.EmailMethodNotFound);

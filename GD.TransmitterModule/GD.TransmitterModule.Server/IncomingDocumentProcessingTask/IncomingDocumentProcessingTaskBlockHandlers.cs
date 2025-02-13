@@ -16,6 +16,24 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
     public virtual void SetCounterpartyStateExecute()
     {
       Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, _block.DocumentState, _block.Comment);
+      
+      if (_block.IsCorrespondentChanged == true && _obj.ReasonDoc != null)
+      {
+        var newItem = InternalMailRegisters.Create();
+        newItem.LeadingDocument = _obj.ReasonDoc;
+        newItem.Correspondent = _obj.ToCounterparty;
+        foreach (var row in _obj.GeneratedFrom.RelatedDocuments)
+          newItem.RelatedDocuments.AddNew().Document = row.Document;
+        
+        newItem.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
+        newItem.TaskId = _obj.GeneratedFrom.TaskId;
+        newItem.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
+        newItem.CounterpartyState = Resources.DeliveryState_Sent;
+        newItem.IsRedirect = true;
+        newItem.Save();
+        
+        _obj.GeneratedFrom = newItem;
+      }
     }
   }
 
@@ -84,23 +102,6 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         _obj.ToBusinessUnitBefore = assignment.ToBusinessUnitBefore;
         _obj.ToBusinessUnit = assignment.ToBusinessUnit;
         _obj.ToCounterparty = assignment.ToCounterparty;
-        
-        if (_obj.ReasonDoc != null)
-        {
-          var newItem = InternalMailRegisters.Create();
-          newItem.LeadingDocument = _obj.ReasonDoc;
-          newItem.Correspondent = assignment.ToCounterparty;
-          foreach (var row in _obj.GeneratedFrom.RelatedDocuments)
-            newItem.RelatedDocuments.AddNew().Document = row.Document;
-          
-          newItem.Status = GD.TransmitterModule.InternalMailRegister.Status.Complete;
-          newItem.TaskId = _obj.GeneratedFrom.TaskId;
-          newItem.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
-          newItem.IsRedirect = true;
-          newItem.Save();
-          
-          _obj.GeneratedFrom = newItem;
-        }
       }
       if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.RedirectToDepartment)
       {
