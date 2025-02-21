@@ -60,15 +60,18 @@ namespace GD.TransmitterModule.Server
       if (!string.IsNullOrEmpty(comment))
       {
         var stateInfo = ((IOutgoingRequestLetterAddressees)addressee).StateInfo;
-        ((IOutgoingRequestLetterAddressees)addressee).StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+        var stateInfroPropertyLength = requestLetter.Info.Properties.Addressees.Properties.StateInfo.Length;
+        var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+        ((IOutgoingRequestLetterAddressees)addressee).StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
       }
       if (requestLetter.IsManyAddressees == false)
       {
-        //requestLetter.DocumentState = state;
         if (!string.IsNullOrEmpty(comment))
         {
           var stateInfo = requestLetter.StateInfo;
-          requestLetter.StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          var stateInfroPropertyLength = requestLetter.Info.Properties.StateInfo.Length;
+          var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          requestLetter.StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
         }
       }
       
@@ -106,17 +109,20 @@ namespace GD.TransmitterModule.Server
         if (!string.IsNullOrEmpty(comment))
         {
           var stateInfo = ((IOutgoingLetterAddressees)addressee).StateInfo;
-          ((IOutgoingLetterAddressees)addressee).StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          var stateInfroPropertyLength = letter.Info.Properties.Addressees.Properties.StateInfo.Length;
+          var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          ((IOutgoingLetterAddressees)addressee).StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
         }
       }
       
       if (letter.IsManyAddressees == false)
       {
-        //letter.DocumentState = state;
         if (!string.IsNullOrEmpty(comment))
         {
           var stateInfo = letter.StateInfo;
-          letter.StateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          var stateInfroPropertyLength = letter.Info.Properties.StateInfo.Length;
+          var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          letter.StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
         }
       }
       
@@ -750,13 +756,6 @@ namespace GD.TransmitterModule.Server
             addressee.DocumentState = Resources.DeliveryState_Sent;
             addressee.ForwardDateGD = Calendar.Today;
           }
-          /*
-          if (outgoingLetter.IsManyAddressees == false)
-          {
-         //   outgoingLetter.DocumentState = Resources.DeliveryState_Delivered;
-            outgoingLetter.StateInfo = Resources.DeliveryState_Delivered;
-          }
-           */
           outgoingLetter.Save();
         }
         else if (OutgoingRequestLetters.Is(document))
@@ -771,13 +770,6 @@ namespace GD.TransmitterModule.Server
             addressee.DocumentState = Resources.DeliveryState_Sent;
             addressee.ForwardDate = Calendar.Today;
           }
-          /*
-          if (outgoingRequestLetter.IsManyAddressees == false)
-          {
-           // outgoingRequestLetter.DocumentState = Resources.DeliveryState_Delivered;
-            outgoingRequestLetter.StateInfo = Resources.DeliveryState_Delivered;
-          }
-           */
           outgoingRequestLetter.Save();
         }
         
@@ -878,16 +870,6 @@ namespace GD.TransmitterModule.Server
               
               if (!isError)
                 outgoingLetterAddressee.ForwardDateGD = Calendar.Today;
-              /*
-              if (letter.IsManyAddressees == false)
-              {
-                var outgoingtLetter = OutgoingLetters.As(letter);
-                outgoingtLetter.DocumentState = state;
-             
-                if (!isError)
-                  outgoingtLetter.StateInfo = Resources.DeliveryState_Sent;
-              }
-               */
             }
             
             else if (OutgoingRequestLetters.Is(letter))
@@ -897,15 +879,6 @@ namespace GD.TransmitterModule.Server
               
               if (!isError)
                 outgoingRequestLetterAddressee.ForwardDate = Calendar.Today;
-              /*
-                if (letter.IsManyAddressees == false)
-                {
-                  var requestLetter = OutgoingRequestLetters.As(letter);
-                  requestLetter.DocumentState = state;
-                  
-                  if (!isError)
-                    requestLetter.StateInfo = Resources.DeliveryState_Sent;
-                }*/
             }
           }
         }
