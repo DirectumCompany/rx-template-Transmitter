@@ -42,18 +42,21 @@ namespace GD.TransmitterModule.Server
                                                               item.Correspondent,
                                                               item.CounterpartyState,
                                                               item.CounterpartyStatusInfo,
-                                                              item.IsRedirect == true);
+                                                              item.IsRedirect == true, 
+                                                              item.SaveOldComment == true);
           
           if (GD.CitizenRequests.OutgoingRequestLetters.Is(item.LeadingDocument))
             Functions.Module.UpdateDocumentsStateInternalMail(GD.CitizenRequests.OutgoingRequestLetters.As(item.LeadingDocument),
                                                               item.Correspondent,
                                                               item.CounterpartyState,
                                                               item.CounterpartyStatusInfo,
-                                                              item.IsRedirect == true);
+                                                              item.IsRedirect == true, 
+                                                              item.SaveOldComment == true);
           
           
           item.IsRedirect = false;
           item.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.Complete;
+          item.SaveOldComment = true;
           item.Save();
         }
         catch (Exception ex)

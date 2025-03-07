@@ -145,4 +145,7 @@
   <data name="Block_d3579cf309fa489eaba9672c085d5594_Property_7feea017f6ab4a779afa0c88c993d3b6" xml:space="preserve">
     <value>New correspondent</value>
   </data>
+  <data name="Block_d3579cf309fa489eaba9672c085d5594_Property_060198d1742348ceb774be3325008f3c" xml:space="preserve">
+    <value>Keep history of status information</value>
+  </data>
 </root>

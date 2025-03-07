@@ -20,15 +20,30 @@ namespace GD.TransmitterModule.Server
     /// <param name="register">Запись в реестре отправки RX-RX.</param>
     /// <param name="state">Состояние отправки.</param>
     /// <param name="comment">Комментарий.</param>
-    public virtual void ChangeDocumentStateInfoInRegister(IInternalMailRegister register, string state, string comment)
+    public virtual void ChangeDocumentStateInfoInRegister(IInternalMailRegister register, string state, string comment, bool saveOldComment)
     {
       if (register == null)
         return;
       
       register.CounterpartyState = state;
-      register.CounterpartyStatusInfo = comment;
-      register.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
+      var newComment = comment;
+      if (register.SyncStateInDocument == GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess && 
+          saveOldComment == true && !string.IsNullOrEmpty(register.CounterpartyStatusInfo) )
+      { 
+        if (!string.IsNullOrEmpty(newComment))
+          newComment = string.Format("{0}; {1}", register.CounterpartyStatusInfo, comment);
+        else 
+          newComment = register.CounterpartyStatusInfo;
+        
+        var stateInfroPropertyLength = register.Info.Properties.CounterpartyStatusInfo.Length;
+        newComment  = newComment.Length > stateInfroPropertyLength ? newComment.Substring(0, stateInfroPropertyLength) : newComment;    
+      }
+      register.CounterpartyStatusInfo = newComment;
       
+      register.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
+      if (register.SaveOldComment != false)
+        register.SaveOldComment = saveOldComment;
+        
       register.Save();
     }
     
@@ -40,7 +55,7 @@ namespace GD.TransmitterModule.Server
     /// <param name="state">Состояние.</param>
     /// <param name="comment">Комментарий.</param>
     /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
-    public virtual void UpdateDocumentsStateInternalMail(IOutgoingRequestLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingRequestLetter requestLetter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append, bool saveOldComment)
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? requestLetter.Addressees.AddNew() : requestLetter.Addressees.Where(a => a.DeliveryMethod != null &&
@@ -57,20 +72,24 @@ namespace GD.TransmitterModule.Server
         ((IOutgoingRequestLetterAddressees)addressee).ForwardDate = Calendar.Today;
       }
       ((IOutgoingRequestLetterAddressees)addressee).DocumentState = state;
-      if (!string.IsNullOrEmpty(comment))
+      var newStateInfo = string.IsNullOrEmpty(comment) ? string.Empty : comment;
+      if (!string.IsNullOrEmpty(comment) || saveOldComment != true)
       {
         var stateInfo = ((IOutgoingRequestLetterAddressees)addressee).StateInfo;
         var stateInfroPropertyLength = requestLetter.Info.Properties.Addressees.Properties.StateInfo.Length;
-        var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+        
+        if (saveOldComment)
+          newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
         ((IOutgoingRequestLetterAddressees)addressee).StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
       }
       if (requestLetter.IsManyAddressees == false)
       {
-        if (!string.IsNullOrEmpty(comment))
+        if (!string.IsNullOrEmpty(comment) || saveOldComment != true)
         {
           var stateInfo = requestLetter.StateInfo;
           var stateInfroPropertyLength = requestLetter.Info.Properties.StateInfo.Length;
-          var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          if (saveOldComment)
+            newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
           requestLetter.StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
         }
       }
@@ -87,13 +106,14 @@ namespace GD.TransmitterModule.Server
     /// <param name="state">Состояние.</param>
     /// <param name="comment">Комментарий.</param>
     /// <param name="append">Необходимо ли добавлять адресата в тч.</param>
-    public virtual void UpdateDocumentsStateInternalMail(IOutgoingLetter letter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append)
+    public virtual void UpdateDocumentsStateInternalMail(IOutgoingLetter letter, Sungero.Parties.ICounterparty correspondent, string state, string comment, bool append, bool saveOldComment)
     {
       var deliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
       var addressee = append ? letter.Addressees.AddNew() : letter.Addressees.Where(a => a.DeliveryMethod != null &&
                                                                                     a.DeliveryMethod.Sid == deliveryMethodSid &&
                                                                                     Equals(a.Correspondent, correspondent)).LastOrDefault();
       
+      var newStateInfo = string.IsNullOrEmpty(comment) ? string.Empty : comment;
       if (addressee != null)
       {
         if (append)
@@ -106,22 +126,24 @@ namespace GD.TransmitterModule.Server
           ((IOutgoingLetterAddressees)addressee).ForwardDateGD = Calendar.Today;
         }
         ((IOutgoingLetterAddressees)addressee).DocumentState = state;
-        if (!string.IsNullOrEmpty(comment))
+        if (!string.IsNullOrEmpty(comment) || saveOldComment != true)
         {
           var stateInfo = ((IOutgoingLetterAddressees)addressee).StateInfo;
           var stateInfroPropertyLength = letter.Info.Properties.Addressees.Properties.StateInfo.Length;
-          var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          if (saveOldComment)
+            newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
           ((IOutgoingLetterAddressees)addressee).StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
         }
       }
       
       if (letter.IsManyAddressees == false)
       {
-        if (!string.IsNullOrEmpty(comment))
+        if (!string.IsNullOrEmpty(comment) || saveOldComment != true)
         {
           var stateInfo = letter.StateInfo;
           var stateInfroPropertyLength = letter.Info.Properties.StateInfo.Length;
-          var newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
+          if (saveOldComment)
+            newStateInfo = string.IsNullOrEmpty(stateInfo) ? comment : string.Format("{0}; {1}", stateInfo, comment);
           letter.StateInfo = newStateInfo.Length > stateInfroPropertyLength ? newStateInfo.Substring(0, stateInfroPropertyLength) : newStateInfo;
         }
       }
@@ -991,6 +1013,7 @@ namespace GD.TransmitterModule.Server
           var registerItem = InternalMailRegisters.Create();
           registerItem.Correspondent = correspondent;
           registerItem.LeadingDocument = document;
+          registerItem.Date = Calendar.Today;
           
           foreach (var relatedDoc in relatedDocs)
             registerItem.RelatedDocuments.AddNew().Document = relatedDoc;
@@ -1029,6 +1052,7 @@ namespace GD.TransmitterModule.Server
         {
           var registerItem = InternalMailRegisters.Create();
           registerItem.Correspondent = correspondent;
+          registerItem.Date = Calendar.Today;
           registerItem.LeadingDocument = document;
           registerItem.IsRequestTransfer = isRequestTransfer;
           registerItem.Request = request;

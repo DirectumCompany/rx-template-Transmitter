@@ -65,7 +65,7 @@ namespace GD.TransmitterModule.Server
       }
       
       if (result == GD.TransmitterModule.IncomingDocumentProcessingReworkAssignment.Result.Corrected)
-       Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Sent, null);
+       Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Sent, null, false);
     }
     #endregion
 
@@ -104,9 +104,9 @@ namespace GD.TransmitterModule.Server
       if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.Register)
         Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Registered,
                                                            IncomingDocumentProcessingTasks.Resources.RegistrationStringFormat(_obj.ResultDoc.RegistrationNumber,
-                                                                                                                              _obj.ResultDoc.RegistrationDate.Value.ToShortDateString()));
+                                                                                                                              _obj.ResultDoc.RegistrationDate.Value.ToShortDateString()), false);
       else if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.Rework)
-        Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Return, assignment.ActiveText);
+        Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_Return, assignment.ActiveText, false);
       
       if (result == GD.TransmitterModule.IncomingDocumentProcessingRegistrationAssignment.Result.RedirectToBusinessUnit)
       {
@@ -116,7 +116,7 @@ namespace GD.TransmitterModule.Server
         
         if (_obj.ReasonDoc != null)
         {
-          Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_RedirectedTo, Resources.DeliveryState_RedirectedTo);
+          Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, Resources.DeliveryState_RedirectedTo, Resources.DeliveryState_RedirectedTo, false);
           
           var newItem = InternalMailRegisters.Create();
           newItem.LeadingDocument = _obj.ReasonDoc;

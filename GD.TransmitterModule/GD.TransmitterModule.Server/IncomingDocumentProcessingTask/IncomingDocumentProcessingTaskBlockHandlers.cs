@@ -15,7 +15,7 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
 
     public virtual void SetCounterpartyStateExecute()
     {
-      Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, _block.DocumentState, _block.Comment);
+      Functions.Module.ChangeDocumentStateInfoInRegister(_obj.GeneratedFrom, _block.DocumentState, _block.Comment, _block.SaveOldComment == true);
       
       if (_block.IsCorrespondentChanged == true && _obj.ReasonDoc != null)
       {
@@ -30,6 +30,7 @@ namespace GD.TransmitterModule.Server.IncomingDocumentProcessingTaskBlocks
         newItem.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.ToProcess;
         newItem.CounterpartyState = Resources.DeliveryState_Sent;
         newItem.IsRedirect = true;
+        newItem.SaveOldComment = _block.SaveOldComment;
         newItem.Save();
         
         _obj.GeneratedFrom = newItem;

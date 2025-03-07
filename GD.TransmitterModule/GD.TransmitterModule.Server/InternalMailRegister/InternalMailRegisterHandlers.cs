@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -14,6 +14,7 @@ namespace GD.TransmitterModule
     {
       _obj.IsRequestTransfer = false;
       _obj.IsRedirect = false;
+      _obj.SaveOldComment = false;
     }
   }
 

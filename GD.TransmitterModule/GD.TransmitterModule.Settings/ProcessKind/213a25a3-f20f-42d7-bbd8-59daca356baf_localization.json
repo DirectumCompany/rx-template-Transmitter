@@ -73,5 +73,9 @@
   "Title_SE_12": {
     "en-US": "Set counterparty state",
     "ru-RU": "Установить статус у контрагента"
+  },
+  "Title_SE_13": {
+    "en-US": "OR",
+    "ru-RU": "ИЛИ"
   }
 }
