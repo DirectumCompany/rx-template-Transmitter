@@ -190,4 +190,7 @@
   <data name="DeliveryState_Delivered" xml:space="preserve">
     <value>Delivered</value>
   </data>
+  <data name="AddresseesDuplicateExists" xml:space="preserve">
+    <value>Duplicate addressees found. Delete?</value>
+  </data>
 </root>

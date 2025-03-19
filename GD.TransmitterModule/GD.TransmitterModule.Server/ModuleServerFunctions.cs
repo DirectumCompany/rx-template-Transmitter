@@ -903,8 +903,7 @@ namespace GD.TransmitterModule.Server
                 outgoingRequestLetterAddressee.ForwardDate = Calendar.Today;
             }
           }
-        }
-        
+        }        
         
         attachmentStream?.Dispose();
         letter.Save();

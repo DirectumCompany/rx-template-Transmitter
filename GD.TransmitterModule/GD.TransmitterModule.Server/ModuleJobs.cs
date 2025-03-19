@@ -78,13 +78,11 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     public virtual void SendOutgoingEMail()
     {
-      var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
+      var method = CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethod();
       var settings = Functions.Module.GetTransmitterSettings();
       
       if (method == null)
-      {
         throw AppliedCodeException.Create("Не найден способ доставки по e-mail.");
-      }
       
       if (settings == null)
         throw AppliedCodeException.Create("Не выполнена инициализация модулей.");

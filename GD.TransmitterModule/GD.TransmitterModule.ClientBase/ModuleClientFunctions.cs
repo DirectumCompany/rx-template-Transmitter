@@ -110,6 +110,32 @@ namespace GD.TransmitterModule.Client
     [Public]
     public virtual Structures.Module.ISendToAddresseeResult SendToAddressee(IOutgoingLetter document)
     {
+      // Удалить дубли адресатов.
+      var addresseesDuplicateExists = document.Addressees.Cast<IOutgoingLetterAddressees>()
+        .Where(x => x.DeliveryMethod != null && string.IsNullOrEmpty(x.DocumentState))
+        .GroupBy(x => new {x.Correspondent, x.Addressee, x.DeliveryMethod})
+        .Any(x => x.Count() > 1);
+      
+      if (addresseesDuplicateExists)
+      {
+        var dialog = Dialogs.CreateConfirmDialog(Resources.AddresseesDuplicateExists);
+        if (!dialog.Show())
+          return null;
+        
+        var addresseesDuplicate = document.Addressees.Cast<IOutgoingLetterAddressees>()
+          .Where(x => x.DeliveryMethod != null && string.IsNullOrEmpty(x.DocumentState))
+          .OrderByDescending(x => x.Number).ToList();
+        foreach (var addresseeDuplicate in addresseesDuplicate)
+        {
+          if (document.Addressees.Cast<IOutgoingLetterAddressees>()
+              .Any(x => x.DeliveryMethod != null && string.IsNullOrEmpty(x.DocumentState) &&
+                   Equals(x.Correspondent, addresseeDuplicate.Correspondent) && Equals(x.Addressee, addresseeDuplicate.Addressee) &&
+                   Equals(x.DeliveryMethod, addresseeDuplicate.DeliveryMethod) && x.Id != addresseeDuplicate.Id))
+            document.Addressees.Remove(addresseeDuplicate);
+        }
+        document.Save();
+      }
+      
       // Выбрать связанные документы для отправки.
       var allRelatedDocuments = new List<Sungero.Content.IElectronicDocument>();;
       var existSending = false;
@@ -182,7 +208,7 @@ namespace GD.TransmitterModule.Client
         }
       }
       
-      // Проверки для отправки по МЭДО.
+      // Проверки для отправки по МЭДО.      
       var errorsMEDO = new List<string>();
       var methodMedo = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Sid == MEDO.PublicConstants.Module.MedoDeliveryMethod).FirstOrDefault();
       
@@ -253,9 +279,8 @@ namespace GD.TransmitterModule.Client
       
       // Проверки для отправки в Directum RX.
       var errorsRX = new List<string>();
-      
-      // Если проверки для отправки не пройдены - не менять статус для адресатов.
       var directumRXDeliveryMethodSid = CitizenRequests.PublicFunctions.Module.Remote.GetDirectumRXDeliveryMethodSid();
+      // Если проверки для отправки не пройдены - не менять статус для адресатов.
       var addressesTransfer = document.Addressees.Cast<IOutgoingLetterAddressees>().Where(a => a.DeliveryMethod?.Sid == directumRXDeliveryMethodSid && string.IsNullOrEmpty(a.DocumentState));
       var needStartInternalSendingDocuments = false;
       
@@ -324,6 +349,32 @@ namespace GD.TransmitterModule.Client
     [Public]
     public virtual Structures.Module.ISendToAddresseeResult SendToAddressee(IOutgoingRequestLetter document)
     {
+      // Удалить дубли адресатов.
+      var addresseesDuplicateExists = document.Addressees.Cast<IOutgoingRequestLetterAddressees>()
+        .Where(x => x.DeliveryMethod != null && string.IsNullOrEmpty(x.DocumentState))
+        .GroupBy(x => new {x.Correspondent, x.Addressee, x.DeliveryMethod})
+        .Any(x => x.Count() > 1);
+      
+      if (addresseesDuplicateExists)
+      {
+        var dialog = Dialogs.CreateConfirmDialog(Resources.AddresseesDuplicateExists);
+        if (!dialog.Show())
+          return null;
+        
+        var addresseesDuplicate = document.Addressees.Cast<IOutgoingRequestLetterAddressees>()
+          .Where(x => x.DeliveryMethod != null && string.IsNullOrEmpty(x.DocumentState))
+          .OrderByDescending(x => x.Number).ToList();
+        foreach (var addresseeDuplicate in addresseesDuplicate)
+        {
+          if (document.Addressees.Cast<IOutgoingRequestLetterAddressees>()
+              .Any(x => x.DeliveryMethod != null && string.IsNullOrEmpty(x.DocumentState) &&
+                   Equals(x.Correspondent, addresseeDuplicate.Correspondent) && Equals(x.Addressee, addresseeDuplicate.Addressee) &&
+                   Equals(x.DeliveryMethod, addresseeDuplicate.DeliveryMethod) && x.Id != addresseeDuplicate.Id))
+            document.Addressees.Remove(addresseeDuplicate);
+        }
+        document.Save();
+      }
+      
       if (!CitizenRequests.PublicFunctions.OutgoingRequestLetter.IsTransfer(document))
       {
         var allRelatedDocuments = new List<Sungero.Content.IElectronicDocument>();;
