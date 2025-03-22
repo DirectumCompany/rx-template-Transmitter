@@ -35,6 +35,20 @@ namespace GD.TransmitterModule.Shared
           else
             errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
         }
+        
+        // Проверить корректность и единственность адреса эл. почты.
+        addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
+                 ((a.Correspondent != null && !string.IsNullOrEmpty(a.Correspondent.Email)) || (a.Addressee != null && !string.IsNullOrEmpty(a.Addressee.Email))));
+        foreach (var addresse in addresses)
+        {
+          if (addresse.Correspondent != null)
+            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Correspondent.Email))
+              errors.Add(GD.TransmitterModule.Resources.CorrespondentWrongEmailFormat(addresse.Correspondent.Name));
+          if (addresse.Addressee != null)
+            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Addressee.Email))
+              errors.Add(GD.TransmitterModule.Resources.AddresseeWrongEmailFormat(addresse.Addressee.Name));
+        }
       }
       else if (OutgoingRequestLetters.Is(document))
       {
@@ -48,6 +62,20 @@ namespace GD.TransmitterModule.Shared
             errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
           else
             errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
+        }
+        
+        // Проверить корректность и единственность адреса эл. почты.
+        addresses = OutgoingRequestLetters.As(document).Addressees.Cast<IOutgoingRequestLetterAddressees>()
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
+                 ((a.Correspondent != null && !string.IsNullOrEmpty(a.Correspondent.Email)) || (a.Addressee != null && !string.IsNullOrEmpty(a.Addressee.Email))));
+        foreach (var addresse in addresses)
+        {
+          if (addresse.Correspondent != null)
+            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Correspondent.Email))
+              errors.Add(GD.TransmitterModule.Resources.CorrespondentWrongEmailFormat(addresse.Correspondent.Name));
+          if (addresse.Addressee != null)
+            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Addressee.Email))
+              errors.Add(GD.TransmitterModule.Resources.AddresseeWrongEmailFormat(addresse.Addressee.Name));
         }
       }
       
