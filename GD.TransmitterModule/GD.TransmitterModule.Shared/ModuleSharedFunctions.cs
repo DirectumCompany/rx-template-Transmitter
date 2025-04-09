@@ -25,58 +25,49 @@ namespace GD.TransmitterModule.Shared
       if (OutgoingLetters.Is(document))
       {
         var addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
-                 a.Correspondent != null && string.IsNullOrEmpty(a.Correspondent.Email) && (a.Addressee == null || string.IsNullOrEmpty(a.Addressee.Email)));
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) && a.Correspondent != null);
         Logger.DebugFormat("Debug CheckRequisitesForEmail - 1");
         foreach (var addresse in addresses)
         {
           if (addresse.Addressee == null)
-            errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
-          else
-            errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
-        }
-        
-        // Проверить корректность и единственность адреса эл. почты.
-        addresses = OutgoingLetters.As(document).Addressees.Cast<IOutgoingLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
-                 ((a.Correspondent != null && !string.IsNullOrEmpty(a.Correspondent.Email)) || (a.Addressee != null && !string.IsNullOrEmpty(a.Addressee.Email))));
-        foreach (var addresse in addresses)
-        {
-          if (addresse.Correspondent != null)
-            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Correspondent.Email))
+          {
+            if (string.IsNullOrEmpty(addresse.Correspondent.Email))
+              errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
+            else if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Correspondent.Email))
               errors.Add(GD.TransmitterModule.Resources.CorrespondentWrongEmailFormat(addresse.Correspondent.Name));
-          if (addresse.Addressee != null)
-            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Addressee.Email))
+          }
+          else
+          {
+            if (string.IsNullOrEmpty(addresse.Addressee.Email))
+              errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
+            else if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Addressee.Email))
               errors.Add(GD.TransmitterModule.Resources.AddresseeWrongEmailFormat(addresse.Addressee.Name));
+          }
         }
       }
       else if (OutgoingRequestLetters.Is(document))
       {
         var addresses = OutgoingRequestLetters.As(document).Addressees.Cast<IOutgoingRequestLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
-                 a.Correspondent != null && string.IsNullOrEmpty(a.Correspondent.Email) && (a.Addressee == null || string.IsNullOrEmpty(a.Addressee.Email)));
+          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) && a.Correspondent != null);
         Logger.DebugFormat("Debug CheckRequisitesForEmail - 1");
         foreach (var addresse in addresses)
         {
           if (addresse.Addressee == null)
-            errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
+          {
+            if (string.IsNullOrEmpty(addresse.Correspondent.Email))
+              errors.Add(GD.TransmitterModule.Resources.CounterpartyIsNotEmailFormat(addresse.Correspondent.Name));
+            else if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Correspondent.Email))
+              errors.Add(GD.TransmitterModule.Resources.CorrespondentWrongEmailFormat(addresse.Correspondent.Name));
+          }
           else
-            errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
+          {
+            if (string.IsNullOrEmpty(addresse.Addressee.Email))
+              errors.Add(Resources.CounterpartyAndAddresseeIsNotEmailFormat(addresse.Addressee.Name, addresse.Correspondent.Name));
+            else if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Addressee.Email))
+              errors.Add(GD.TransmitterModule.Resources.AddresseeWrongEmailFormat(addresse.Addressee.Name));
+          }
         }
         
-        // Проверить корректность и единственность адреса эл. почты.
-        addresses = OutgoingRequestLetters.As(document).Addressees.Cast<IOutgoingRequestLetterAddressees>()
-          .Where(a => Equals(a.DeliveryMethod, method) && string.IsNullOrEmpty(a.DocumentState) &&
-                 ((a.Correspondent != null && !string.IsNullOrEmpty(a.Correspondent.Email)) || (a.Addressee != null && !string.IsNullOrEmpty(a.Addressee.Email))));
-        foreach (var addresse in addresses)
-        {
-          if (addresse.Correspondent != null)
-            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Correspondent.Email))
-              errors.Add(GD.TransmitterModule.Resources.CorrespondentWrongEmailFormat(addresse.Correspondent.Name));
-          if (addresse.Addressee != null)
-            if (!GovernmentCommons.PublicFunctions.Module.IsEmailValid(addresse.Addressee.Email))
-              errors.Add(GD.TransmitterModule.Resources.AddresseeWrongEmailFormat(addresse.Addressee.Name));
-        }
       }
       
       if (OutgoingDocumentBases.Is(document))
