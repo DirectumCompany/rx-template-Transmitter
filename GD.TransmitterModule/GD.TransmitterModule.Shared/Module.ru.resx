@@ -187,4 +187,10 @@
   <data name="EmailDuplicate" xml:space="preserve">
     <value>E-mail {0} повторяется для нескольких адресатов</value>
   </data>
+  <data name="CorrespondentWrongEmail" xml:space="preserve">
+    <value>У Корреспондента {0} адрес электронной почты имеет неверный формат.</value>
+  </data>
+  <data name="AddresseeWrongEmail" xml:space="preserve">
+    <value>У Адресата {0} адрес электронной почты имеет неверный формат.</value>
+  </data>
 </root>
