@@ -79,7 +79,8 @@
       "BaseGuid": "1f76cc5d-f096-4062-b34a-51b3c02269f2",
       "HandledEvents": [
         "CreateSynchronizeIncomingDocumentExecute"
-      ]
+      ],
+      "ProcessStagesDisplayMode": "Hide"
     },
     {
       "$type": "Sungero.Metadata.AssignmentBlockMetadata, Sungero.Workflow.Shared",
@@ -90,7 +91,8 @@
       "HandledEvents": [
         "IncomingDocumentProcessingRegistrationAssignmentStart",
         "IncomingDocumentProcessingRegistrationAssignmentCompleteAssignment"
-      ]
+      ],
+      "ProcessStagesDisplayMode": "Show"
     },
     {
       "$type": "Sungero.Metadata.AssignmentBlockMetadata, Sungero.Workflow.Shared",
@@ -101,7 +103,8 @@
       "HandledEvents": [
         "IncomingDocumentProcessingReworkAssignmentStart",
         "IncomingDocumentProcessingReworkAssignmentCompleteAssignment"
-      ]
+      ],
+      "ProcessStagesDisplayMode": "Show"
     },
     {
       "$type": "Sungero.Metadata.ScriptBlockMetadata, Sungero.Workflow.Shared",
@@ -111,6 +114,7 @@
       "HandledEvents": [
         "SetCounterpartyStateExecute"
       ],
+      "ProcessStagesDisplayMode": "Hide",
       "Properties": [
         {
           "$type": "Sungero.Metadata.StringBlockPropertyMetadata, Sungero.Metadata",
@@ -351,7 +355,7 @@
     },
     {
       "Type": "EntityMetadata",
-      "Number": 12
+      "Number": 13
     }
   ]
 }

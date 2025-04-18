@@ -964,7 +964,7 @@ namespace GD.TransmitterModule.Server
       
       try
       {
-        var package = MEDO.PublicFunctions.Module.Remote.CreatePackage(document, company, documentPages, !OutgoingLetters.Is(document), sender);
+        var package = MEDO.PublicFunctions.Module.Remote.CreatePackage(GD.GovernmentSolution.OutgoingDocumentBases.As(document), company, documentPages, !OutgoingLetters.Is(document), sender);
         if (OutgoingLetters.Is(document))
         {
           MEDO.PublicFunctions.Module.Remote.SetDocumentMedoStatus(Resources.DeliveryState_Sent, Resources.DeliveryState_Sent, OutgoingLetters.As(document), package);

@@ -187,6 +187,12 @@
   <data name="EmailDuplicate" xml:space="preserve">
     <value>E-mail {0} is repeated for multiple addressee</value>
   </data>
+  <data name="CorrespondentWrongEmail" xml:space="preserve">
+    <value>The Correspondent {0} format of the email address is incorrect.</value>
+  </data>
+  <data name="AddresseeWrongEmail" xml:space="preserve">
+    <value>The Addressee {0} format of the email address is incorrect.</value>
+  </data>
   <data name="DeliveryState_Delivered" xml:space="preserve">
     <value>Delivered</value>
   </data>
