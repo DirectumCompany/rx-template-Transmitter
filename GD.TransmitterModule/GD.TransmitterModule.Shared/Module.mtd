@@ -664,7 +664,9 @@
     "CounterpartyAndAddresseeIsNotEmail",
     "EmailDuplicate",
     "DeliveryState_Delivered",
-    "AddresseesDuplicateExists"
+    "AddresseesDuplicateExists",
+    "CorrespondentWrongEmail",
+    "AddresseeWrongEmail"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",
