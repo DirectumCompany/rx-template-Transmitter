@@ -63,8 +63,8 @@
     "ru-RU": "Зарегистрируйте документ {0}"
   },
   "Subject_SE_3": {
-    "en-US": "Registration denied {0}",
-    "ru-RU": "Отказано в регистрации {0}"
+    "en-US": "Registration denied  {1}: {0}",
+    "ru-RU": "Получен отказ в регистрации от {1}: {0}"
   },
   "Title_SE_11": {
     "en-US": "Set counterparty state",
