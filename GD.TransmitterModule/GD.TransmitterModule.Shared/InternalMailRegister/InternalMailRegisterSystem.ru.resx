@@ -124,4 +124,7 @@
   <data name="Property_Status" xml:space="preserve">
     <value>Состояние отправки</value>
   </data>
+  <data name="Property_SaveOldComment" xml:space="preserve">
+    <value>Сохранять историю информации по статусу</value>
+  </data>
 </root>
