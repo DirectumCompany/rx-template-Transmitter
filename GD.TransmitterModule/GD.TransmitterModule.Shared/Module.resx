@@ -135,7 +135,7 @@
     <value>Sent</value>
   </data>
   <data name="DeliveryState_Return" xml:space="preserve">
-    <value>Return</value>
+    <value>Registration denied</value>
   </data>
   <data name="DeliveryState_RedirectedTo" xml:space="preserve">
     <value>Redirected</value>
@@ -159,7 +159,7 @@
     <value>Correspondent {0} has no delivery method</value>
   </data>
   <data name="BusinessUnitCEOIsEmpty" xml:space="preserve">
-    <value>CEO for business unit {0} is empty</value>
+    <value>CEO for business unit {0} is empty.</value>
   </data>
   <data name="DeliveryState_Error" xml:space="preserve">
     <value>Error</value>
@@ -192,5 +192,11 @@
   </data>
   <data name="AddresseeWrongEmail" xml:space="preserve">
     <value>The Addressee {0} format of the email address is incorrect.</value>
+  </data>
+  <data name="DeliveryState_Delivered" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="AddresseesDuplicateExists" xml:space="preserve">
+    <value>Duplicate addressees found. Delete?</value>
   </data>
 </root>

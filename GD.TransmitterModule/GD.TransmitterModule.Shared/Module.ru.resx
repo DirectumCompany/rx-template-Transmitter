@@ -135,7 +135,7 @@
     <value>Отправлено</value>
   </data>
   <data name="DeliveryState_Return" xml:space="preserve">
-    <value>Возврат</value>
+    <value>Отказано в регистрации</value>
   </data>
   <data name="DeliveryState_RedirectedTo" xml:space="preserve">
     <value>Перенаправлено</value>
@@ -159,10 +159,10 @@
     <value>У корреспондента {0} не заполнен способ доставки</value>
   </data>
   <data name="BusinessUnitCEOIsEmpty" xml:space="preserve">
-    <value>В организации {0} не указан руководитель</value>
+    <value>В организации {0} не указан руководитель.</value>
   </data>
   <data name="DeliveryState_Error" xml:space="preserve">
-    <value>Ошибки отправки</value>
+    <value>Ошибка отправки</value>
   </data>
   <data name="DocumentNotFound" xml:space="preserve">
     <value>Документ не найден.</value>
@@ -192,5 +192,11 @@
   </data>
   <data name="AddresseeWrongEmail" xml:space="preserve">
     <value>У Адресата {0} адрес электронной почты имеет неверный формат.</value>
+  </data>
+  <data name="DeliveryState_Delivered" xml:space="preserve">
+    <value>Доставлено</value>
+  </data>
+  <data name="AddresseesDuplicateExists" xml:space="preserve">
+    <value>Найдены дубли адресатов. Удалить?</value>
   </data>
 </root>

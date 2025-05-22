@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sungero.Core;
@@ -42,17 +42,21 @@ namespace GD.TransmitterModule.Server
                                                               item.Correspondent,
                                                               item.CounterpartyState,
                                                               item.CounterpartyStatusInfo,
-                                                              item.IsRedirect == true);
+                                                              item.IsRedirect == true, 
+                                                              item.SaveOldComment == true);
           
           if (GD.CitizenRequests.OutgoingRequestLetters.Is(item.LeadingDocument))
             Functions.Module.UpdateDocumentsStateInternalMail(GD.CitizenRequests.OutgoingRequestLetters.As(item.LeadingDocument),
                                                               item.Correspondent,
                                                               item.CounterpartyState,
                                                               item.CounterpartyStatusInfo,
-                                                              item.IsRedirect == true);
+                                                              item.IsRedirect == true, 
+                                                              item.SaveOldComment == true);
           
-            
+          
+          item.IsRedirect = false;
           item.SyncStateInDocument = GD.TransmitterModule.InternalMailRegister.SyncStateInDocument.Complete;
+          item.SaveOldComment = true;
           item.Save();
         }
         catch (Exception ex)
@@ -74,13 +78,11 @@ namespace GD.TransmitterModule.Server
     /// </summary>
     public virtual void SendOutgoingEMail()
     {
-      var method = Sungero.Docflow.MailDeliveryMethods.GetAll(m => m.Name == Sungero.Docflow.MailDeliveryMethods.Resources.EmailMethod).FirstOrDefault();
+      var method = CitizenRequests.PublicFunctions.Module.Remote.GetEmailDeliveryMethod();
       var settings = Functions.Module.GetTransmitterSettings();
       
       if (method == null)
-      {
         throw AppliedCodeException.Create("Не найден способ доставки по e-mail.");
-      }
       
       if (settings == null)
         throw AppliedCodeException.Create("Не выполнена инициализация модулей.");
