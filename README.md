@@ -59,7 +59,7 @@
       repository:
       -   '@folderName': 'work'
           '@solutionType': 'Work'
-          '@url': https://github.com/DirectumCompany/rx-template-govtransmitter.git'
+          '@url': https://github.com/DirectumCompany/rx-template-Transmitter.git'
       -   '@folderName': 'base'
           '@solutionType': 'Base'
           '@url': ''
@@ -79,13 +79,14 @@
       repository:
       -   '@folderName': 'work'
           '@solutionType': 'Work'
-          '@url': https://github.com/DirectumCompany/rx-template-govtransmitter.git'
+          '@url': https://github.com/DirectumCompany/rx-template-Transmitter.git'
       -   '@folderName': 'base'
           '@solutionType': 'Base'
           '@url': ''
 ```
 
 **B. Подключение на базовый слой.**
+
 Вариант не рекомендуется, так как при выходе версии шаблона разработки не гарантируется обратная совместимость.
 1. Склонировать репозиторий Transmitter в папку.
 2. Указать в config.yml в разделе DevelopmentStudio:
@@ -101,7 +102,7 @@
           '@url': ''
       -   '@folderName': 'base'
           '@solutionType': 'Base'
-          '@url': 'https://github.com/DirectumCompany/rx-template-govtransmitter.git'
+          '@url': 'https://github.com/DirectumCompany/rx-template-Transmitter.git'
 ```
 
 **C. Копирование репозитория в систему контроля версий.**
@@ -112,4 +113,5 @@
 3. Перейти в папку из п. 2.
 4. Импортировать клонированный репозиторий в систему контроля версий командой:
 `git push –mirror <Адрес репозитория из п. 1>`
+
 
