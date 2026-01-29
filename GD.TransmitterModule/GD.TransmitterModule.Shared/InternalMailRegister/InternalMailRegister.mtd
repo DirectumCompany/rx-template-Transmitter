@@ -186,11 +186,13 @@
       ]
     }
   ],
+  "FormViewUuid": "9fad306b-5480-44d9-8978-afd8214aea33",
   "HandledEvents": [
     "CreatedServer"
   ],
   "IconResourcesKeys": [],
   "IsAutoCreated": true,
+  "ListViewUuid": "3d86730e-e1ab-40ae-8a9b-3b2d57f4a3d6",
   "OperationsClass": "",
   "Overridden": [
     "CanBeSearch",

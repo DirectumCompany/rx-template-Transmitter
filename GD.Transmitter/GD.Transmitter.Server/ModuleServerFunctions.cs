@@ -6,7 +6,7 @@ using Sungero.CoreEntities;
 
 namespace GD.Transmitter.Server
 {
-  public class ModuleFunctions
+  public partial class ModuleFunctions
   {
 
   }

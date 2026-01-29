@@ -8,7 +8,7 @@ using GD.CitizenRequests;
 
 namespace GD.TransmitterModule.Shared
 {
-  public class ModuleFunctions
+  public partial class ModuleFunctions
   {
     /// <summary>
     /// Проверить реквизиты для отправки по Email.
