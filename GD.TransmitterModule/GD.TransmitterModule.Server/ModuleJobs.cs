@@ -7,7 +7,7 @@ using System.IO;
 
 namespace GD.TransmitterModule.Server
 {
-  public class ModuleJobs
+  public partial class ModuleJobs
   {
 
     /// <summary>

@@ -8,7 +8,7 @@ using GD.CitizenRequests;
 
 namespace GD.TransmitterModule.Server
 {
-  public class ModuleAsyncHandlers
+  public partial class ModuleAsyncHandlers
   {
     public virtual void HandleErrorInDocumentProcessingTask(GD.TransmitterModule.Server.AsyncHandlerInvokeArgs.HandleErrorInDocumentProcessingTaskInvokeArgs args)
     {

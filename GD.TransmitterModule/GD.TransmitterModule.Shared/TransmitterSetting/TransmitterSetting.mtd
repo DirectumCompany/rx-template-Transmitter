@@ -71,9 +71,11 @@
       ]
     }
   ],
+  "FormViewUuid": "b548e584-9703-4d40-9a97-4683adfbeb1b",
   "IconResourcesKeys": [],
   "IsAutoCreated": true,
   "IsVisible": false,
+  "ListViewUuid": "2808c25e-710d-40ca-8000-71547ef062b8",
   "OperationsClass": "",
   "Overridden": [
     "IsVisible",

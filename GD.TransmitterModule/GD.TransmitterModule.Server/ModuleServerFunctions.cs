@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace GD.TransmitterModule.Server
 {
-  public class ModuleFunctions
+  public partial class ModuleFunctions
   {
     /// <summary>
     /// Изменить информацию о состоянии отправки RX-RX в реестре

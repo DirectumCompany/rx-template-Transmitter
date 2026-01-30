@@ -198,6 +198,7 @@
       ]
     }
   ],
+  "FormViewUuid": "a749daa4-ebc4-4af2-91ab-a45e0adcbe24",
   "HandledEvents": [
     "ShowingClient",
     "BeforeSaveServer",
@@ -205,6 +206,7 @@
   ],
   "IconResourcesKeys": [],
   "IsAutoCreated": true,
+  "ListViewUuid": "2c8a4d57-ec20-4e6a-a55e-d6be9763e0e9",
   "OperationsClass": "",
   "Overridden": [
     "CanBeSearch",
