@@ -166,7 +166,7 @@
       ]
     }
   ],
-  "FormViewUuid": "0e6d1d69-5048-40a7-a371-26b34f364c5e",
+  "FormViewUuid": "eca51896-61f7-4040-afae-036006f1c981",
   "HandledEvents": [
     "CreatedServer",
     "BeforeStartServer"
@@ -174,7 +174,7 @@
   "IconResourcesKeys": [],
   "IsAutoCreated": true,
   "IsVisibleThreadText": true,
-  "ListViewUuid": "0715ee0e-a4dd-493d-a99c-0f06a1f994c6",
+  "ListViewUuid": "8c9773ef-9c23-4cbb-b881-35f44a6c043f",
   "NeverLinkToParentWhenCreated": true,
   "OperationsClass": "",
   "Overridden": [
@@ -353,7 +353,7 @@
     },
     {
       "Type": "EntityMetadata",
-      "Number": 13
+      "Number": 14
     }
   ]
 }

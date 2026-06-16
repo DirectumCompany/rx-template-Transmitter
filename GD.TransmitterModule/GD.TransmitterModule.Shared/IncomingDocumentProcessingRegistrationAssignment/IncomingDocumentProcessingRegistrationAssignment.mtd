@@ -279,10 +279,10 @@
       ]
     }
   ],
-  "FormViewUuid": "6626f5a2-0b29-44b5-b370-f9ba584bd3d8",
+  "FormViewUuid": "97618524-c141-405a-89ce-9437f860a712",
   "IconResourcesKeys": [],
   "IsVisibleThreadText": true,
-  "ListViewUuid": "a7cdcd52-183f-4d98-a6af-951d079cd2ee",
+  "ListViewUuid": "2a9fe026-1852-4035-bb8c-071efc63adb5",
   "NeverLinkToParentWhenCreated": true,
   "OperationsClass": "",
   "Properties": [
@@ -482,7 +482,7 @@
     },
     {
       "Type": "EntityMetadata",
-      "Number": 13
+      "Number": 14
     }
   ]
 }

@@ -662,10 +662,10 @@
     "IncorrectExtLength",
     "CounterpartyAndAddresseeIsNotEmail",
     "EmailDuplicate",
-    "DeliveryState_Delivered",
-    "AddresseesDuplicateExists",
     "CorrespondentWrongEmail",
-    "AddresseeWrongEmail"
+    "AddresseeWrongEmail",
+    "DeliveryState_Delivered",
+    "AddresseesDuplicateExists"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",
