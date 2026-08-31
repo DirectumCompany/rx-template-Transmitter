@@ -292,7 +292,7 @@
       ],
       "Placement": "Shared",
       "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
-      "ReturnTypeFullName": "System.Collections.Generic.List"
+      "ReturnTypeFullName": "System.Collections.Generic.List`1[[System.String]]"
     },
     {
       "Name": "CheckRequisitesForSendRX",
@@ -306,7 +306,7 @@
       ],
       "Placement": "Shared",
       "ReturnType": "global::System.Collections.Generic.List<global::System.String>",
-      "ReturnTypeFullName": "System.Collections.Generic.List"
+      "ReturnTypeFullName": "System.Collections.Generic.List`1[[System.String]]"
     },
     {
       "Name": "CopyAddendum",
@@ -347,7 +347,7 @@
         {
           "Name": "relatedDocs",
           "ParameterType": "global::System.Linq.IQueryable<global::Sungero.Content.IElectronicDocument>",
-          "ParameterTypeFullName": "System.Linq.IQueryable"
+          "ParameterTypeFullName": "System.Linq.IQueryable`1[[Sungero.Content.IElectronicDocument, Sungero.Content.Shared]]"
         },
         {
           "Name": "correspondent",
@@ -357,7 +357,7 @@
         {
           "Name": "errors",
           "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
-          "ParameterTypeFullName": "System.Collections.Generic.List"
+          "ParameterTypeFullName": "System.Collections.Generic.List`1[[System.String]]"
         }
       ],
       "ReturnType": "void",
@@ -398,7 +398,7 @@
         {
           "Name": "errors",
           "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
-          "ParameterTypeFullName": "System.Collections.Generic.List"
+          "ParameterTypeFullName": "System.Collections.Generic.List`1[[System.String]]"
         },
         {
           "Name": "isRequestTransfer",
@@ -465,7 +465,7 @@
         {
           "Name": "relatedDocs",
           "ParameterType": "global::System.Linq.IQueryable<global::Sungero.Content.IElectronicDocument>",
-          "ParameterTypeFullName": "System.Linq.IQueryable"
+          "ParameterTypeFullName": "System.Linq.IQueryable`1[[Sungero.Content.IElectronicDocument, Sungero.Content.Shared]]"
         },
         {
           "Name": "company",
@@ -475,7 +475,7 @@
         {
           "Name": "errors",
           "ParameterType": "global::System.Collections.Generic.List<global::System.String>",
-          "ParameterTypeFullName": "System.Collections.Generic.List"
+          "ParameterTypeFullName": "System.Collections.Generic.List`1[[System.String]]"
         },
         {
           "Name": "sender",
@@ -662,10 +662,10 @@
     "IncorrectExtLength",
     "CounterpartyAndAddresseeIsNotEmail",
     "EmailDuplicate",
-    "DeliveryState_Delivered",
-    "AddresseesDuplicateExists",
     "CorrespondentWrongEmail",
-    "AddresseeWrongEmail"
+    "AddresseeWrongEmail",
+    "DeliveryState_Delivered",
+    "AddresseesDuplicateExists"
   ],
   "ServerAssemblyName": "GD.TransmitterModule.Server",
   "ServerNamespace": "GD.TransmitterModule.Server",
